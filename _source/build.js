@@ -5,18 +5,48 @@ var Metalsmith = require('metalsmith'),
 	metallic = require('metalsmith-metallic'),
   collections = require('metalsmith-collections'),
   Handlebars = require('handlebars'),
+  path = require('path'),
+  _ = require('lodash'),
 	exec = require('child_process').exec;
 
 
 Handlebars.registerHelper('list', function(items, options) {
-  var out = "<ul>";
-  for(var i=0, l=items.length; i<l; i++) {
-    out = out + "<li>" + options.fn(items[i]) + "</li>";
-  }
-  return out + "</ul>";
+  return _.reduce(items,function(memo,item){
+    return memo+"<li>"+options.fn(item)+"</li>";
+  },"<ul>")+"</ul>";
 });
 
+Handlebars.registerHelper('authorPosts', function(authorname, options) {
+  list = _.reduce(this.articles,function(memo,a){
+    return a.author === authorname ? memo + "<li>" + options.fn(a)+ "</li>" : memo;
+  },"");
+  return list ? "<ul>"+list+"</ul>" : options.inverse(this);
+});
+
+Handlebars.registerHelper('tagPosts', function(tagname, options) {
+  return _.reduce(this.tags["tags/"+tagname+".html"].posts,function(memo,f){
+    return memo+"<li>"+options.fn(f)+ "</li>";
+  },"<ul>")+"</ul>";
+});
+
+addtagfiles = function(opts){
+  return function(files, metalsmith, done){
+    var tags = _.reduce(files,function(memo,file,path){
+      _.each(file.tags ? file.tags.split(",") : [],function(tag){
+        tag = tag.replace(/\W*$/,"").replace(/^\W*/,"").toLowerCase();
+        memo["tags/"+tag+".html"] = memo["tags/"+tag+".html"] || {tag:tag,template:"tag.html",posts:[],contents:""};
+        memo["tags/"+tag+".html"].posts.push(file);
+      });
+      return memo;
+    },{});
+    _.extend(files,tags);
+    metalsmith.metadata().tags = tags;
+    done();
+  };
+};
+
 Metalsmith(__dirname)
+  .use(addtagfiles())
   .use(collections({
     articles: 'posts/*.md'
   }))
@@ -32,6 +62,7 @@ Metalsmith(__dirname)
   .source('./files')
   .destination('../.')
   .build(function(e){console.log(e);});
+
 
 
 

@@ -4,10 +4,19 @@
   <meta name="description" content="{{ description }}">
 </head>
 <body>
-  <h1>{{ title }}</h1>
-  <p>{{ description }}</p>
+  <h1>Krawaller</h1>
+  <p>A blog about development on the web stack by the Krawaller brothers;
+  	<a href='author/david'>David</a>,
+    <a href='author/hannes'>Hannes</a> and
+    <a href='author/jacob'>Jacob</a>.
+  </p>
+  <h2>Posts</h2>
   {{#list articles}}
     <a href='{{path}}'>{{date}} - {{title}}</a>
+  {{/list}}
+  <h2>Tags</h2>
+  {{#list this.tags}}
+  <a href='tags/{{tag}}/'>{{tag}}</a>
   {{/list}}
 </body>
 </html>

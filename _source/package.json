@@ -9,6 +9,7 @@
     "metalsmith-metallic": "^0.1.1",
     "metalsmith": "^0.2.3",
     "handlebars": "^2.0.0-alpha.2",
+    "lodash": "^2.4.1",
     "metalsmith-collections":"^0.4.0"
   }
 }

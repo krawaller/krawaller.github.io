@@ -1,0 +1,17 @@
+<html>
+<head>
+  <title>Krawaller - {{portrait}}</title>
+  <link rel="stylesheet" href="../../css/highlight.css">
+</head>
+<body>
+  <h1><a href='../../'>Krawaller Blog</a></h1>
+  <h2>{{ portrait }}</h2>
+  {{{ contents }}}
+  <h2>Posts by {{portrait}}</h2>
+  {{#authorPosts portrait}}
+    <a href='{{path}}'>{{date}} - {{title}}</a>
+  {{else}}
+    <p>{{portrait}} hasn't written anything yet.</p>
+  {{/authorPosts}}
+</body>
+</html>
