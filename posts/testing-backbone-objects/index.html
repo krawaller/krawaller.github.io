@@ -1,0 +1,203 @@
+<html>
+<head>
+  <title>Krawaller Blog</title>
+  <link rel="stylesheet" href="../../css/highlight.css">
+</head>
+<body>
+  <h1><a href='../../index.html'>Krawaller Blog</a></h1>
+  <h2>Testing Backbone Objects</h2>
+  <time>2013-02-23 17:21</time>
+  <h3 id="troll-bait-or-how-not-to-do-it-">Troll bait (or &quot;How not to do it&quot;)</h3>
+<p>Here&#39;s a blanket statement to flame against:</p>
+<blockquote>
+<p><em>Instantiating Backbone views/models/collections in order to test them is an <strong>antipattern</strong>!</em></p>
+</blockquote>
+<p>Why? When we try to test an instance, we&#39;re faced with two main problems:</p>
+<ul>
+<li>It will likely <strong>require lots of setup</strong>, as we have to call the constructor with some reasonable data.</li>
+<li>When testing some aspect of the instance, it is <strong>hard to make the test independent</strong> of other functionality aspects.</li>
+</ul>
+<h3 id="how-to-do-it">How to do it</h3>
+<p>So, then, how should it be done? Here&#39;s the approach I use when testing a method on a Backbone object:</p>
+<ol>
+<li>First we must of course <strong>analyse what the method actually does</strong> (or is supposed to do, if we&#39;re doing true BDD and writing the tests first).</li>
+<li>Start the test by <strong>storing the method</strong> to test by stealing it from the constructor prototype.</li>
+<li>If the method touches <code>this</code> (which is almost always the case in a Backbone object) I <strong>create a custom context</strong> object containing stubs, spies and dummy data as needed.</li>
+<li>I create eventual <strong>parameter</strong> data.</li>
+<li>I&#39;ll then <strong>call the method on the custom context</strong>.</li>
+<li>Following that I can <strong>test the result</strong>...</li>
+<li>...check that the <strong>context was manipulated</strong> in the expected way...</li>
+<li>...and also if my <strong>spies where called in the correct way</strong>.</li>
+</ol>
+<h3 id="a-small-case-study">A small case study</h3>
+<p>As an example, consider the (adapted) following view that a student of mine had in a recent project:</p>
+<pre><code><span class="keyword">var</span> AddRecipeView = Backbone.View.extend({
+
+  initialize: <span class="function"><span class="keyword">function</span><span class="params">(opts)</span> {</span>
+    <span class="keyword">this</span>.model = <span class="keyword">new</span> DishModel();
+    <span class="keyword">this</span>.render()
+      <span class="comment">// Listen to model validation errors</span>
+      .listenTo(<span class="keyword">this</span>.model, <span class="string">'invalid'</span>, <span class="keyword">this</span>.renderErrors)
+      .listenTo(<span class="keyword">this</span>.model, <span class="string">'change'</span>, <span class="keyword">this</span>.checkErrorField)
+  },
+
+  <span class="comment">// ...rest of functionality edited out...</span>
+});</code></pre>
+
+<p>Using the test philosophy outlined above, how would we test the <code>initialize</code> function? Here&#39;s one suggestion, using <a href="[http://pivotal.github.com/jasmine/]">Jasmine</a>, <a href="[http://sinonjs.org/]">Sinon</a> and <a href="[https://github.com/froots/jasmine-sinon]">Jasmine-sinon</a> custom matchers.</p>
+<h4 id="1-analysis">1: Analysis</h4>
+<p>First we analyse what the method is supposed to do:</p>
+<ul>
+<li>It adds a Dishmodel instance to the context</li>
+<li>It calls the render function</li>
+<li>It sets two event listeners</li>
+</ul>
+<p>These three things, and <em>only</em> these, are what we should aim to test!</p>
+<h4 id="2-access-the-method">2: Access the method</h4>
+<p>We start the testcode by capturing the method to test from the constructor prototype:</p>
+<pre><code>var initialize = AddRecipeView<span class="preprocessor">.prototype</span><span class="preprocessor">.initialize</span><span class="comment">;</span></code></pre>
+
+<h4 id="3-context">3: Context</h4>
+<p>We need to create a context with stubs for <code>listenTo</code> and <code>render</code>. As the method uses a chaining syntax, we must also have these stubs return our custom context. Finally we need to have some dummy data in <code>.renderErrors</code> and <code>.checkErrorField</code>, in order to be able to test if those properties were passed to <code>listenTo</code>. Here&#39;s the full fake context:</p>
+<pre><code>var context = {
+    listenTo: sinon<span class="preprocessor">.stub</span>()<span class="preprocessor">.returns</span>(context),
+    render: sinon<span class="preprocessor">.stub</span>()<span class="preprocessor">.returns</span>(context),
+    renderErrors: <span class="string">"RENDERFUNC"</span>,
+    checkErrorField: <span class="string">"CHECKSTUFF"</span>
+}<span class="comment">;</span></code></pre>
+
+<h4 id="4-parameter-data">4: Parameter data</h4>
+<p>The initialize method doesn&#39;t take any arguments, so we don&#39;t need to decide on any data for that.</p>
+<h4 id="5-execute-the-method">5: Execute the method</h4>
+<p>Now we execute the method on our fake context:</p>
+<pre><code>var result = initialize.<span class="operator"><span class="keyword">call</span>(context);</span></code></pre>
+
+<h4 id="6-test-the-result">6: Test the result</h4>
+<p>As the initialize method isn&#39;t supposed to return anything, we don&#39;t need to test the result.</p>
+<h4 id="7-check-context-manipulation">7: Check context manipulation</h4>
+<p>The method was supposed to add a dishmodel instance to the <code>.model</code> property, so let&#39;s make sure that happened:</p>
+<pre><code>it(<span class="string">"should set a Dishmodel instance on .model"</span>,<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    expect(context.model <span class="keyword">instanceof</span> Dishmodel).toBe(<span class="literal">true</span>);
+});</code></pre>
+
+<h4 id="8-check-method-calls">8: Check method calls</h4>
+<p>Finally we need to make sure that other functions were called as expected. First we check for the expected call to <code>render</code>:</p>
+<pre><code><span class="function">it(<span class="string">"should call render"</span>,<span class="function">function()</span>{
+    <span class="function">expect(context.render)</span>.<span class="function">toHaveBeenCalledOnce()</span>;
+})</span>;</code></pre>
+
+<p>And finally we test if the two event listeners were set:</p>
+<pre><code>it(<span class="string">"added the event listeners"</span>,function(){
+    expect(context<span class="preprocessor">.listenTo</span>)<span class="preprocessor">.toHaveBeenCalledTwice</span>()<span class="comment">;</span>
+    expect(context<span class="preprocessor">.listenTo</span><span class="preprocessor">.firstCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+        context<span class="preprocessor">.model</span>,<span class="string">"invalid"</span>,context<span class="preprocessor">.renderErrors</span>
+    ])<span class="comment">;</span>
+    expect(context<span class="preprocessor">.listenTo</span><span class="preprocessor">.secondCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+        context<span class="preprocessor">.model</span>,<span class="string">"change"</span>,context<span class="preprocessor">.checkErrorField</span>
+    ])<span class="comment">;</span>
+})<span class="comment">;</span></code></pre>
+
+<h4 id="end-result">End result</h4>
+<p>To save you scrolling back and forth, here&#39;s the <code>initialize</code> source again:</p>
+<pre><code><span class="keyword">var</span> AddRecipeView = Backbone.View.extend({
+
+  initialize: <span class="function"><span class="keyword">function</span><span class="params">(opts)</span> {</span>
+    <span class="keyword">this</span>.model = <span class="keyword">new</span> DishModel();
+    <span class="keyword">this</span>.render()
+      <span class="comment">// Listen to model validation errors</span>
+      .listenTo(<span class="keyword">this</span>.model, <span class="string">'invalid'</span>, <span class="keyword">this</span>.renderErrors)
+      .listenTo(<span class="keyword">this</span>.model, <span class="string">'change'</span>, <span class="keyword">this</span>.checkErrorField)
+  },
+
+  <span class="comment">// ...rest of functionality edited out...</span>
+});</code></pre>
+
+<p>...and here&#39;s the test code in full:</p>
+<pre><code>describe(<span class="string">"the initialize function"</span>,function(){
+    var initialize = AddRecipeView<span class="preprocessor">.prototype</span><span class="preprocessor">.initialize</span>,
+        context = {
+            listenTo: sinon<span class="preprocessor">.stub</span>()<span class="preprocessor">.returns</span>(context),
+            render: sinon<span class="preprocessor">.stub</span>()<span class="preprocessor">.returns</span>(context),
+            renderErrors: <span class="string">"RENDERFUNC"</span>,
+            checkErrorField: <span class="string">"CHECKSTUFF"</span>
+        }<span class="comment">;</span>
+    initialize<span class="preprocessor">.call</span>(context)<span class="comment">;</span>
+    it(<span class="string">"should set a Dishmodel instance on .model"</span>,function(){
+        expect(context<span class="preprocessor">.model</span> instanceof Dishmodel)<span class="preprocessor">.toBe</span>(true)<span class="comment">;</span>
+    })<span class="comment">;</span>
+    it(<span class="string">"should call render"</span>,function(){
+        expect(context<span class="preprocessor">.render</span>)<span class="preprocessor">.toHaveBeenCalledOnce</span>()<span class="comment">;</span>
+    })<span class="comment">;</span>
+    it(<span class="string">"called listenTo correctly"</span>,function(){
+        expect(context<span class="preprocessor">.listenTo</span>)<span class="preprocessor">.toHaveBeenCalledTwice</span>()<span class="comment">;</span>
+        expect(context<span class="preprocessor">.listenTo</span><span class="preprocessor">.firstCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+            context<span class="preprocessor">.model</span>,<span class="string">"invalid"</span>,context<span class="preprocessor">.renderErrors</span>
+        ])<span class="comment">;</span>
+        expect(context<span class="preprocessor">.listenTo</span><span class="preprocessor">.secondCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+            context<span class="preprocessor">.model</span>,<span class="string">"change"</span>,context<span class="preprocessor">.checkErrorField</span>
+        ])<span class="comment">;</span>
+    })<span class="comment">;</span>
+})<span class="comment">;</span></code></pre>
+
+<p>All tests control one specific expected behaviour of the method, and nothing else. We&#39;re not even depending on any Backbone functionality, which is one of the badges to strive for when unit testing your Backbone apps! Achieving that will make the test simpler, smaller and less fragile.</p>
+<h3 id="case-study-2-testing-dom-methods">Case study #2 - Testing DOM methods</h3>
+<p>The same approach can be adopted even when DOM manipulation is involved. Here is the <code>renderErrors</code> method of the same view:</p>
+<pre><code><span class="keyword">var</span> AddRecipeView = Backbone.View.extend({
+
+    <span class="comment">// ...other functionality edited out...</span>
+
+    renderErrors: <span class="function"><span class="keyword">function</span><span class="params">(model)</span> {</span>
+        <span class="keyword">this</span>.$(<span class="string">'.errors'</span>).html(<span class="string">''</span>);
+        _.each(model.validationError, <span class="function"><span class="keyword">function</span><span class="params">(error)</span> {</span>
+            <span class="keyword">this</span>.$(<span class="string">'.errors'</span>).append(error.message + <span class="string">'&lt;br&gt;'</span>);
+        });
+    },
+
+    <span class="comment">// ...other functionality edited out...</span>
+
+});</code></pre>
+
+<p>How to test that? There&#39;s even quirkier chaining going on, and we&#39;re manipulating the DOM. Is testing this really feasible without instantiating the view?</p>
+<p>Here&#39;s what I did, using the same approach as before:</p>
+<pre><code>describe(<span class="string">"the renderError function"</span>,function(){
+    var renderErr = AddRecipeView<span class="preprocessor">.prototype</span><span class="preprocessor">.renderErrors</span>,
+        model = {validationError:[
+            {message:<span class="string">"err1"</span>},{message:<span class="string">"err2"</span>},{message:<span class="string">"err3"</span>}
+        ]},
+        $el = {
+            html: sinon<span class="preprocessor">.spy</span>(),
+            append: sinon<span class="preprocessor">.spy</span>()
+        },
+        context = {
+            $: sinon<span class="preprocessor">.stub</span>()<span class="preprocessor">.returns</span>($el)<span class="comment">;</span>
+        }<span class="comment">;</span>
+    renderErr<span class="preprocessor">.call</span>(context,model)<span class="comment">;</span>
+    it(<span class="string">"should use the correct selector"</span>,function(){
+        expect(context.$)<span class="preprocessor">.toHaveBeenAlwaysCalledWith</span>(<span class="string">".errors"</span>)<span class="comment">;</span>
+    })<span class="comment">;</span>
+    it(<span class="string">"should have cleared the previous html"</span>,function(){
+        expect($el<span class="preprocessor">.html</span>)<span class="preprocessor">.toHaveBeenCalledWith</span>(<span class="string">""</span>)<span class="comment">;</span>
+    })<span class="comment">;</span>
+    it(<span class="string">"appends each errormsg"</span>,function(){
+        expect($el<span class="preprocessor">.append</span>)<span class="preprocessor">.toHaveBeenCalledThrice</span>()<span class="comment">;</span>
+        expect($el<span class="preprocessor">.append</span><span class="preprocessor">.firstCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+            model<span class="preprocessor">.validationError</span>[<span class="number">0</span>]<span class="preprocessor">.message</span>+<span class="string">"&lt;br&gt;"</span>
+        ])<span class="comment">;</span>
+        expect($el<span class="preprocessor">.append</span><span class="preprocessor">.secondCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+            model<span class="preprocessor">.validationError</span>[<span class="number">1</span>]<span class="preprocessor">.message</span>+<span class="string">"&lt;br&gt;"</span>
+        ])<span class="comment">;</span>
+        expect($el<span class="preprocessor">.append</span><span class="preprocessor">.thirdCall</span><span class="preprocessor">.args</span>)<span class="preprocessor">.toEqual</span>([
+            model<span class="preprocessor">.validationError</span>[<span class="number">2</span>]<span class="preprocessor">.message</span>+<span class="string">"&lt;br&gt;"</span>
+        ])<span class="comment">;</span>
+    })<span class="comment">;</span>
+})<span class="comment">;</span></code></pre>
+
+<p>In order to deal with the chain, I made a dummy object for the element (<code>$el</code>), and then I made the spy for the scoped selector <code>$</code> return that dummy. This deals with the chaining problem, but is perhaps a bit too implementation specific - for example, the student might change from using <code>this.$(selector)</code> to <code>this.$el.find(selector)</code>, in which case my test would fail. It will however keep working even if he starts caching the result from <code>this.$(selector)</code>, which he should of course do.</p>
+<p>Apart from the danger of becoming implementation specific, I find that this fake chain approach mostly works very well!</p>
+<p>As for the DOM, the secret to testing it is NOT to test it. Here I stub out the relevant methods, and then simply check that they&#39;re called correctly. No special measure needs to be taken just because they&#39;re functions that are supposed to affect the DOM. I find this approach much easier than actually making sure that the correct html was set. In fact, I&#39;ll go as far as to end this post with another bit of troll bait:</p>
+<blockquote>
+<p><em>Testing if <code>this.$el.html() === expectedHtml</code> is an <strong>antipattern</strong>!</em></p>
+</blockquote>
+
+</body>
+</html>
