@@ -24,7 +24,8 @@ Handlebars.registerHelper('authorPosts', function(authorname, options) {
 });
 
 Handlebars.registerHelper('tagPosts', function(tagname, options) {
-  return _.reduce(this.tags["tags/"+tagname+".html"].posts,function(memo,f){
+  console.log(tagname,this.tags["tags/"+tagname+"/index.html"]);
+  return _.reduce(this.tags["tags/"+tagname+"/index.html"].posts,function(memo,f){
     return memo+"<li>"+options.fn(f)+ "</li>";
   },"<ul>")+"</ul>";
 });
@@ -32,11 +33,16 @@ Handlebars.registerHelper('tagPosts', function(tagname, options) {
 addtagfiles = function(opts){
   return function(files, metalsmith, done){
     var tags = _.reduce(files,function(memo,file,path){
+      file.taglist = [];
       _.each(file.tags ? file.tags.split(",") : [],function(tag){
         tag = tag.replace(/\W*$/,"").replace(/^\W*/,"").toLowerCase();
-        memo["tags/"+tag+".html"] = memo["tags/"+tag+".html"] || {tag:tag,template:"tag.html",posts:[],contents:""};
-        memo["tags/"+tag+".html"].posts.push(file);
+        key = "tags/"+tag+"/index.html";
+        memo[key] = memo[key] || {tag:tag,template:"tag.html",posts:[],contents:""};
+        memo[key].posts.push(file);
+        file.taglist.push("<a href='../../tags/"+tag+"'>"+tag+"</a>");
       });
+      file.taglist = file.taglist.join(", ");
+      console.log("TAGLIST",file.taglist);
       return memo;
     },{});
     _.extend(files,tags);
