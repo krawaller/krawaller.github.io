@@ -24,7 +24,6 @@ Handlebars.registerHelper('authorPosts', function(authorname, options) {
 });
 
 Handlebars.registerHelper('tagPosts', function(tagname, options) {
-  console.log(tagname,this.tags["tags/"+tagname+"/index.html"]);
   return _.reduce(this.tags["tags/"+tagname+"/index.html"].posts,function(memo,f){
     return memo+"<li>"+options.fn(f)+ "</li>";
   },"<ul>")+"</ul>";
@@ -42,7 +41,6 @@ addtagfiles = function(opts){
         file.taglist.push("<a href='../../tags/"+tag+"'>"+tag+"</a>");
       });
       file.taglist = file.taglist.join(", ");
-      console.log("TAGLIST",file.taglist);
       return memo;
     },{});
     _.extend(files,tags);
