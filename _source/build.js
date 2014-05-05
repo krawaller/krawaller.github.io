@@ -29,6 +29,10 @@ Handlebars.registerHelper('tagPosts', function(tagname, options) {
   },"<ul>")+"</ul>";
 });
 
+Handlebars.registerHelper('toLowerCase', function(str,options) {
+  return str.toLowerCase();
+});
+
 addtagfiles = function(opts){
   return function(files, metalsmith, done){
     var tags = _.reduce(files,function(memo,file,path){
