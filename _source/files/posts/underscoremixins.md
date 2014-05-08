@@ -52,20 +52,14 @@ function(obj,iterator,context){
 
 ### `extendProp(obj,propname,src)`
 
-This is a utility method for exending an object which is the property of another object. Instead of doing this:
+This is a utility method for exending an object which is the property of another object, which works even if 
+the property doesn't exist. Doing this:
 
 ```javascript
-obj[propname] = _.extend(obj[propname],src);
+_.extend(obj[propname],src);
 ```
 
-...we can simply do this:
-
-```
-_.extendProp(obj,propname,src);
-```
-
-Not a huge gain characterwise, but rather more readable and therefore still worthy of inclusion. As an added bonus,
-`extendProp` also includes a safeguard to work when the property is undefined. Here's the source:
+...would fail if the `propname` property is undefined.Here's the source:
 
 ```
 function(obj,propname,src){
@@ -73,6 +67,8 @@ function(obj,propname,src){
 	return obj;
 }
 ```
+
+As the parent object is returned we can chain more operations on the target object.
 
 
 ### Mixing it in
