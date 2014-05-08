@@ -83,20 +83,17 @@ function call cleans up the codebase nicely. Here&#39;s the source:</p>
 }</code></pre>
 
 <h3 id="-extendprop-obj-propname-src-"><code>extendProp(obj,propname,src)</code></h3>
-<p>This is a utility method for exending an object which is the property of another object. Instead of doing this:</p>
-<pre><code>obj[propname] = _.extend(obj[propname],src);</code></pre>
+<p>This is a utility method for exending an object which is the property of another object, which works even if 
+the property doesn&#39;t exist. Doing this:</p>
+<pre><code>_.extend(obj[propname],src);</code></pre>
 
-<p>...we can simply do this:</p>
-<pre><code>_<span class="preprocessor">.extendProp</span>(obj,propname,src)<span class="comment">;</span></code></pre>
-
-<p>Not a huge gain characterwise, but rather more readable and therefore still worthy of inclusion. As an added bonus,
-<code>extendProp</code> also includes a safeguard to work when the property is undefined. Here&#39;s the source:</p>
+<p>...would fail if the <code>propname</code> property is undefined.Here&#39;s the source:</p>
 <pre><code><span class="function"><span class="keyword">function</span><span class="params">(obj,propname,src)</span>{</span>
     obj<span class="matrix">[propname]</span> = <span class="transposed_variable">_.</span>extend(obj<span class="matrix">[propname]</span>||<span class="cell">{}</span>,source);
     <span class="keyword">return</span> obj;
 }</code></pre>
 
-
+<p>As the parent object is returned we can chain more operations on the target object.</p>
 <h3 id="mixing-it-in">Mixing it in</h3>
 <p>The methods are added to underscore through the <code>mixin</code> method:</p>
 <pre><code>_.mixin({
