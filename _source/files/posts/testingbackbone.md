@@ -1,8 +1,8 @@
 ---
 template: post.html
 title: "Testing Backbone Objects"
-date: 2013-02-23 17:21
-tags: Backbone,Jasmine,Testing,Sinon
+date: 2013-02-23
+tags: [Backbone,Jasmine,Testing,Sinon]
 author: David
 excerpt: My thoughts on how to test Backbone objects without instantiating them. We also discuss testing methods involving chaining syntax and DOM manipulation
 ---

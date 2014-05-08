@@ -1,22 +1,71 @@
 <html>
 <head>
-  <title>{{ title }}</title>
+  <title>{{ blogtitle }}</title>
   <meta name="description" content="{{ description }}">
+  <link rel="stylesheet" href="css/theme.css"/>
 </head>
 <body>
-  <h1>Krawaller</h1>
-  <p>A blog about development on the web stack by the Krawaller brothers;
-  	<a href='author/david/'>David</a>,
-    <a href='author/hannes/'>Hannes</a> and
-    <a href='author/jacob/'>Jacob</a>.
-  </p>
-  <h2>Posts</h2>
-  {{#list articles}}
-    <a href='{{path}}'>{{date}} - {{title}}</a>
-  {{/list}}
-  <h2>Tags</h2>
-  {{#list this.tags}}
-  <a href='tags/{{tag}}/'>{{tag}}</a>
-  {{/list}}
+
+<header class="site-head" {{#if @cover}}style="background-image: url({{@cover}})"{{/if}}>
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        {{#if @logo}}
+          <a class="blog-logo" href="{{blogurl}}"><img src="{{logo}}" alt="Blog Logo" /></a>
+        {{else}}
+          <h1 class="blog-title"><a href="{{blogurl}}">{{ blogtitle }}</a></h1>
+        {{/if}}
+        <h2 class="blog-description">A blog about web development by the Krawaller brothers <a href='authors/david/'>David</a>, <a href='authors/hannes/'>Hannes</a> &amp; <a href='authors/jacob/'>Jacob</a>.</h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+<div class="sub-head">
+  <div class="container">
+    <!-- Manually add in Twitter/any link until Ghost supports social -->
+    <ul class="social-nav">
+      <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+      <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+      <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+    </ul>
+  </div>
+</div><!-- END .sub-head -->
+
+
+<div class="container">
+  <main class="content" role="main">
+
+    {{#each articles}}
+
+    <article class="{{post_class}}">
+      <header class="post-header">
+        <h2 class="post-title">
+          <a href="{{path}}">{{{title}}}</a>
+          <span class="post-meta">
+            <time datetime="{{date}}">{{moment date 'MMM Do YYYY'}}</time> 
+          </span>
+        </h2>
+          <div class='tags'>
+            By: <span><a href='author/{{toLowerCase author}}'>{{author}}</a></span>
+          </div>
+          <div class="tags">
+            Tags:
+            {{#each tags}}
+              <span><a href='tags/{{this}}/'>{{this}}</a></span>
+            {{/each}}
+          </div>
+      </header>
+      <section class="post-excerpt">
+        <p>{{excerpt}}</p>
+      </section>
+    </article>
+
+    {{/each}}
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+
 </body>
 </html>

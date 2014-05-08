@@ -1,0 +1,119 @@
+<html>
+<head>
+  <title>Underscore mixins</title>
+  <meta name="description" content="">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/highlight.css">
+</head>
+<body>
+
+<header class="site-head" >
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        
+          <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        
+        <h2 class="blog-description">Some methods I usually mix into Underscore</h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+<div class="sub-head">
+  <div class="container">
+    <!-- Manually add in Twitter/any link until Ghost supports social -->
+    <ul class="social-nav">
+      <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+      <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+      <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+    </ul>
+  </div>
+</div><!-- END .sub-head -->
+
+
+<div class="container">
+  <main class="content" role="main">
+    <article class="">
+      <header class="post-header">
+        <h2 class="post-title">
+          <a href="./.">Underscore mixins</a>
+          <span class="post-meta">
+            <time datetime="Wed May 07 2014 02:00:00 GMT+0200 (CEST)">May 7th 2014</time> 
+          </span>
+        </h2>
+          <div class='tags'>
+            By: <span><a href='../../author/david'>David</a></span>
+          </div>
+          <div class="tags">
+            Tags:
+            
+              <span><a href='../../tags/underscore/'>underscore</a></span>
+            
+          </div>
+      </header>
+      <section class="post-content">
+        <p>Here are some methods I usually mix into Underscore:</p>
+<h3 id="-ensurearray-val-emptyel-"><code>ensureArray(val,emptyel)</code></h3>
+<p>This method always gives you back an array. There are four different scenarios; if you give the method...</p>
+<ul>
+<li>...an array, you get the same array back: <code>_.ensureArray([1,2,3]); // =&gt; [1,2,3]</code></li>
+<li>...a truthy value that isn&#39;t an array, you get that value wrapped in an array: <code>_.ensureArray(1); // =&gt; [1]</code></li>
+<li>...a falsy value, you get an empty array: <code>_.ensureArray(undefvar); // =&gt; []</code></li>
+<li>...a falsy value and gave a value for the optional second argument, you get that in an array: <code>_.ensureArray(undefvar,x); =&gt; [x]</code></li>
+</ul>
+<p>The point of the method is of course to safely use an API that expects an array when you&#39;re not sure exactly what you&#39;ve got. Here&#39;s the source code:</p>
+<pre><code><span class="function"><span class="keyword">function</span><span class="params">(o,e)</span>{ <span class="title">return</span> <span class="title">o</span> ? <span class="params">[]</span>.<span class="title">concat</span><span class="params">(o)</span> : <span class="title">e</span> ? <span class="params">[e]</span> : <span class="params">[]</span>;}</span></code></pre>
+
+<p>A <a href="https://github.com/jashkenas/underscore/pull/816">pull request</a> to add this into Underscore proper was shot down by Ashkenas for being too special case and because there are other object types too with the same problem. I agree with the first sentiment but not the second; We can easily ensure booleans (<code>!!x</code>), strings (<code>&quot;&quot;+x</code>) and numbers (<code>+x</code>), but arrays alone require logic! Converting to objects will always be domain-specific so they don&#39;t really play into this discussion.</p>
+<h3 id="-mapobj-obj-iterator-context-"><code>mapObj(obj,iterator,context)</code></h3>
+<p>The <code>mapObj</code> follows the filosophy of <code>map</code>, but returns an object instead of an array. Here&#39;s a silly example:</p>
+<pre><code><span class="keyword">var</span> obj = {a:<span class="number">1</span>,b:<span class="number">2</span>}, fn = <span class="function"><span class="keyword">function</span><span class="params">(i)</span>{</span><span class="keyword">return</span> i*<span class="number">3</span>;};
+
+mapObj(obj,fn); <span class="comment">// =&gt; {a:3,b:6}</span></code></pre>
+
+<p>There&#39;s been lots of pull requests and issues asking for this feature, but as it can be nicely composed and is considered to be a 
+rare use case it has been denied. I however find myself very frequently needing to map objects, so being able to do that in a simple
+function call cleans up the codebase nicely. Here&#39;s the source:</p>
+<pre><code><span class="function"><span class="keyword">function</span><span class="params">(obj,iterator,context)</span>{</span>
+    <span class="keyword">var</span> keys = _.keys(obj);
+    <span class="keyword">return</span> _.reduce(_.map(obj,iterator,context),<span class="function"><span class="keyword">function</span><span class="params">(memo,val,i)</span>{</span>
+        <span class="keyword">return</span> _.extend(_.object([keys[i]],[val]),memo);
+    },{});
+}</code></pre>
+
+<h3 id="-extendprop-obj-propname-src-"><code>extendProp(obj,propname,src)</code></h3>
+<p>This is a utility method for exending an object which is the property of another object. Instead of doing this:</p>
+<pre><code>obj[propname] = _.extend(obj[propname],src);</code></pre>
+
+<p>...we can simply do this:</p>
+<pre><code>_<span class="preprocessor">.extendProp</span>(obj,propname,src)<span class="comment">;</span></code></pre>
+
+<p>Not a huge gain characterwise, but rather more readable and therefore still worthy of inclusion. As an added bonus,
+<code>extendProp</code> also includes a safeguard to work when the property is undefined. Here&#39;s the source:</p>
+<pre><code><span class="function"><span class="keyword">function</span><span class="params">(obj,propname,src)</span>{</span>
+    obj<span class="matrix">[propname]</span> = <span class="transposed_variable">_.</span>extend(obj<span class="matrix">[propname]</span>||<span class="cell">{}</span>,source);
+    <span class="keyword">return</span> obj;
+}</code></pre>
+
+
+<h3 id="mixing-it-in">Mixing it in</h3>
+<p>The methods are added to underscore through the <code>mixin</code> method:</p>
+<pre><code>_.mixin({
+    ensureArray: <span class="function"><span class="keyword">function</span><span class="params">(o,e)</span>{</span> <span class="keyword">return</span> o ? [].concat(o) : e ? [e] : [];},
+    mapObj: <span class="function"><span class="keyword">function</span><span class="params">(obj,iterator,context)</span>{</span>
+        <span class="keyword">var</span> keys = _.keys(obj);
+        <span class="keyword">return</span> _.reduce(_.map(obj,iterator,context),<span class="function"><span class="keyword">function</span><span class="params">(memo,val,i)</span>{</span>
+            <span class="keyword">return</span> _.extend(_.object([keys[i]],[val]),memo);
+        },{});
+    },
+    extendProp: <span class="function"><span class="keyword">function</span><span class="params">(obj,propname,src)</span>{</span> obj[propname] = _.extend(obj[propname]||{},src) },
+});</code></pre>
+      </section>
+    </article>
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+
+</body>
+</html>

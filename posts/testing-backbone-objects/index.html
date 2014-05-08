@@ -1,14 +1,65 @@
 <html>
 <head>
-  <title>Krawaller Blog</title>
+  <title>Testing Backbone Objects</title>
+  <meta name="description" content="">
+  <link rel="stylesheet" href="../../css/theme.css"/>
   <link rel="stylesheet" href="../../css/highlight.css">
 </head>
 <body>
-  <h1><a href='../../'>Krawaller Blog</a></h1>
-  <h2>Testing Backbone Objects</h2>
-  <p>By <a href='../../author/david/'>David</a>. Tags: <a href='../../tags/backbone'>backbone</a>, <a href='../../tags/jasmine'>jasmine</a>, <a href='../../tags/testing'>testing</a>, <a href='../../tags/sinon'>sinon</a></p>
-  <time>2013-02-23 17:21</time>
-  <h3 id="troll-bait-or-how-not-to-do-it-">Troll bait (or &quot;How not to do it&quot;)</h3>
+
+<header class="site-head" >
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        
+          <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        
+        <h2 class="blog-description">My thoughts on how to test Backbone objects without instantiating them. We also discuss testing methods involving chaining syntax and DOM manipulation</h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+<div class="sub-head">
+  <div class="container">
+    <!-- Manually add in Twitter/any link until Ghost supports social -->
+    <ul class="social-nav">
+      <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+      <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+      <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+    </ul>
+  </div>
+</div><!-- END .sub-head -->
+
+
+<div class="container">
+  <main class="content" role="main">
+    <article class="">
+      <header class="post-header">
+        <h2 class="post-title">
+          <a href="./.">Testing Backbone Objects</a>
+          <span class="post-meta">
+            <time datetime="Sat Feb 23 2013 01:00:00 GMT+0100 (CET)">Feb 23rd 2013</time> 
+          </span>
+        </h2>
+          <div class='tags'>
+            By: <span><a href='../../author/david'>David</a></span>
+          </div>
+          <div class="tags">
+            Tags:
+            
+              <span><a href='../../tags/backbone/'>backbone</a></span>
+            
+              <span><a href='../../tags/jasmine/'>jasmine</a></span>
+            
+              <span><a href='../../tags/testing/'>testing</a></span>
+            
+              <span><a href='../../tags/sinon/'>sinon</a></span>
+            
+          </div>
+      </header>
+      <section class="post-content">
+        <h3 id="troll-bait-or-how-not-to-do-it-">Troll bait (or &quot;How not to do it&quot;)</h3>
 <p>Here&#39;s a blanket statement to flame against:</p>
 <blockquote>
 <p><em>Instantiating Backbone views/models/collections in order to test them is an <strong>antipattern</strong>!</em></p>
@@ -199,6 +250,12 @@
 <blockquote>
 <p><em>Testing if <code>this.$el.html() === expectedHtml</code> is an <strong>antipattern</strong>!</em></p>
 </blockquote>
+
+      </section>
+    </article>
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
 
 </body>
 </html>
