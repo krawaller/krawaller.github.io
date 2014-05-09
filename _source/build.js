@@ -38,7 +38,7 @@ Handlebars.registerHelper('moment', function(time,format){
 });
 
 tags= function(opts){
-  opts = _.defaults({}||opts,{path:"tags/",yaml:{template:"tag.html"}});
+  opts = _.defaults(opts||{},{path:"tags/",yaml:{template:"tag.html"}});
   return function(files, metalsmith, done){
     meta = metalsmith.metadata();
     var tags = _.reduce(meta[opts.collection]||files,function(memo,file,path){
@@ -50,7 +50,10 @@ tags= function(opts){
       });
       return memo;
     },{});
-    _.extend(meta[opts.collection]||files,tags);
+    _.extend(files,tags);
+    (meta[opts.collection]||meta).taglist = _.reduce(tags,function(memo,tag){
+      return memo.concat({tag:tag.tag,count:tag.posts.length,posts:tag.posts});
+    },[]);
     (meta[opts.collection]||meta).tags = _.reduce(tags,function(memo,tag){
       memo[tag.tag] = {tag:tag.tag,count:tag.posts.length,posts:tag.posts};
       return memo;
@@ -60,8 +63,8 @@ tags= function(opts){
 };
 
 Metalsmith(__dirname)
-  .use(tags({path:"tags/"}))
   .use(collections({articles: {pattern:'posts/*.md',sortBy:"date",reverse:true}}))
+  .use(tags({path:"tags/"}))
   .use(metallic({classPrefix:''}))
   .use(markdown())
   .use(sass({outputStyle:"expanded"}))
@@ -69,7 +72,7 @@ Metalsmith(__dirname)
   .use(templates({engine: 'handlebars',directory: './templates'}))
   .source('./files')
   .destination('../.')
-  .build(function(e){console.log(e);});
+  .build(function(e,h){if (e){throw e;}});
 
 
 

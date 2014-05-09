@@ -11,12 +11,24 @@ Here are some methods I usually mix into Underscore:
 
 ### `ensureArray(val,emptyel)`
 
-This method always gives you back an array. There are four different scenarios; if you give the method...
+This method always gives you back an array. There are four different scenarios:
 
-*    ...an array, you get the same array back: `_.ensureArray([1,2,3]); // => [1,2,3]`
-*    ...a truthy value that isn't an array, you get that value wrapped in an array: `_.ensureArray(1); // => [1]`
-*    ...a falsy value, you get an empty array: `_.ensureArray(undefvar); // => []`
-*    ...a falsy value and gave a value for the optional second argument, you get that in an array: `_.ensureArray(undefvar,x); => [x]`
+```javascript
+// when passed an array, we get that array back:
+_.ensureArray([1,2,3]); // => [1,2,3]
+
+// when passed a truthy value that isn't an array,
+// you get that value wrapped in an array:
+_.ensureArray(1); // => [1]
+
+// when passed a falsy value, we get an empty array:
+_.ensureArray(undefvar); // => []
+
+// when passed a falsy value and the optional `emptyel` parameter,
+// we get that parameter in an array:
+_.ensureArray(undefvar,x); // => [x]
+```
+
 
 The point of the method is of course to safely use an API that expects an array when you're not sure exactly what you've got. Here's the source code:
 
@@ -49,6 +61,8 @@ function(obj,iterator,context){
 	},{});
 }
 ```
+
+If you're using Lo-Dash then there is already a function called [`mapValues`](http://lodash.com/docs#mapValues) that does all of the above and more!
 
 ### `extendProp(obj,propname,src)`
 
