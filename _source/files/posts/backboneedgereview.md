@@ -3,9 +3,11 @@ title: Book Review - Developing a Backbone.js Edge
 author: David
 tags: [review,Backbone]
 date: 2013-04-26
-excerpt: A book review of "High Performance JavaScript" by Nicholas Zakas
+excerpt: A book review of "Developing a Backbone.js Edge" by Casey Foster et al
 template: post.html
 ---
+
+In the interest of full disclosure; I was given access to a free copy to conduct this review.
 
 ![iThoughts](../../img/backbonejsedge.jpg)
 
