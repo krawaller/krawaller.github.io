@@ -39,7 +39,7 @@
         <h2 class="post-title">
           <a href="./.">First flirt with impact</a>
           <span class="post-meta">
-            <time datetime="Sun Mar 17 2013 01:00:00 GMT+0100 (CET)">Mar 17th 2013</time> 
+            <time datetime="Mon Mar 17 2014 01:00:00 GMT+0100 (CET)">Mar 17th 2014</time> 
           </span>
         </h2>
           <div class='tags'>
@@ -59,6 +59,17 @@
 <p>As weekends have an unfortunate habit of ending we didn&#39;t get too far (also the constant temptation of another CS round didn&#39;t help), but leaving the office we did have a working prototype of a classic (same-computer) multiplayer tank game. We built with Impact and Box2D, a very nice although woefully undocumented marriage.</p>
 <p><img src="../../img/kratank.png" alt="iThoughts"></p>
 <p>Live link <a href="http://krawaller.github.io/kratankpubl/live">here</a>, repo <a href="https://github.com/krawaller/kratankpubl">here</a> (although with minified impact source, as per the license). Only the green tank can actually fire, which gives him a slight advantage...</p>
+<h3 id="code">Code</h3>
+<p>The files that make up the non-impact parts of the game (i.e, what we wrote) is all in the <code>live/lib/game</code> folder. In there you&#39;ll find 5 files in an <code>entities</code> folder, who fit together like thus:</p>
+<p><img src="../../img/kratankentities.jpg" alt="iThoughts"></p>
+<p>These files do pretty much what you&#39;d think:</p>
+<ul>
+<li>The <code>_baseclass.js</code> file contains the basic stuff needed for an entity to exist in the world, setting up collision etc.</li>
+<li><code>_playercontrolled.js</code> sets up controls and ties the entity to a <code>player</code>. It also contains health bar code, which should probably be abstracted out to a <code>_destructible.js</code> baseclass.</li>
+<li><code>tank.js</code> are of course the actual tanks. They mostly contain shooting code.</li>
+<li><code>projectile.js</code> destroys itself if off screen, and catches collision notification from box2D. If target is a tank (or in the future a <code>_destructible</code>), it deals damage and destroys itself.</li>
+<li><code>crate.js</code> just sets some initiation stuff such as weight and mass, and then does nothing else.</li>
+</ul>
 
       </section>
     </article>
