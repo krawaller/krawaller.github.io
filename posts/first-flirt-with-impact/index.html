@@ -81,12 +81,23 @@
 <li><a href="https://github.com/krawaller/kratankpubl/blob/gh-pages/live/lib/game/entities/projectile.js">projectile.js</a> destroys itself if off screen, and catches collision notification from box2D. If target is a tank (or in the future a <code>_destructible</code>), it deals damage and destroys itself.</li>
 <li><a href="https://github.com/krawaller/kratankpubl/blob/gh-pages/live/lib/game/entities/crate.js">crate.js</a> just sets some initiation stuff such as weight and mass, and then does nothing else.</li>
 </ul>
-<p>The main challenge was deciphering the java code from the tutorial that compensates for lateral velocity. Here&#39;s what we ended up with:</p>
+<p>The main challenge was deciphering the java code from the tutorial that compensates for lateral velocity:</p>
+<pre><code>b2Vec2 getLateralVelocity() {
+  b2Vec2 currentRightNormal = m_body-&gt;GetWorldVector( b2Vec2(<span class="number">1</span>,<span class="number">0</span>) );
+  <span class="keyword">return</span> b2Dot( currentRightNormal, m_body-&gt;GetLinearVelocity() ) * currentRightNormal;
+}
+
+<span class="keyword">void</span> updateFriction() {
+  b2Vec2 impulse = m_body-&gt;GetMass() * -getLateralVelocity();
+  m_body-&gt;ApplyAngularImpulse( <span class="number">0.1</span>f * m_body-&gt;GetInertia() * -m_body-&gt;GetAngularVelocity() );
+}</code></pre>
+
+<p>Here&#39;s what we ended up with, in case someone wants to make the same java-javascript transition we did:</p>
 <pre><code>getLateralCounterForce(){
-    <span class="keyword">var</span> vector = <span class="keyword">new</span> Box2D.Common.Math.b2Vec2(<span class="number">0</span>,<span class="number">1</span>);
-    <span class="keyword">var</span> currentRightNormal = <span class="keyword">this</span>.body.GetWorldVector(vector);
-    <span class="keyword">var</span> linearVel = <span class="keyword">this</span>.body.GetLinearVelocity();
-    <span class="keyword">var</span> dot = Box2D.Common.Math.b2Math.Dot(currentRightNormal,linearVel);
+    <span class="keyword">var</span> vector = <span class="keyword">new</span> Box2D.Common.Math.b2Vec2(<span class="number">0</span>,<span class="number">1</span>),
+        currentRightNormal = <span class="keyword">this</span>.body.GetWorldVector(vector),
+        linearVel = <span class="keyword">this</span>.body.GetLinearVelocity(),
+        dot = Box2D.Common.Math.b2Math.Dot(currentRightNormal,linearVel);
     currentRightNormal.Multiply(-dot*<span class="keyword">this</span>.body.GetMass()*(<span class="keyword">this</span>.lateralCounterForceFactor||<span class="number">1</span>));
     <span class="keyword">return</span> currentRightNormal;
 }</code></pre>

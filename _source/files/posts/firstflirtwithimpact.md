@@ -45,14 +45,28 @@ These files do pretty much what you'd think:
 *    [projectile.js](https://github.com/krawaller/kratankpubl/blob/gh-pages/live/lib/game/entities/projectile.js) destroys itself if off screen, and catches collision notification from box2D. If target is a tank (or in the future a `_destructible`), it deals damage and destroys itself.
 *    [crate.js](https://github.com/krawaller/kratankpubl/blob/gh-pages/live/lib/game/entities/crate.js) just sets some initiation stuff such as weight and mass, and then does nothing else.
 
-The main challenge was deciphering the java code from the tutorial that compensates for lateral velocity. Here's what we ended up with:
+The main challenge was deciphering the java code from the tutorial that compensates for lateral velocity:
+
+```java
+b2Vec2 getLateralVelocity() {
+  b2Vec2 currentRightNormal = m_body->GetWorldVector( b2Vec2(1,0) );
+  return b2Dot( currentRightNormal, m_body->GetLinearVelocity() ) * currentRightNormal;
+}
+
+void updateFriction() {
+  b2Vec2 impulse = m_body->GetMass() * -getLateralVelocity();
+  m_body->ApplyAngularImpulse( 0.1f * m_body->GetInertia() * -m_body->GetAngularVelocity() );
+}
+```
+
+Here's what we ended up with, in case someone wants to make the same java-javascript transition we did:
 
 ```javascript
 getLateralCounterForce(){
-    var vector = new Box2D.Common.Math.b2Vec2(0,1);
-    var currentRightNormal = this.body.GetWorldVector(vector);
-    var linearVel = this.body.GetLinearVelocity();
-    var dot = Box2D.Common.Math.b2Math.Dot(currentRightNormal,linearVel);
+    var vector = new Box2D.Common.Math.b2Vec2(0,1),
+        currentRightNormal = this.body.GetWorldVector(vector),
+        linearVel = this.body.GetLinearVelocity(),
+        dot = Box2D.Common.Math.b2Math.Dot(currentRightNormal,linearVel);
     currentRightNormal.Multiply(-dot*this.body.GetMass()*(this.lateralCounterForceFactor||1));
     return currentRightNormal;
 }
