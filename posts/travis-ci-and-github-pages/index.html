@@ -1,0 +1,195 @@
+<html>
+<head>
+  <title>Travis CI and Github Pages</title>
+  <meta name="description" content="">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/highlight.css">
+</head>
+<body>
+
+<header class="site-head" >
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        
+          <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+<div class="sub-head">
+  <div class="container">
+    How to set up Travis CI and testing for a ghpages app
+  </div>
+</div><!-- END .sub-head -->
+
+
+<div class="container">
+  <main class="content" role="main">
+    <article class="">
+      <header class="post-header">
+        <h2 class="post-title">
+          <a href="./.">Travis CI and Github Pages</a>
+          <span class="post-meta">
+            <time datetime="Fri Aug 08 2014 02:00:00 GMT+0200 (CEST)">Aug 8th 2014</time> 
+          </span>
+        </h2>
+          <div class='tags'>
+            By: <span><a href='../../author/david'>David</a></span>
+          </div>
+          <div class="tags">
+            Tags:
+            
+              <span><a href='../../tags/travis/'>travis</a></span>
+            
+              <span><a href='../../tags/testing/'>testing</a></span>
+            
+              <span><a href='../../tags/jasmine/'>jasmine</a></span>
+            
+              <span><a href='../../tags/sinon/'>sinon</a></span>
+            
+          </div>
+      </header>
+      <section class="post-content">
+        <h2 id="the-what">The what</h2>
+<p>In this post I&#39;ll walk through how to set up Travis Continuous integration with Jasmine+Sinon testing for an app
+published to Github Pages. This is mainly directed at students taking the Linnaeus RIA course, but it might serve as a good approach for other developers too.</p>
+<p>The definition of continuous integration can be more complex, but in this context we merely aim to make our test suite run automatically whenever we push new code to the github repo. That&#39;s what <a href="https://travis-ci.org/">Travis CI</a> does for us. After setting up Travis to watch our repo, we can navigate to <code>http://travis-ci.org/&lt;githubusername&gt;/&lt;reponame&gt;</code> to see the results for each build:</p>
+<p><a href="https://travis-ci.org/krawaller/algol3/builds"><img src="../../img/travisresults.png" alt="travis result"></a></p>
+<h2 id="the-why">The why</h2>
+<p>Having Travis running the test suite whenever we push code to Github is not a very big win in itself. After all, if I have a test suite, I&#39;m most likely running it on my own machine, and will catch errors before pushing the code to Github.</p>
+<p>But Github has a Travis hook for pull requests, which means that whenever someone creates a pull request to my repo, the Travis results will be shown right in the pull request:</p>
+<p><a href="https://github.com/krawaller/algol3/pull/1/files"><img src="../../img/sillypullrequest.png" alt="silly pull request"></a></p>
+<p>Clicking the warning will take us to a log dump at Travis, where we can see exactly what went wrong:</p>
+<p><a href="https://travis-ci.org/krawaller/algol3/jobs/32018043"><img src="../../img/travisfail.png" alt="travis fail"></a></p>
+<p>Apparently, the proposed change is a very bad idea. Without Travis I&#39;d have to run the requested change on my machine to see if the test suite held up, but now I&#39;m immediately (well, after a few minutes) warned by Travis.</p>
+<h2 id="the-how">The how</h2>
+<p>First off we need to tell Travis to watch our repository. We do that by signing in to <a href="http://travis-ci.org">http://travis-ci.org</a> (note that <a href="http://travis-ci.com">http://travis-ci.com</a> is for private repoes) using our Github credentials, and then flicking the switch for the repo in question:</p>
+<p><img src="../../img/travisflick.png" alt="travis activation"></p>
+<p>By default Travis will run the <code>test</code> script specified in <code>package.json</code> in the root of our repo. Here&#39;s the relevant parts of that file for Algol3:</p>
+<pre><code>{
+  "<span class="attribute">dependencies</span>": <span class="value">{
+    "<span class="attribute">lodash</span>": <span class="value"><span class="string">"&gt;=2.4.1"</span>
+  </span>}</span>,
+  "<span class="attribute">scripts</span>": <span class="value">{
+    "<span class="attribute">test</span>": <span class="value"><span class="string">"jasmine-node test"</span>
+  </span>}</span>,
+  "<span class="attribute">devDependencies</span>": <span class="value">{
+    "<span class="attribute">jasmine-node</span>": <span class="value"><span class="string">"&gt;=1.14.5"</span></span>,
+    "<span class="attribute">jasmine-sinon</span>": <span class="value"><span class="string">"=0.3.2"</span></span>,
+    "<span class="attribute">sinon</span>": <span class="value"><span class="string">"&gt;=1.10.3"</span>
+  </span>}
+</span>}</code></pre>
+
+<p>Here we see that the command Travis will run is <code>jasmine-node test</code>. All dependencies will be automatically installed by Travis using npm.</p>
+<p>But we also need some Travis-specific settings. These are housed in a <code>.travis.yml</code> file, also to be put in the root of the repo:</p>
+<pre><code>language: node_js
+node_js:
+  -<span class="ruby"> <span class="string">"0.11"</span>
+</span>  -<span class="ruby"> <span class="string">"0.10"</span>
+</span>  -<span class="ruby"> <span class="string">"0.8"</span>
+</span>before_script:
+  -<span class="ruby"> <span class="string">"npm i -g jasmine-node"</span>
+</span>branches:
+  only:
+    -<span class="ruby"> gh-pages</span></code></pre>
+
+<p>Although pretty self-explanatory, here are some quick notes:</p>
+<ul>
+<li>The <code>language</code> setting is needed as Travis supports loads of different platforms besides node; Ruby, Java, etc.</li>
+<li>As Node&#39;s API is still under constant development it can be important to run the tests using different versions of node. These are specified using the <code>node_js</code> setting. Each version of Node will be run for each build, and the results can be individually browsed.</li>
+<li>We have to use the <code>before_script</code> hook to make sure <code>jasmine-node</code> is globally installed. Merely including it in our <code>package.json</code> will just copy the code to the <code>node_module</code> directory which enables us to <code>require</code> it in our code, but here we need to be able to execute the binary.</li>
+<li>By default Travis is wired to ignore the gh-pages branch of a repo, as that traditionally is used to hold a static about page. The rather verbose <code>branches</code> setting here is needed to tell Travis that we are indeed using the gh-pages branch.</li>
+</ul>
+<p>An image badge is automatically generated representing the Travis result for the latest build. The URL is <code>https://img.shields.io/travis/&lt;githubusername&gt;/&lt;reponame&gt;/&lt;repobranch&gt;.svg</code>. It is customary to use it in the project <code>README.md</code> file as a link to the project Travis page.Here&#39;s what that looks like for Algol3:</p>
+<pre><code><span class="header"># Algol3</span>
+
+Third time's the charm!
+
+[<span class="link_label">![Build Status</span>](<span class="link_url">https://img.shields.io/travis/krawaller/algol3/gh-pages.svg</span>)](<span class="link_url">https://travis-ci.org/krawaller/algol3</span>)</code></pre>
+
+<p>Which then looks like this:</p>
+<p><a href="https://github.com/krawaller/algol3/blob/gh-pages/README.md"><img src="../../img/readmewithtravisbadge.png" alt="readme with travis badge"></a></p>
+<h2 id="supporting-node-and-the-browser">Supporting Node and the browser</h2>
+<p>The students are required to publish their app using Github Pages, which means it must be runnable in a browser. But Travis uses Node to run the test suite, which means the app must support Node too! This means we have to deal with requirements and exporting accordingly. Algol3 has lodash as a dependency, which is handled (admittedly not very gracefully) at the top of <code>algol.js</code>:</p>
+<pre><code><span class="keyword">var</span> Algol = {},
+    _ = (<span class="keyword">typeof</span> <span class="built_in">require</span> !== <span class="string">"undefined"</span> ? <span class="built_in">require</span>(<span class="string">"./lodashmixins"</span>) : window._);</code></pre>
+
+<p>At the bottom of the same file we export <code>Algol</code> for both Node and the browser:</p>
+<pre><code><span class="keyword">if</span> (<span class="keyword">typeof</span> module !== <span class="string">'undefined'</span> &amp;&amp; <span class="keyword">typeof</span> module.exports !== <span class="string">'undefined'</span>)
+    module.exports = Algol;
+<span class="keyword">else</span>
+    window.Algol = Algol;</code></pre>
+
+<p>In the RIA course, the students are also required to have the tests runnable in a browser! This has two big advantages;</p>
+<ul>
+<li>You don&#39;t have to have Node locally to be able to run the test suite</li>
+<li>If you aren&#39;t the project owner you can see the results of the test suite on Github Pages, without having to clone the repo to your machine.</li>
+</ul>
+<p>Maintaining tests are expensive, so I am a firm believer of making those tests as available as possible. Not having Node as a requirement to running them goes a long way towards achieving that.</p>
+<p>Having the tests support the browsers means our spec files must handle dependencies in much the same way as the app itself. Here&#39;s the top of one of the spec files for Algol:</p>
+<pre><code><span class="keyword">if</span> (<span class="keyword">typeof</span> <span class="built_in">require</span> === <span class="string">'function'</span> &amp;&amp; <span class="keyword">typeof</span> module === <span class="string">'object'</span>) {
+    <span class="keyword">var</span> sinon = <span class="built_in">require</span>(<span class="string">'sinon'</span>),
+        jasmineSinon = <span class="built_in">require</span>(<span class="string">'jasmine-sinon'</span>),
+        Algol = <span class="built_in">require</span>(<span class="string">"../../algol.js"</span>),
+        _ = <span class="built_in">require</span>(<span class="string">"../../lodashmixins.js"</span>);
+}</code></pre>
+
+<p>The tests are then made available through the standard html-runner file:</p>
+<pre><code><span class="doctype">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;<span class="title">html</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">head</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">title</span>&gt;</span>demo tests<span class="tag">&lt;/<span class="title">title</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">link</span> <span class="attribute">rel</span>=<span class="value">"stylesheet"</span> <span class="attribute">type</span>=<span class="value">"text/css"</span> <span class="attribute">href</span>=<span class="value">"html/jasmine/jasmine.css"</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">head</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">body</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"html/jasmine/jasmine.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"html/jasmine/jasmine-html.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"html/sinon.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"html/jasmine-sinon.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"../node_modules/lodash/lodash.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"../lodashmixins.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"../algol.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"specs/time.spec.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"specs/generators.spec.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span> <span class="attribute">src</span>=<span class="value">"specs/board.spec.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">script</span> <span class="attribute">type</span>=<span class="value">"text/javascript"</span>&gt;</span><span class="javascript">
+            <span class="keyword">var</span> jasmineEnv = jasmine.getEnv();
+            jasmineEnv.updateInterval = <span class="number">1000</span>;
+            <span class="keyword">var</span> htmlReporter = <span class="keyword">new</span> jasmine.HtmlReporter();
+            jasmineEnv.addReporter(htmlReporter);
+            jasmineEnv.specFilter = <span class="function"><span class="keyword">function</span><span class="params">(spec)</span> {</span>
+                <span class="keyword">return</span> htmlReporter.specFilter(spec);
+            };
+            jasmineEnv.execute();
+        </span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">body</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">html</span>&gt;</span></code></pre>
+
+<p>There&#39;s a trap here; when using node to run the test suite, <code>jasmine-node</code> will automatically find all <code>*.spec.js</code> files and run them. In the HTML runner, we must add each spec file manually, which is easy to forget to do as we create new ones.</p>
+<p>Note I haven&#39;t managed to use the same jasmine library in the html file, which is a potential hazard.</p>
+<p>But the spec files and the app are all the same, which means we can reliably run the tests in the browser...</p>
+<p><a href="http://krawaller.github.io/algol3/test/suite.html"><img src="../../img/browsertestresults.png" alt="html tests"></a></p>
+<p>...getting the same results as if we ran <code>jasmine-node test</code> locally:</p>
+<p><img src="../../img/nodetests.png" alt="node tests"></p>
+
+      </section>
+    </article>
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+
+</body>
+</html>
