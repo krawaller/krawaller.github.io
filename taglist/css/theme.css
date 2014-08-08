@@ -4,6 +4,9 @@ article:after, section:after {
   clear: both;
   display: block; }
 
+article {
+  margin-bottom: 3em; }
+
 img.leftimg {
   float: left;
   margin-right: 10px;
