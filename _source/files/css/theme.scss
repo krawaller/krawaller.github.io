@@ -54,15 +54,11 @@ h1, h2, h3, h4, h5, h6{
 	margin: auto;
 }
 
-.sub-head{
-	background-color: #eadfd2;
-	margin: 0px;
-	padding: 10px 0px 10px 0px;
-
 	ul.social-nav{
 		margin: 0px;
 		padding: 0px;
 		text-align: center;
+		font-size: 0.9em;
 
 		li.twitter:before{
 			content: url(http://i.imgur.com/GXcr9XG.png);
@@ -89,7 +85,7 @@ h1, h2, h3, h4, h5, h6{
 			text-align: center;
 
 			a{
-				color: #2b303b;
+				color: white;
 				text-decoration: none;
 				&:hover{
 					text-decoration: underline;
@@ -102,6 +98,13 @@ h1, h2, h3, h4, h5, h6{
 			}
 		}
 	}
+
+.sub-head{
+	background-color: #eadfd2;
+	margin: 0px;
+	padding: 10px 0px 10px 0px;
+	font-size: 0.85em;
+	text-align: center;
 }
 
 .site-head{
