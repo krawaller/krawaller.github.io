@@ -2,4 +2,5 @@
 template: author.html
 portrait: Jacob
 ---
-jacob is a little "fjant", as we say in swedish
+<img src='../../img/jacob.jpg' class='leftimg' />
+Despite his young age Jacob has already had an impressive web development career. He is currently working for Spotify's HTML team in Gothenburg. 

@@ -1,4 +1,17 @@
 /*David hacks*/
+article:after, section:after {
+	content: " ";
+	clear: both;
+	display: block;
+}
+
+img.leftimg {
+	float: left;
+	margin-right: 10px;
+	margin-bottom: 10px;
+	max-width: 150px;
+}
+
 .content > ul {
 	list-style-type: none;
 }

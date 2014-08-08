@@ -2,4 +2,5 @@
 template: author.html
 portrait: Hannes
 ---
-hannes is something weird inbetween
+<img src='../../img/hkwaller.jpg' class='leftimg' />
+Hannes studies web programming in Oslo, focusing mostly on Angular and Ionic.
