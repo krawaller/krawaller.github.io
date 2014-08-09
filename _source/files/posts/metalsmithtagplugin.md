@@ -7,9 +7,7 @@ excerpt: A walkthrough of creating a tag plugin for Metalsmith
 template: post.html
 ---
 
-## Creating the plugin
-
-When we first set up this blog, there was no tag plugin for Metalsmith. Now there is a [pretty solid-looking one](https://github.com/totocaster/metalsmith-tags), but we had to roll our own. This post walks through that code, serving mostly as a rundown of how to create a Metalsmith plugin.
+### Metalsmith
 
 Metalsmith is mostly used as a static site generator, but it is really an all-purpose tool for iterating over files in a folder structure and doing something with them. Everything you want to do is a plugin. Here's what the Metalsmith code looks like for generating this blog:
 
@@ -29,12 +27,16 @@ Metalsmith(__dirname)
 
 Each `use` call is a plugin. Abstracting the actual file transformations to plugins is a very conscious call made by Metalsmith creators, serving to keep the Metalsmith API very small and lean.
 
-Note the second row, `.use(tags({...}))`. That's our plugin! As you can see, each plugin is actually a function, that takes an options object for an argument.
+When we first set up this blog, there was no tag plugin for Metalsmith. Now there is a [pretty solid-looking one](https://github.com/totocaster/metalsmith-tags), but we had to roll our own. This post walks through that code, serving mostly as a rundown of how to create a Metalsmith plugin.
 
-Here's the skeleton of the plugin code:
+Note the second row, `.use(tags({...}))`. That's our plugin!
+
+### Plugin structure
+
+As you saw earlier, each plugin is a function that takes an options object as an argument. Here's the skeleton of a plugin's code:
 
 ```javascript
-tags= function(opts){
+tags = function(opts){
 
   // commonly set default options here
 
@@ -48,13 +50,13 @@ tags= function(opts){
 };
 ```
 
-The plugin function is given three arguments:
+The function returned by the plugin, which then is what is passed to `use`, is given three arguments:
 
 *    The `files` object given to the plugin function contains information of all processed files so far. The keys are the paths to the files. A plugin commonly loops through all these files, editing them accordingly. 
 *    The `metalsmith` object exposes the Metalsmith API. A common usecase is to access the metadata through `metalsmith.metadata()` and read/edit that.
 *    To allow plugins to do asynchronous stuff, control isn't handed back to Metalsmith until the `done` callback is called.
 
-Each `file` object contains the contents of the file, and also information from optional YAML frontmatter. For example, here's the YAML for this very blog post:
+Each `file` object contains the contents of the file, and also information from optional YAML frontmatter. For example, below is the YAML for this very blog post. Note the `tags` data - that's of course meant to be consumed by our tags plugin!
 
 ```yaml
 ---
@@ -65,9 +67,10 @@ date: 2014-08-09
 excerpt: A walkthrough of creating a tag plugin for Metalsmith
 template: post.html
 ---
-```
+``` 
 
-Note the `tags` data - that's of course meant to be consumed by our tags plugin! 
+
+### Creating the tags plugin
 
 First we need to consider what we actually want our plugin to do. What we need are two things;
 
@@ -77,7 +80,7 @@ First we need to consider what we actually want our plugin to do. What we need a
 Here's the full code for our tag plugin, meeting the needs outlined above:
 
 ```javascript
-tags= function(opts){
+tags = function(opts){
   opts = _.defaults(opts||{},{path:"tags/",yaml:{template:"tag.html"}});
   return function(files, metalsmith, done){
     meta = metalsmith.metadata();
@@ -116,9 +119,9 @@ tags= function(opts){
 };
 ```
 
-## Consuming the plugin
+### Consuming the plugin
 
-First off, individual blog posts will print out the individual tags by simply reading from the YAML `tags` array:
+First off, individual blog posts will print out their tags by simply reading from the YAML `tags` array. All YAML data are available as local variables:
 
 ```html
 <div class="tags">
@@ -140,9 +143,9 @@ Our taglist page contains this code, using the `taglist` metadata added by our p
 </div>
 ```
 
-The main code powering the individual tag pages will be in the html template file. Note that we added a default to the `opts` object, telling Metalsmith to use a `tags.html` file for these pages. The `contents` was merely set to an empty string - we need to have a contents specification, otherwise Metalsmith will simply skip over generating a file.
+The main code powering the individual tag pages will be in the html template file. Note that we added a default to the `opts` object, telling Metalsmith to use a `tags.html` template file for these pages. The `contents` was merely set to an empty string. Even though there are no contents to the individual tag files we need to have a contents specification, otherwise Metalsmith will simply skip over generating a file.
 
-Inside the template we have access to the variables set in the `files[tagname]` object. This means we can do this in the template file:
+When the template file is used to create a tag file, it will have the tag name in a local `tag` variable. Thus we can do the following in the template:
 
 ```html
 <div class="container">
@@ -150,7 +153,7 @@ Inside the template we have access to the variables set in the `files[tagname]` 
 </div>
 ```
 
-For these individual pages we also created a Handlebars helper, to avoid having to put too much logic into the template file. Here's how we consume it in the template:
+For the actual post list we created a Handlebars helper, to avoid having to put too much logic into the template file. Here's how we consume it in the template:
 
 ```html
 {{#tagPosts tag}}
@@ -178,17 +181,17 @@ For these individual pages we also created a Handlebars helper, to avoid having 
   </section>
 </article>
 
-{{else}}
-<section class="post-content">{{portrait}} hasn't written any posts yet!</section>
 {{/tagPosts}}
 ```
 
-And here's the source for the `tagPosts` helper, which uses the `tags` property of the metadata to look up the corresponding information:
+And here's the source for the `tagPosts` helper. It is run in the context of the Metalsmith session, which means that `this` points to the metadata. Our tag plugin added a `tags` option with tagname keys, so we can use that to access the post list for our particular tag:
 
 ```javascript
 Handlebars.registerHelper('tagPosts', function(tagname, options) {
-  return _.reduce(this.tags[tagname].posts,function(memo,f){
-    return memo+options.fn(f);
+  return _.reduce(this.tags[tagname].posts,function(memo,post){
+    return memo+options.fn(post);
   },"");
 });
 ```
+
+For each call to `options.fn`, our helper will use the given html in the context of a post object.
