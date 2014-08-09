@@ -82,7 +82,7 @@ Although pretty self-explanatory, here are some quick notes:
 *    We have to use the `before_script` hook to make sure `jasmine-node` is globally installed. Merely including it in our `package.json` will just copy the code to the `node_module` directory which enables us to `require` it in our code, but here we need to be able to execute the binary.
 *    By default Travis is wired to ignore the gh-pages branch of a repo, as that traditionally is used to hold a static about page. The rather verbose `branches` setting here is needed to tell Travis that we are indeed using the gh-pages branch.
 
-An image badge is automatically generated representing the Travis result for the latest build. The URL is `https://img.shields.io/travis/<githubusername>/<reponame>/<repobranch>.svg`. It is customary to use it in the project `README.md` file as a link to the project Travis page.Here's what that looks like for Algol3:
+An image badge is automatically generated representing the Travis result for the latest build. The URL is `https://img.shields.io/travis/<githubusername>/<reponame>/<repobranch>.svg`. It is customary to use it in the project `README.md` file as a link to the project Travis page. Here's what that looks like for Algol3:
 
 ```markdown
 # Algol3
@@ -146,7 +146,7 @@ The tests are then made available through the standard html-runner file:
 		<script type="text/javascript" src="html/jasmine/jasmine-html.js"></script>
 		<script type="text/javascript" src="html/sinon.js"></script>
 		<script type="text/javascript" src="html/jasmine-sinon.js"></script>
-		<script type="text/javascript" src="../node_modules/lodash/lodash.js"></script>
+		<script type="text/javascript" src="html/lodash.js"></script>
 		<script type="text/javascript" src="../lodashmixins.js"></script>
 
 		<script type="text/javascript" src="../algol.js"></script>
@@ -171,9 +171,9 @@ The tests are then made available through the standard html-runner file:
 
 There's a trap here; when using node to run the test suite, `jasmine-node` will automatically find all `*.spec.js` files and run them. In the HTML runner, we must add each spec file manually, which is easy to forget to do as we create new ones.
 
-Note I haven't managed to use the same jasmine library in the html file, which is a potential hazard.
+Note I haven't managed to used the same dependencies as Node, instead the html runner has it's own copies of jasmine, sinon and lodash inside an `html` directory. This is a potential danger as we might be using different versions of the code when running the tests in the browser when compared to Node. But the alternative, adding `node_modules` to the repo and linking to code there with script tags, has its own sets of head aches.
 
-But the spec files and the app are all the same, which means we can reliably run the tests in the browser...
+But the spec files and the app are all the same, which means we can somewhat reliably run the tests in the browser...
 
 [![html tests](../../img/browsertestresults.png)](http://krawaller.github.io/algol3/test/suite.html)
 
