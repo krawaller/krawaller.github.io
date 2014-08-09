@@ -7,7 +7,7 @@ excerpt: How to set up Travis CI and testing for a ghpages app
 template: post.html
 ---
 
-## The what
+### The what
 
 In this post I'll walk through how to set up Travis Continuous integration with Jasmine+Sinon testing for an app
 published to Github Pages. This is mainly directed at students taking the Linnaeus RIA course, but it might serve as a good approach for other developers too.
@@ -18,7 +18,7 @@ The definition of continuous integration can be more complex, but in this contex
 
 
 
-## The why
+### The why
 
 Having Travis running the test suite whenever we push code to Github is not a very big win in itself. After all, if I have a test suite, I'm most likely running it on my own machine, and will catch errors before pushing the code to Github.
 
@@ -33,7 +33,7 @@ Clicking the warning will take us to a log dump at Travis, where we can see exac
 Apparently, the proposed change is a very bad idea. Without Travis I'd have to run the requested change on my machine to see if the test suite held up, but now I'm immediately (well, after a few minutes) warned by Travis.
 
 
-## The how
+### The how
 
 First off we need to tell Travis to watch our repository. We do that by signing in to [http://travis-ci.org](http://travis-ci.org) (note that [http://travis-ci.com](http://travis-ci.com) is for private repoes) using our Github credentials, and then flicking the switch for the repo in question:
 
@@ -96,7 +96,7 @@ Which then looks like this:
 
 [![readme with travis badge](../../img/readmewithtravisbadge.png)](https://github.com/krawaller/algol3/blob/gh-pages/README.md)
 
-## Supporting Node and the browser
+### Supporting Node and the browser
 
 The students are required to publish their app using Github Pages, which means it must be runnable in a browser. But Travis uses Node to run the test suite, which means the app must support Node too! This means we have to deal with requirements and exporting accordingly. Algol3 has lodash as a dependency, which is handled (admittedly not very gracefully) at the top of `algol.js`:
 

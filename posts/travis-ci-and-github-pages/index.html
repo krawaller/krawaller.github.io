@@ -60,19 +60,19 @@
           </div>
       </header>
       <section class="post-content">
-        <h2 id="the-what">The what</h2>
+        <h3 id="the-what">The what</h3>
 <p>In this post I&#39;ll walk through how to set up Travis Continuous integration with Jasmine+Sinon testing for an app
 published to Github Pages. This is mainly directed at students taking the Linnaeus RIA course, but it might serve as a good approach for other developers too.</p>
 <p>The definition of continuous integration can be more complex, but in this context we merely aim to make our test suite run automatically whenever we push new code to the github repo. That&#39;s what <a href="https://travis-ci.org/">Travis CI</a> does for us. After setting up Travis to watch our repo, we can navigate to <code>http://travis-ci.org/&lt;githubusername&gt;/&lt;reponame&gt;</code> to see the results for each build:</p>
 <p><a href="https://travis-ci.org/krawaller/algol3/builds"><img src="../../img/travisresults.png" alt="travis result"></a></p>
-<h2 id="the-why">The why</h2>
+<h3 id="the-why">The why</h3>
 <p>Having Travis running the test suite whenever we push code to Github is not a very big win in itself. After all, if I have a test suite, I&#39;m most likely running it on my own machine, and will catch errors before pushing the code to Github.</p>
 <p>But Github has a Travis hook for pull requests, which means that whenever someone creates a pull request to my repo, the Travis results will be shown right in the pull request:</p>
 <p><a href="https://github.com/krawaller/algol3/pull/1/files"><img src="../../img/sillypullrequest.png" alt="silly pull request"></a></p>
 <p>Clicking the warning will take us to a log dump at Travis, where we can see exactly what went wrong:</p>
 <p><a href="https://travis-ci.org/krawaller/algol3/jobs/32018043"><img src="../../img/travisfail.png" alt="travis fail"></a></p>
 <p>Apparently, the proposed change is a very bad idea. Without Travis I&#39;d have to run the requested change on my machine to see if the test suite held up, but now I&#39;m immediately (well, after a few minutes) warned by Travis.</p>
-<h2 id="the-how">The how</h2>
+<h3 id="the-how">The how</h3>
 <p>First off we need to tell Travis to watch our repository. We do that by signing in to <a href="http://travis-ci.org">http://travis-ci.org</a> (note that <a href="http://travis-ci.com">http://travis-ci.com</a> is for private repoes) using our Github credentials, and then flicking the switch for the repo in question:</p>
 <p><img src="../../img/travisflick.png" alt="travis activation"></p>
 <p>By default Travis will run the <code>test</code> script specified in <code>package.json</code> in the root of our repo. Here&#39;s the relevant parts of that file for Algol3:</p>
@@ -119,7 +119,7 @@ Third time's the charm!
 
 <p>Which then looks like this:</p>
 <p><a href="https://github.com/krawaller/algol3/blob/gh-pages/README.md"><img src="../../img/readmewithtravisbadge.png" alt="readme with travis badge"></a></p>
-<h2 id="supporting-node-and-the-browser">Supporting Node and the browser</h2>
+<h3 id="supporting-node-and-the-browser">Supporting Node and the browser</h3>
 <p>The students are required to publish their app using Github Pages, which means it must be runnable in a browser. But Travis uses Node to run the test suite, which means the app must support Node too! This means we have to deal with requirements and exporting accordingly. Algol3 has lodash as a dependency, which is handled (admittedly not very gracefully) at the top of <code>algol.js</code>:</p>
 <pre><code><span class="keyword">var</span> Algol = {},
     _ = (<span class="keyword">typeof</span> <span class="built_in">require</span> !== <span class="string">"undefined"</span> ? <span class="built_in">require</span>(<span class="string">"./lodashmixins"</span>) : window._);</code></pre>
