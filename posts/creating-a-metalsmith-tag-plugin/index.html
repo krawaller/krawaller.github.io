@@ -28,7 +28,7 @@
 </header>
 <div class="sub-head">
   <div class="container">
-    A walkthrough of creating a tag plugin for Metalsmith
+    A walkthrough of creating a tag plugin for Metalsmith and some accompanying Handlebars helpers
   </div>
 </div><!-- END .sub-head -->
 
@@ -50,6 +50,8 @@
             Tags:
             
               <span><a href='../../tags/metalsmith/'>metalsmith</a></span>
+            
+              <span><a href='../../tags/handlebars/'>handlebars</a></span>
             
           </div>
       </header>
@@ -171,6 +173,7 @@ Tags:
   Posts about {{tag}}:
 <span class="tag">&lt;/<span class="title">div</span>&gt;</span></code></pre>
 
+<h3 id="utilizing-handlebars-helpers">Utilizing Handlebars helpers</h3>
 <p>For the actual post list we created a Handlebars helper, to avoid having to put too much logic into the template file. Here&#39;s how we consume it in the template:</p>
 <pre><code>{{#tagPosts tag}}
 
@@ -207,6 +210,61 @@ Tags:
 });</code></pre>
 
 <p>For each call to <code>options.fn</code>, our helper will use the given html in the context of a post object.</p>
+<h3 id="author-portraits">Author portraits</h3>
+<p>While we&#39;re talking Handlebars, let&#39;s also look at how we deal with the author portraits! Each author on this blog has their own page with a short bio and a listing of that person&#39;s posts. This is generated from markdown files for all authors in the source directory that Metalsmith iterates over:</p>
+<p><img src="../../img/authorfiles.png" alt="author files"></p>
+<p>Here&#39;s what the author file looks like for me (David):</p>
+<pre><code><span class="horizontal_rule">---</span>
+template: author.html
+<span class="header">portrait: David
+---</span>
+<span class="xml"><span class="tag">&lt;<span class="title">img</span> <span class="attribute">src</span>=<span class="value">'../../img/david.png'</span> <span class="attribute">class</span>=<span class="value">'leftimg'</span> /&gt;</span></span>
+David shares his time between working as a maths teacher for the Swedish Prison and Probation service, and working as a web programmer. His duties as the latter includes teaching a yearly course in advanced JavaScript at Linnaeus University.</code></pre>
+
+<p>Notice we&#39;re storing the author name in a <code>portrait</code> YAML variable, and sending the contents to an <code>author.html</code> template. Here&#39;s the relevant part of that template:</p>
+<pre><code><span class="tag">&lt;<span class="title">section</span> <span class="attribute">class</span>=<span class="value">"post-content"</span>&gt;</span>{{{contents}}}<span class="tag">&lt;/<span class="title">section</span>&gt;</span>
+
+{{#authorPosts portrait}}
+
+<span class="tag">&lt;<span class="title">article</span> <span class="attribute">class</span>=<span class="value">"{{post_class}}"</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">header</span> <span class="attribute">class</span>=<span class="value">"post-header"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">h2</span> <span class="attribute">class</span>=<span class="value">"post-title"</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">"../../{{path}}"</span>&gt;</span>{{{title}}}<span class="tag">&lt;/<span class="title">a</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">span</span> <span class="attribute">class</span>=<span class="value">"post-meta"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">time</span> <span class="attribute">datetime</span>=<span class="value">"{{date}}"</span>&gt;</span>{{moment date 'MMM Do YYYY'}}<span class="tag">&lt;/<span class="title">time</span>&gt;</span> 
+      <span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">h2</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">'tags'</span>&gt;</span>
+        By: <span class="tag">&lt;<span class="title">span</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">'../../author/{{toLowerCase author}}'</span>&gt;</span>{{author}}<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"tags"</span>&gt;</span>
+        Tags:
+        {{#each tags}}
+          <span class="tag">&lt;<span class="title">span</span>&gt;</span><span class="tag">&lt;<span class="title">a</span> <span class="attribute">href</span>=<span class="value">'../../tags/{{this}}/'</span>&gt;</span>{{this}}<span class="tag">&lt;/<span class="title">a</span>&gt;</span><span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+        {{/each}}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+  <span class="tag">&lt;/<span class="title">header</span>&gt;</span>
+  <span class="tag">&lt;<span class="title">section</span> <span class="attribute">class</span>=<span class="value">"post-excerpt"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">p</span>&gt;</span>{{excerpt}}<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+  <span class="tag">&lt;/<span class="title">section</span>&gt;</span>
+<span class="tag">&lt;/<span class="title">article</span>&gt;</span>
+
+{{else}}
+
+<span class="tag">&lt;<span class="title">section</span> <span class="attribute">class</span>=<span class="value">"post-content"</span>&gt;</span>{{portrait}} hasn't written any posts yet!<span class="tag">&lt;/<span class="title">section</span>&gt;</span>
+
+{{/authorPosts}}</code></pre>
+
+<p>First we print the bio content using the <code>contents</code> variable, and then we call an <code>authorPosts</code> Handlebars helper. Note how we send two chunks of html to the helper - one to be used normally, then a fallback <code>else</code> chunk. In the first chunk, we assume having access to a single post by this author.</p>
+<p>Here&#39;s the source code for this helper:</p>
+<pre><code>Handlebars.registerHelper(<span class="string">'authorPosts'</span>, <span class="function"><span class="keyword">function</span><span class="params">(authorname, options)</span> {</span>
+  <span class="keyword">return</span> _.reduce(<span class="keyword">this</span>.articles,<span class="function"><span class="keyword">function</span><span class="params">(memo,post)</span>{</span>
+    <span class="keyword">return</span> post.author === authorname ? memo + options.fn(post) : memo;
+  },<span class="string">""</span>) || options.inverse(<span class="keyword">this</span>);
+});</code></pre>
+
+<p>We loop through all posts, which thanks to the collection plugin can be accessed at <code>this.articles</code>. Then for all posts who has the name of our author in the YAML author variable, we send that post to the first html chunk through <code>options.fn</code>.</p>
+<p>If there were no matching posts, we instead use the second html chunk through a call to <code>options.inverse</code>. Notice how we&#39;re sending <code>this</code> as a context, giving us access to the YAML <code>portrait</code> variable in the second chunk.</p>
 
       </section>
     </article>

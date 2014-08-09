@@ -1,9 +1,9 @@
 ---
 title: Creating a Metalsmith tag plugin
 author: David
-tags: [metalsmith]
+tags: [metalsmith,handlebars]
 date: 2014-08-09
-excerpt: A walkthrough of creating a tag plugin for Metalsmith
+excerpt: A walkthrough of creating a tag plugin for Metalsmith and some accompanying Handlebars helpers
 template: post.html
 ---
 
@@ -153,6 +153,8 @@ When the template file is used to create a tag file, it will have the tag name i
 </div>
 ```
 
+### Utilizing Handlebars helpers
+
 For the actual post list we created a Handlebars helper, to avoid having to put too much logic into the template file. Here's how we consume it in the template:
 
 ```html
@@ -195,3 +197,73 @@ Handlebars.registerHelper('tagPosts', function(tagname, options) {
 ```
 
 For each call to `options.fn`, our helper will use the given html in the context of a post object.
+
+### Author portraits
+
+While we're talking Handlebars, let's also look at how we deal with the author portraits! Each author on this blog has their own page with a short bio and a listing of that person's posts. This is generated from markdown files for all authors in the source directory that Metalsmith iterates over:
+
+![author files](../../img/authorfiles.png)
+
+Here's what the author file looks like for me (David):
+
+```markdown
+---
+template: author.html
+portrait: David
+---
+<img src='../../img/david.png' class='leftimg' />
+David shares his time between working as a maths teacher for the Swedish Prison and Probation service, and working as a web programmer. His duties as the latter includes teaching a yearly course in advanced JavaScript at Linnaeus University.
+```
+
+Notice we're storing the author name in a `portrait` YAML variable, and sending the contents to an `author.html` template. Here's the relevant part of that template:
+
+```html
+<section class="post-content">{{{contents}}}</section>
+
+{{#authorPosts portrait}}
+
+<article class="{{post_class}}">
+  <header class="post-header">
+    <h2 class="post-title">
+      <a href="../../{{path}}">{{{title}}}</a>
+      <span class="post-meta">
+        <time datetime="{{date}}">{{moment date 'MMM Do YYYY'}}</time> 
+      </span>
+    </h2>
+      <div class='tags'>
+        By: <span><a href='../../author/{{toLowerCase author}}'>{{author}}</a></span>
+      </div>
+      <div class="tags">
+        Tags:
+        {{#each tags}}
+          <span><a href='../../tags/{{this}}/'>{{this}}</a></span>
+        {{/each}}
+      </div>
+  </header>
+  <section class="post-excerpt">
+    <p>{{excerpt}}</p>
+  </section>
+</article>
+
+{{else}}
+
+<section class="post-content">{{portrait}} hasn't written any posts yet!</section>
+
+{{/authorPosts}}
+```
+
+First we print the bio content using the `contents` variable, and then we call an `authorPosts` Handlebars helper. Note how we send two chunks of html to the helper - one to be used normally, then a fallback `else` chunk. In the first chunk, we assume having access to a single post by this author.
+
+Here's the source code for this helper:
+
+```javascript
+Handlebars.registerHelper('authorPosts', function(authorname, options) {
+  return _.reduce(this.articles,function(memo,post){
+    return post.author === authorname ? memo + options.fn(post) : memo;
+  },"") || options.inverse(this);
+});
+```
+
+We loop through all posts, which thanks to the collection plugin can be accessed at `this.articles`. Then for all posts who has the name of our author in the YAML author variable, we send that post to the first html chunk through `options.fn`.
+
+If there were no matching posts, we instead use the second html chunk through a call to `options.inverse`. Notice how we're sending `this` as a context, giving us access to the YAML `portrait` variable in the second chunk.
