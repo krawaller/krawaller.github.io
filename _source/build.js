@@ -46,7 +46,7 @@ tags= function(opts){
       _.each(file.tags,function(tag){
         key = opts.path+tag+"/index.html";
         memo[key] = _.defaults({},memo[key],{tag:tag,posts:[],contents:""},opts.yaml);
-        memo[key].posts.push(file);
+        memo[key].posts = _.sortBy(memo[key].posts.concat(file),"date").reverse();
       });
       return memo;
     },{});
