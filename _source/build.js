@@ -51,9 +51,9 @@ tags= function(opts){
       return memo;
     },{});
     _.extend(files,tags);
-    (meta[opts.collection]||meta).taglist = _.reduce(tags,function(memo,tag){
+    (meta[opts.collection]||meta).taglist = _.sortBy(_.reduce(tags,function(memo,tag){
       return memo.concat({tag:tag.tag,count:tag.posts.length,posts:tag.posts});
-    },[]);
+    },[]),"count").reverse();
     (meta[opts.collection]||meta).tags = _.reduce(tags,function(memo,tag){
       memo[tag.tag] = {tag:tag.tag,count:tag.posts.length,posts:tag.posts};
       return memo;

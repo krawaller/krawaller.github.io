@@ -122,7 +122,7 @@ excerpt: A walkthrough of creating a tag plugin for Metalsmith
         <span class="comment">// build a path for where the file for this tag is supposed to go</span>
         key = opts.path+tag+<span class="string">"/index.html"</span>;
         memo[key] = _.defaults({},memo[key],{tag:tag,posts:[],contents:<span class="string">""</span>},opts.yaml);
-        memo[key].posts.push(file);
+        memo[key].posts = _.sortBy(memo[key].posts.concat(file),<span class="string">"date"</span>).reverse();
       });
       <span class="keyword">return</span> memo;
     },{});
@@ -131,9 +131,9 @@ excerpt: A walkthrough of creating a tag plugin for Metalsmith
     _.extend(files,tags);
 
     <span class="comment">// add a taglist array to the metadata, to be consumed by a tagcloud type page</span>
-    meta.taglist = _.reduce(tags,<span class="function"><span class="keyword">function</span><span class="params">(memo,tag)</span>{</span>
+    meta.taglist = _.sortBy(_.reduce(tags,<span class="function"><span class="keyword">function</span><span class="params">(memo,tag)</span>{</span>
       <span class="keyword">return</span> memo.concat({tag:tag.tag,count:tag.posts.length,posts:tag.posts});
-    },[]);
+    },[]),<span class="string">"count"</span>).reverse();
 
     <span class="comment">// also add the same data but with tagnames as key, for use by individual tag pages</span>
     meta.tags = _.reduce(tags,<span class="function"><span class="keyword">function</span><span class="params">(memo,tag)</span>{</span>

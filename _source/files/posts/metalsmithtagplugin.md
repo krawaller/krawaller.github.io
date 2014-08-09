@@ -100,9 +100,9 @@ tags= function(opts){
     _.extend(files,tags);
 
     // add a taglist array to the metadata, to be consumed by a tagcloud type page
-    meta.taglist = _.reduce(tags,function(memo,tag){
+    meta.taglist = _.sortBy(_.reduce(tags,function(memo,tag){
       return memo.concat({tag:tag.tag,count:tag.posts.length,posts:tag.posts});
-    },[]);
+    },[]),"count").reverse();
 
     // also add the same data but with tagnames as key, for use by individual tag pages
     meta.tags = _.reduce(tags,function(memo,tag){
