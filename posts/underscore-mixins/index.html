@@ -93,14 +93,15 @@ function call cleans up the codebase nicely. Here&#39;s the source:</p>
 }</code></pre>
 
 <p>If you&#39;re using Lo-Dash then there is already a function called <a href="http://lodash.com/docs#mapValues"><code>mapValues</code></a> that does all of the above and more!</p>
-<h3 id="-extendprop-obj-propname-src-"><code>extendProp(obj,propname,src)</code></h3>
+<h3 id="-extendprop-obj-propname-source-source-"><code>extendProp(obj,propname,source,source,...)</code></h3>
 <p>This is a utility method for exending an object which is the property of another object, which works even if 
 the property doesn&#39;t exist. Doing this:</p>
-<pre><code>_.extend(obj[propname],src);</code></pre>
+<pre><code>_.extend(obj[propname],source,source,...);</code></pre>
 
 <p>...would fail if the <code>propname</code> property is undefined.Here&#39;s the source:</p>
-<pre><code><span class="function"><span class="keyword">function</span><span class="params">(obj,propname,src)</span>{</span>
-    obj[propname] = _.extend(obj[propname]||{},source);
+<pre><code><span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">var</span> obj = <span class="built_in">arguments</span>[<span class="number">0</span>], propname = <span class="built_in">arguments</span>[<span class="number">1</span>], sources = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>, <span class="number">2</span>);
+    obj[propname] = _.extend.apply(<span class="keyword">this</span>,[obj[propname]||{}].concat(sources));
     <span class="keyword">return</span> obj;
 }</code></pre>
 
@@ -134,7 +135,11 @@ the property doesn&#39;t exist. Doing this:</p>
             <span class="keyword">return</span> _.extend(_.object([keys[i]],[val]),memo);
         },{});
     },
-    extendProp: <span class="function"><span class="keyword">function</span><span class="params">(obj,propname,src)</span>{</span> obj[propname] = _.extend(obj[propname]||{},src) },
+    extendProp: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+        <span class="keyword">var</span> obj = <span class="built_in">arguments</span>[<span class="number">0</span>], propname = <span class="built_in">arguments</span>[<span class="number">1</span>], sources = <span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>, <span class="number">2</span>);
+        obj[propname] = _.extend.apply(<span class="keyword">this</span>,[obj[propname]||{}].concat(sources));
+        <span class="keyword">return</span> obj;
+    },
     combine: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
         <span class="keyword">return</span> _.reduce(<span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),<span class="function"><span class="keyword">function</span><span class="params">(ret,newarr)</span>{</span>
             <span class="keyword">return</span> _.reduce(ret,<span class="function"><span class="keyword">function</span><span class="params">(memo,oldi)</span>{</span>

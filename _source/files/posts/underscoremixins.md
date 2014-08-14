@@ -64,22 +64,24 @@ function(obj,iterator,context){
 
 If you're using Lo-Dash then there is already a function called [`mapValues`](http://lodash.com/docs#mapValues) that does all of the above and more!
 
-### `extendProp(obj,propname,src)`
+### `extendProp(obj,propname,source,source,...)`
 
 This is a utility method for exending an object which is the property of another object, which works even if 
 the property doesn't exist. Doing this:
 
 ```javascript
-_.extend(obj[propname],src);
+_.extend(obj[propname],source,source,...);
 ```
 
 ...would fail if the `propname` property is undefined.Here's the source:
 
 ```javascript
-function(obj,propname,src){
-	obj[propname] = _.extend(obj[propname]||{},source);
+function(){
+	var obj = arguments[0], propname = arguments[1], sources = Array.prototype.slice.call(arguments, 2);
+	obj[propname] = _.extend.apply(this,[obj[propname]||{}].concat(sources));
 	return obj;
 }
+
 ```
 
 As the parent object is returned we can chain more operations on the target object.
@@ -126,7 +128,11 @@ _.mixin({
 			return _.extend(_.object([keys[i]],[val]),memo);
 		},{});
 	},
-	extendProp: function(obj,propname,src){ obj[propname] = _.extend(obj[propname]||{},src) },
+	extendProp: function(){
+		var obj = arguments[0], propname = arguments[1], sources = Array.prototype.slice.call(arguments, 2);
+		obj[propname] = _.extend.apply(this,[obj[propname]||{}].concat(sources));
+		return obj;
+	},
 	combine: function(){
 		return _.reduce(Array.prototype.slice.call(arguments, 1),function(ret,newarr){
 			return _.reduce(ret,function(memo,oldi){
