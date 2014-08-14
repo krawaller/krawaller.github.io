@@ -104,7 +104,7 @@ Here's the source code:
 
 ```javascript
 function(){
-	return _.reduce(slice.call(arguments, 1),function(ret,newarr){
+	return _.reduce(Array.prototype.slice.call(arguments, 1),function(ret,newarr){
 		return _.reduce(ret,function(memo,oldi){
 			return memo.concat(_.map(newarr,function(newi){
 				return oldi.concat(newi);
@@ -133,7 +133,7 @@ _.mixin({
 		return obj;
 	},
 	combine: function(){
-		return _.reduce(slice.call(arguments, 1),function(ret,newarr){
+		return _.reduce(Array.prototype.slice.call(arguments, 1),function(ret,newarr){
 			return _.reduce(ret,function(memo,oldi){
 				return memo.concat(_.map(newarr,function(newi){
 					return oldi.concat(newi);
