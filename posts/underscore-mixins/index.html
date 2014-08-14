@@ -115,7 +115,7 @@ the property doesn&#39;t exist. Doing this:</p>
 <p>This isn&#39;t something you&#39;ll need every day (which is why it was <a href="https://github.com/jashkenas/underscore/pull/1788">shot down from Underscore</a>), but when you do need it, doing it manually is very verbose so a helper really cleans up the code (which is why I <a href="https://github.com/documentcloud/underscore-contrib/pull/168">tried to sell it to Underscore-contrib</a> instead).</p>
 <p>Here&#39;s the source code:</p>
 <pre><code><span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
-    <span class="keyword">return</span> _.reduce(slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),<span class="function"><span class="keyword">function</span><span class="params">(ret,newarr)</span>{</span>
+    <span class="keyword">return</span> _.reduce(<span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),<span class="function"><span class="keyword">function</span><span class="params">(ret,newarr)</span>{</span>
         <span class="keyword">return</span> _.reduce(ret,<span class="function"><span class="keyword">function</span><span class="params">(memo,oldi)</span>{</span>
             <span class="keyword">return</span> memo.concat(_.map(newarr,<span class="function"><span class="keyword">function</span><span class="params">(newi)</span>{</span>
                 <span class="keyword">return</span> oldi.concat(newi);
@@ -140,7 +140,7 @@ the property doesn&#39;t exist. Doing this:</p>
         <span class="keyword">return</span> obj;
     },
     combine: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
-        <span class="keyword">return</span> _.reduce(slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),<span class="function"><span class="keyword">function</span><span class="params">(ret,newarr)</span>{</span>
+        <span class="keyword">return</span> _.reduce(<span class="built_in">Array</span>.prototype.slice.call(<span class="built_in">arguments</span>, <span class="number">1</span>),<span class="function"><span class="keyword">function</span><span class="params">(ret,newarr)</span>{</span>
             <span class="keyword">return</span> _.reduce(ret,<span class="function"><span class="keyword">function</span><span class="params">(memo,oldi)</span>{</span>
                 <span class="keyword">return</span> memo.concat(_.map(newarr,<span class="function"><span class="keyword">function</span><span class="params">(newi)</span>{</span>
                     <span class="keyword">return</span> oldi.concat(newi);
