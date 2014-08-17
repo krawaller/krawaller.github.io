@@ -1,5 +1,5 @@
 ---
-template: post.html
+type: post
 title: "Testing Backbone Objects"
 date: 2013-02-23
 tags: [Backbone,Jasmine,Testing,Sinon]

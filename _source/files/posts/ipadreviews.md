@@ -4,7 +4,7 @@ author: David
 tags: [ithoughts,instaviz,textastic,dropbox,omnigraffle,drawingpad,review]
 date: 2011-03-26
 excerpt: Reviews of our favourite iPad productivity apps
-template: post.html
+type: post
 ---
 
 While waiting for my younger brother to post some long-promised content, I thought I'd give a quick overview of our design flow iPad usage. When I first got my pad, I bought it mainly as a testing device, not really anticipating to use it as an actual productivity tool. Because let's face it, in what fields could it possibly bester my trusted MacBook Pro? 

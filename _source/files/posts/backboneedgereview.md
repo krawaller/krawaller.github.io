@@ -4,7 +4,7 @@ author: David
 tags: [review,Backbone]
 date: 2013-04-26
 excerpt: A book review of "Developing a Backbone.js Edge" by Casey Foster et al
-template: post.html
+type: post
 ---
 
 In the interest of full disclosure; I was given access to a free copy to conduct this review.

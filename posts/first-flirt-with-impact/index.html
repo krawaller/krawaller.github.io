@@ -2,19 +2,19 @@
 <head>
   <title>First flirt with impact</title>
   <meta name="description" content="">
-  <link rel="stylesheet" href="../../css/theme.css"/>
+  
   <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  
 </head>
 <body>
 
-<header class="site-head" >
+<header class="site-head">
   <div class="container">
     <!-- Vertically center -->
     <div class="vertical">
       <div class="site-head-content inner">
-        
-          <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
-        
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
         <h2 class="blog-description">
           <ul class="social-nav">
             <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
@@ -26,37 +26,43 @@
     </div><!-- END .vertical -->
   </div><!-- END .container -->
 </header>
+
 <div class="sub-head">
   <div class="container">
-    A quick experiment with ImpactJS and Box2D
+  	
+A quick experiment with ImpactJS and Box2D
+  	
   </div>
 </div><!-- END .sub-head -->
 
-
 <div class="container">
   <main class="content" role="main">
-    <article class="">
-      <header class="post-header">
-        <h2 class="post-title">
-          <a href="./.">First flirt with impact</a>
-          <span class="post-meta">
-            <time datetime="Mon Mar 17 2014 01:00:00 GMT+0100 (CET)">Mar 17th 2014</time> 
-          </span>
-        </h2>
-          <div class='tags'>
-            By: <span><a href='../../author/david'>David</a></span>
-          </div>
-          <div class="tags">
-            Tags:
-            
-              <span><a href='../../tags/impactjs/'>impactjs</a></span>
-            
-              <span><a href='../../tags/box2d/'>box2d</a></span>
-            
-          </div>
-      </header>
-      <section class="post-content">
-        <p>A few weekends ago, I got to shut myself in with my two brothers and a few friends in the Spotify Gothenburg office. Counterstrike, Nerf gun wars, FIFA tournaments and male bonding ensued! Most importantly, we had a night-long hack trying out Impact for the first time. So much fun!!</p>
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/first-flirt-with-impact">First flirt with impact</a>
+    <span class="post-meta">
+      <time datetime="Mon Mar 17 2014 01:00:00 GMT+0100 (CET)">Mar 17th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/impactjs/'>impactjs</a></span>
+      
+        <span><a href='../../tags/box2d/'>box2d</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <p>A few weekends ago, I got to shut myself in with my two brothers and a few friends in the Spotify Gothenburg office. Counterstrike, Nerf gun wars, FIFA tournaments and male bonding ensued! Most importantly, we had a night-long hack trying out Impact for the first time. So much fun!!</p>
 <p>As weekends have an unfortunate habit of ending we didn&#39;t get too far (also the constant temptation of another CS round didn&#39;t help), but leaving the office we did have a working prototype of a classic (same-computer) multiplayer tank game. We built with Impact and Box2D, a very nice although woefully undocumented marriage.</p>
 <p>Our little game is woefully simple and light years from completion, but with features like respawn, grace, reload time and recoil, it still feels like the start of something!</p>
 <p><img src="../../img/kratank.png" alt="screenshot"></p>
@@ -107,26 +113,28 @@
 <p>Box2D is included as a plugin to Impact. The main hooks into Impact are in <a href="https://github.com/krawaller/kratankpubl/blob/gh-pages/live/lib/plugins/box2d/collision.js">collision.js</a>, a file we had to 
 modify rather heavily to get stuff working the way we wanted.</p>
 
-      </section>
-    </article>
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>    
+
+
+
+
   </main><!-- END role="main" -->
-
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-
 </div><!-- END .container -->
 
 

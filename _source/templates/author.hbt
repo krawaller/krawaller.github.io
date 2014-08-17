@@ -1,0 +1,19 @@
+
+<section class="post-content">
+
+<img src='../../img/{{toLowerCase title}}.png' class='leftimg' />
+
+{{{contents}}}
+
+</section>
+<br/><br/>
+
+{{#authorPosts title}}
+
+{{> listedpost }}
+
+{{else}}
+
+<section class="post-content">{{title}} hasn't written any posts yet!</section>
+
+{{/authorPosts}}

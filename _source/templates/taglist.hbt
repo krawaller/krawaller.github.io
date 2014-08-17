@@ -1,0 +1,10 @@
+<article>
+  <header class="post-header">
+    <div class='tags'>
+      Tags:
+      {{#each this.taglist}}
+      <span><a href='../../tags/{{tag}}/'>{{tag}} ({{count}})</a></span>
+      {{/each}}
+    </div>
+  </header>
+</article>

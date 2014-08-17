@@ -1,0 +1,5 @@
+{{#posts}}
+
+{{> listedpost isindex=true}}
+
+{{/posts}}

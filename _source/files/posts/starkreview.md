@@ -4,7 +4,7 @@ author: David
 tags: [review]
 date: 2010-02-12
 excerpt: A book review of "Building iPhone Apps with HTML, CSS and JavaScript" by Jonathan Stark
-template: post.html
+type: post
 ---
 
 I've just finished [Building iPhone Apps](http://oreilly.com/catalog/9780596805791/) by [Jonathan Stark](http://jonathanstark.com/), and what an excellent read it is! My little brother has spent ages and ages trawling docs and blogs and forums, gathering the knowledge he needed to bester objective C with JavaScript. I had pretty much given up on the hope of ever catching up with him, but thanks to mr Stark we can now do it in just 150 pages! This book really is a remarkable feat; in spite of it's short span, it manages to deliver the full picture on what constitutes making web apps on the iPhone.

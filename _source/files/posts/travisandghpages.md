@@ -4,7 +4,7 @@ author: David
 tags: [travis,testing,jasmine,sinon]
 date: 2014-08-08
 excerpt: How to set up Travis CI and testing for a ghpages app
-template: post.html
+type: post
 ---
 
 ### The what

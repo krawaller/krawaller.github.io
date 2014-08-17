@@ -2,19 +2,19 @@
 <head>
   <title>Travis CI and Github Pages</title>
   <meta name="description" content="">
-  <link rel="stylesheet" href="../../css/theme.css"/>
+  
   <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  
 </head>
 <body>
 
-<header class="site-head" >
+<header class="site-head">
   <div class="container">
     <!-- Vertically center -->
     <div class="vertical">
       <div class="site-head-content inner">
-        
-          <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
-        
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
         <h2 class="blog-description">
           <ul class="social-nav">
             <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
@@ -26,41 +26,47 @@
     </div><!-- END .vertical -->
   </div><!-- END .container -->
 </header>
+
 <div class="sub-head">
   <div class="container">
-    How to set up Travis CI and testing for a ghpages app
+  	
+How to set up Travis CI and testing for a ghpages app
+  	
   </div>
 </div><!-- END .sub-head -->
 
-
 <div class="container">
   <main class="content" role="main">
-    <article class="">
-      <header class="post-header">
-        <h2 class="post-title">
-          <a href="./.">Travis CI and Github Pages</a>
-          <span class="post-meta">
-            <time datetime="Fri Aug 08 2014 02:00:00 GMT+0200 (CEST)">Aug 8th 2014</time> 
-          </span>
-        </h2>
-          <div class='tags'>
-            By: <span><a href='../../author/david'>David</a></span>
-          </div>
-          <div class="tags">
-            Tags:
-            
-              <span><a href='../../tags/travis/'>travis</a></span>
-            
-              <span><a href='../../tags/testing/'>testing</a></span>
-            
-              <span><a href='../../tags/jasmine/'>jasmine</a></span>
-            
-              <span><a href='../../tags/sinon/'>sinon</a></span>
-            
-          </div>
-      </header>
-      <section class="post-content">
-        <h3 id="the-what">The what</h3>
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/travis-ci-and-github-pages">Travis CI and Github Pages</a>
+    <span class="post-meta">
+      <time datetime="Fri Aug 08 2014 02:00:00 GMT+0200 (CEST)">Aug 8th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/travis/'>travis</a></span>
+      
+        <span><a href='../../tags/testing/'>testing</a></span>
+      
+        <span><a href='../../tags/jasmine/'>jasmine</a></span>
+      
+        <span><a href='../../tags/sinon/'>sinon</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="the-what">The what</h3>
 <p>In this post I&#39;ll walk through how to set up Travis Continuous integration with Jasmine+Sinon testing for an app
 published to Github Pages. This is mainly directed at students taking the Linnaeus RIA course, but it might serve as a good approach for other developers too.</p>
 <p>The definition of continuous integration can be more complex, but in this context we merely aim to make our test suite run automatically whenever we push new code to the github repo. That&#39;s what <a href="https://travis-ci.org/">Travis CI</a> does for us. After setting up Travis to watch our repo, we can navigate to <code>http://travis-ci.org/&lt;githubusername&gt;/&lt;reponame&gt;</code> to see the results for each build:</p>
@@ -185,26 +191,28 @@ Third time's the charm!
 <p>...getting the same results as if we ran <code>jasmine-node test</code> locally:</p>
 <p><img src="../../img/nodetests.png" alt="node tests"></p>
 
-      </section>
-    </article>
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>    
+
+
+
+
   </main><!-- END role="main" -->
-
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-
 </div><!-- END .container -->
 
 

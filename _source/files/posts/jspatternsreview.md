@@ -4,7 +4,7 @@ author: David
 tags: [review]
 date: 2010-10-10
 excerpt: A book review of "JavaScript Patterns" by Stoyan Stefanov
-template: post.html
+type: post
 ---
 
 Back in April, Yahoo's JavaScript guru [Stoyan Stefanov](http://www.phpied.com/) set a very ambitious goal for himself; to [publish 5 books](http://www.phpied.com/publishing-5-books-this-year/) before the end of the year. An amazing feat, even when accounting for his generous definition of the task.

@@ -1,6 +1,6 @@
 var Metalsmith = require('metalsmith'),
 	markdown = require('metalsmith-markdown'),
-	templates = require('metalsmith-templates'),
+	templates = require('./metalsmith-templates-davidhack'), //require('metalsmith-templates'), // 
 	permalinks = require('metalsmith-permalinks'),
 	metallic = require('metalsmith-metallic'),
   collections = require('metalsmith-collections'),
@@ -9,7 +9,8 @@ var Metalsmith = require('metalsmith'),
   path = require('path'),
   _ = require('lodash'),
   moment = require('moment'),
-	exec = require('child_process').exec;
+	exec = require('child_process').exec,
+  fs = require('fs');
 
 Handlebars.registerHelper('list', function(items, options) {
   return _.reduce(items,function(memo,item){
@@ -18,7 +19,7 @@ Handlebars.registerHelper('list', function(items, options) {
 });
 
 Handlebars.registerHelper('authorPosts', function(authorname, options) {
-  return _.reduce(this.articles,function(memo,a){
+  return _.reduce(this.posts,function(memo,a){
     return a.author === authorname ? memo + options.fn(a) : memo;
   },"") || options.inverse(this);
 });
@@ -37,15 +38,24 @@ Handlebars.registerHelper('moment', function(time,format){
   return moment(time).format(format);
 });
 
+Handlebars.registerHelper('snooper', function(options){
+  console.log("ME:",Object.keys(this),this.path);
+  return "snooped";
+});
+
+_.each(fs.readdirSync('templates/partials'),function(file){
+  Handlebars.registerPartial(file.split(".")[0],fs.readFileSync(__dirname+"/templates/partials/"+file).toString());
+});
+
 tags= function(opts){
-  opts = _.defaults(opts||{},{path:"tags/",yaml:{template:"tag.html"}});
+  opts = _.defaults(opts||{},{path:"tags/",yaml:{type:"tag"}});
   return function(files, metalsmith, done){
     meta = metalsmith.metadata();
     var tags = _.reduce(meta[opts.collection]||files,function(memo,file,path){
       file.tags = file.tags ? _.map(file.tags,function(t){return t.toLowerCase();}) : [];
       _.each(file.tags,function(tag){
         key = opts.path+tag+"/index.html";
-        memo[key] = _.defaults({},memo[key],{tag:tag,posts:[],contents:""},opts.yaml);
+        memo[key] = _.defaults({},memo[key],{tag:tag,posts:[],contents:"",title:tag},opts.yaml);
         memo[key].posts = _.sortBy(memo[key].posts.concat(file),"date").reverse();
       });
       return memo;
@@ -63,13 +73,19 @@ tags= function(opts){
 };
 
 Metalsmith(__dirname)
-  .use(collections({articles: {pattern:'posts/*.md',sortBy:"date",reverse:true}}))
+  .use(collections({posts: {pattern:'posts/*.md',sortBy:"date",reverse:true}}))
   .use(tags({path:"tags/"}))
+  .use(function(files,metalsmith,done){
+    _.map(files,function(file){
+      return file.type ? _.extend(file,{template:file.type+".hbt"},_.object(["is"+file.type],[true])) : file;
+    });
+    done();
+  })
   .use(metallic({classPrefix:''}))
   .use(markdown())
   .use(sass({outputStyle:"expanded"}))
-  .use(permalinks({pattern: 'posts/:title'}))
-  .use(templates({engine: 'handlebars',directory: './templates'}))
+  .use(permalinks({pattern: ':collection/:title'}))
+  .use(templates({engine: 'handlebars',directory: './templates', master:'master.hbt'}))
   .source('./files')
   .destination('../.')
   .build(function(e,h){if (e){throw e;}});

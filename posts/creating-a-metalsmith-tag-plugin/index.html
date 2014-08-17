@@ -2,19 +2,19 @@
 <head>
   <title>Creating a Metalsmith tag plugin</title>
   <meta name="description" content="">
-  <link rel="stylesheet" href="../../css/theme.css"/>
+  
   <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  
 </head>
 <body>
 
-<header class="site-head" >
+<header class="site-head">
   <div class="container">
     <!-- Vertically center -->
     <div class="vertical">
       <div class="site-head-content inner">
-        
-          <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
-        
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
         <h2 class="blog-description">
           <ul class="social-nav">
             <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
@@ -26,37 +26,43 @@
     </div><!-- END .vertical -->
   </div><!-- END .container -->
 </header>
+
 <div class="sub-head">
   <div class="container">
-    A walkthrough of creating a tag plugin for Metalsmith and some accompanying Handlebars helpers
+  	
+A walkthrough of creating a tag plugin for Metalsmith and some accompanying Handlebars helpers
+  	
   </div>
 </div><!-- END .sub-head -->
 
-
 <div class="container">
   <main class="content" role="main">
-    <article class="">
-      <header class="post-header">
-        <h2 class="post-title">
-          <a href="./.">Creating a Metalsmith tag plugin</a>
-          <span class="post-meta">
-            <time datetime="Sat Aug 09 2014 02:00:00 GMT+0200 (CEST)">Aug 9th 2014</time> 
-          </span>
-        </h2>
-          <div class='tags'>
-            By: <span><a href='../../author/david'>David</a></span>
-          </div>
-          <div class="tags">
-            Tags:
-            
-              <span><a href='../../tags/metalsmith/'>metalsmith</a></span>
-            
-              <span><a href='../../tags/handlebars/'>handlebars</a></span>
-            
-          </div>
-      </header>
-      <section class="post-content">
-        <h3 id="metalsmith">Metalsmith</h3>
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/creating-a-metalsmith-tag-plugin">Creating a Metalsmith tag plugin</a>
+    <span class="post-meta">
+      <time datetime="Sat Aug 09 2014 02:00:00 GMT+0200 (CEST)">Aug 9th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/metalsmith/'>metalsmith</a></span>
+      
+        <span><a href='../../tags/handlebars/'>handlebars</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="metalsmith">Metalsmith</h3>
 <p>Metalsmith is mostly used as a static site generator, but it is really an all-purpose tool for iterating over files in a folder structure and doing something with them. Everything you want to do is a plugin. Here&#39;s what the Metalsmith code looks like for generating this blog:</p>
 <pre><code>Metalsmith(__dirname)
   .use(collections({articles: {pattern:<span class="string">'posts/*.md'</span>,sortBy:<span class="string">"date"</span>,reverse:<span class="literal">true</span>}}))
@@ -266,26 +272,28 @@ David shares his time between working as a maths teacher for the Swedish Prison 
 <p>We loop through all posts, which thanks to the collection plugin can be accessed at <code>this.articles</code>. Then for all posts who has the name of our author in the YAML author variable, we send that post to the first html chunk through <code>options.fn</code>.</p>
 <p>If there were no matching posts, we instead use the second html chunk through a call to <code>options.inverse</code>. Notice how we&#39;re sending <code>this</code> as a context, giving us access to the YAML <code>portrait</code> variable in the second chunk.</p>
 
-      </section>
-    </article>
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</article>    
+
+
+
+
   </main><!-- END role="main" -->
-
-  <div id="disqus_thread"></div>
-    <script type="text/javascript">
-        /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
-        var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
-
-        /* * * DON'T EDIT BELOW THIS LINE * * */
-        (function() {
-            var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
-            dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
-            (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
-        })();
-    </script>
-    <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
-    <a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
-    
-
 </div><!-- END .container -->
 
 

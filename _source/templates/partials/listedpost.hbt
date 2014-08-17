@@ -1,0 +1,6 @@
+<article>
+  {{> posthead isindex=isindex}}
+  <section class="post-excerpt">
+    <p>{{excerpt}}</p>
+  </section>
+</article>

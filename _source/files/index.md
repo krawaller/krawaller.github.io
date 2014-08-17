@@ -1,6 +1,5 @@
 ---
-template: index.html
-blogdescription: The Krawaller Blog
-blogtitle: Krawaller
+type: index
+title: Krawaller
 blogurl: http://blog.krawaller.se
 ---

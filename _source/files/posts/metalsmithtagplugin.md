@@ -4,7 +4,7 @@ author: David
 tags: [metalsmith,handlebars]
 date: 2014-08-09
 excerpt: A walkthrough of creating a tag plugin for Metalsmith and some accompanying Handlebars helpers
-template: post.html
+type: post
 ---
 
 ### Metalsmith

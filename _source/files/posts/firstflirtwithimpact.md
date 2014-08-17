@@ -4,7 +4,7 @@ author: David
 tags: [impactjs,box2d]
 date: 2014-03-17
 excerpt: A quick experiment with ImpactJS and Box2D
-template: post.html
+type: post
 ---
 
 A few weekends ago, I got to shut myself in with my two brothers and a few friends in the Spotify Gothenburg office. Counterstrike, Nerf gun wars, FIFA tournaments and male bonding ensued! Most importantly, we had a night-long hack trying out Impact for the first time. So much fun!!

@@ -4,7 +4,7 @@ author: David
 tags: [review]
 date: 2010-04-16
 excerpt: A book review of "High Performance JavaScript" by Nicholas Zakas
-template: post.html
+type: post
 ---
 
 Is the town of JavaScript performance big enough for both Souders & Zakas? Can the newly released book High Performance JavaScript hold its own against the established bible Even Faster Websites? Catch the captivating conclusion here!

@@ -1,5 +1,5 @@
 ---
-template: post.html
+type: post
 title: "Underscore mixins"
 date: 2014-05-07
 tags: [Underscore]
