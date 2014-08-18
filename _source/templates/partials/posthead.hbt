@@ -1,17 +1,17 @@
 <header class="post-header">
   <h2 class="post-title">
-    <a href="{{#unless isindex}}../../{{/unless}}{{path}}">{{{title}}}</a>
+    <a href="{{#unless root}}../../{{/unless}}{{path}}">{{{title}}}</a>
     <span class="post-meta">
       <time datetime="{{date}}">{{moment date 'MMM Do YYYY'}}</time> 
     </span>
   </h2>
     <div class='tags'>
-      By: <span><a href='{{#unless isindex}}../../{{/unless}}about/{{toLowerCase author}}'>{{author}}</a></span>
+      By: <span><a href='{{#unless root}}../../{{/unless}}about/{{toLowerCase author}}'>{{author}}</a></span>
     </div>
     <div class="tags">
       Tags:
       {{#tags}}
-        <span><a href='{{#unless ../isindex}}../../{{/unless}}tags/{{this}}/'>{{this}}</a></span>
+        <span><a href='{{#unless ../root}}../../{{/unless}}tags/{{this}}/'>{{this}}</a></span>
       {{/tags}}
     </div>
 </header>

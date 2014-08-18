@@ -13,12 +13,6 @@ var Metalsmith = require('metalsmith'),
 	exec = require('child_process').exec,
   fs = require('fs');
 
-Handlebars.registerHelper('list', function(items, options) {
-  return _.reduce(items,function(memo,item){
-    return memo+"<li>"+options.fn(item)+"</li>";
-  },"<ul>")+"</ul>";
-});
-
 Handlebars.registerHelper('authorPosts', function(authorname, options) {
   return _.reduce(this.posts,function(memo,a){
     return a.author === authorname ? memo + options.fn(a) : memo;
@@ -37,11 +31,6 @@ Handlebars.registerHelper('toLowerCase', function(str,options) {
 
 Handlebars.registerHelper('moment', function(time,format){
   return moment(time).format(format);
-});
-
-Handlebars.registerHelper('snooper', function(options){
-  console.log("ME:",Object.keys(this),this.path);
-  return "snooped";
 });
 
 _.each(fs.readdirSync('templates/partials'),function(file){

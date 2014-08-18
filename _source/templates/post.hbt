@@ -1,7 +1,7 @@
 
 <article>
   
-  {{> posthead isindex=isindex}}
+  {{> posthead }}
 
   <section class='post-content'>
   {{{contents}}}

@@ -1,5 +1,5 @@
 {{#posts}}
 
-{{> listedpost isindex=true}}
+{{> listedpost root=true}}
 
 {{/posts}}

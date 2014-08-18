@@ -1,5 +1,5 @@
 <article>
-  {{> posthead isindex=isindex}}
+  {{> posthead root=root}}
   <section class="post-excerpt">
     <p>{{excerpt}}</p>
   </section>

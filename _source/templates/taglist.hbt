@@ -2,9 +2,9 @@
   <header class="post-header">
     <div class='tags'>
       Tags:
-      {{#each this.taglist}}
+      {{#taglist}}
       <span><a href='../../tags/{{tag}}/'>{{tag}} ({{count}})</a></span>
-      {{/each}}
+      {{/taglist}}
     </div>
   </header>
 </article>
