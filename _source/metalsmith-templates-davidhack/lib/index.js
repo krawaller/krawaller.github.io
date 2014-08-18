@@ -3,6 +3,9 @@ var consolidate = require('consolidate');
 var debug = require('debug')('metalsmith-templates');
 var async = require('async');
 var extend = require('extend');
+var join = require('path').join;
+var match = require('multimatch');
+var omit = require('lodash.omit');
 
 /**
  * Expose `plugin`.
@@ -11,41 +14,79 @@ var extend = require('extend');
 module.exports = plugin;
 
 /**
+ * Settings.
+ */
+
+var settings = ['engine', 'directory', 'pattern', 'inPlace', 'default'];
+
+/**
  * Metalsmith plugin to run files through any template in a template `dir`.
  *
  * @param {String or Object} options
- *   @property {String} engine
+ *   @property {String} default (optional)
  *   @property {String} directory (optional)
- *   @master {String} name of postprocessing master template (optional)
+ *   @property {String} engine
+ *   @property {String} inPlace (optional)
+ *   @property {String} pattern (optional)
  * @return {Function}
  */
 
 function plugin(opts){
-  if ('string' == typeof opts) opts = { engine: opts };
   opts = opts || {};
+  if ('string' == typeof opts) opts = { engine: opts };
+  if (!opts.engine) throw new Error('"engine" option required');
+
   var engine = opts.engine;
   var dir = opts.directory || 'templates';
-
-  if (!opts.engine) throw new Error('"engine" option required');
+  var pattern = opts.pattern;
+  var inPlace = opts.inPlace;
+  var def = opts.default;
+  var master = opts.master;
+  var params = omit(opts, settings);
 
   return function(files, metalsmith, done){
     var metadata = metalsmith.metadata();
 
-    async.each(Object.keys(files),function(file, done){
-      debug('checking file: %s', file);
+    function check(file){
       var data = files[file];
-      if (!data.template && !opts.master) return done();
+      if (pattern && !match(file, pattern)[0]){
+        console.log("Pattern says no need to template file %s",file);
+        return false;
+      }
+      if (!inPlace && !data.template && !def && !master) return false;
+      return true;
+    }
+
+    async.each(Object.keys(files), convert, done);
+
+    function convert(file, done){
+      if (!check(file)) return done();
+      debug('converting file: %s', file);
+      var data = files[file];
       data.contents = data.contents.toString();
-      var templates = (data.template ? [metalsmith.join(dir, data.template)] : []).concat( opts.master ? [metalsmith.join(dir, opts.master)] : [] );
-      var clone = extend({}, metadata, data);
+      var clone = extend({}, params, metadata, data);
+      var str;
+      var render;
+      var templates = [];
+
+      if (inPlace) {
+        templates.push(clone.contents);
+        render = consolidate[engine].render;
+      } else {
+        if (data.template || def) templates.push(metalsmith.join(dir, data.template || def));
+        if (master) templates.push(metalsmith.join(dir, master));
+        render = consolidate[engine];
+      }
+
       async.eachSeries(templates,function(tmplname,done){
-        consolidate[engine](tmplname, clone, function(err, str){
-          debug('%s   --------->   %s', file, tmplname);
+        render(tmplname, clone, function(err, tmplname){
           if (err) return done(err);
-          data.contents = clone.contents = new Buffer(str);
+          data.contents = clone.contents = (new Buffer(tmplname)).toString();
+          debug('converted file %s using template %s', file, tmplname);
           done();
         });
       },done);
-    },done);
+
+    }
   };
 }

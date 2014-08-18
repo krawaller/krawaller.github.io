@@ -25,6 +25,36 @@ describe('metalsmith-templates', function(){
       });
   });
 
+  it('should accept an inPlace option', function(done){
+    Metalsmith('test/fixtures/in-place')
+      .use(templates({ engine: 'swig', inPlace: true }))
+      .build(function(err){
+        if (err) return done(err);
+        equal('test/fixtures/in-place/expected', 'test/fixtures/in-place/build');
+        done();
+      });
+  });
+
+  it('should accept a pattern to match', function(done){
+    Metalsmith('test/fixtures/pattern')
+      .use(templates({ engine: 'swig', pattern: '*.md' }))
+      .build(function(err){
+        if (err) return done(err);
+        equal('test/fixtures/pattern/expected', 'test/fixtures/pattern/build');
+        done();
+      });
+  });
+
+  it('should accept a default template', function(done){
+    Metalsmith('test/fixtures/default')
+      .use(templates({ engine: 'swig', pattern: '*.md', default: 'default.html' }))
+      .build(function(err){
+        if (err) return done(err);
+        equal('test/fixtures/pattern/expected', 'test/fixtures/pattern/build');
+        done();
+      });
+  });
+
   it('should accept a different templates directory', function(done){
     Metalsmith('test/fixtures/directory')
       .use(templates({ engine: 'swig', directory: 'layouts' }))
@@ -42,6 +72,26 @@ describe('metalsmith-templates', function(){
       .build(function(err){
         if (err) return done(err);
         equal('test/fixtures/metadata/expected', 'test/fixtures/metadata/build');
+        done();
+      });
+  });
+
+  it('should preserve binary files', function(done){
+    Metalsmith('test/fixtures/binary')
+      .use(templates({ engine: 'swig' }))
+      .build(function(err){
+        if (err) return done(err);
+        equal('test/fixtures/binary/expected', 'test/fixtures/binary/build');
+        done();
+      });
+  });
+
+  it('should apply master template', function(done){
+    Metalsmith('test/fixtures/master')
+      .use(templates({ engine: 'swig', master: 'master.html', default: 'default.html' }))
+      .build(function(err){
+        if (err) return done(err);
+        equal('test/fixtures/master/expected', 'test/fixtures/master/build');
         done();
       });
   });

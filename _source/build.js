@@ -85,7 +85,7 @@ Metalsmith(__dirname)
   .use(markdown())
   .use(sass({outputStyle:"expanded"}))
   .use(permalinks({pattern: ':collection/:title'}))
-  .use(templates({engine: 'handlebars',directory: './templates', master:'master.hbt'}))
+  .use(templates({engine: 'handlebars',directory: './templates', master:'master.hbt', pattern: ["*/*/*html","*html"]}))
   .source('./files')
   .destination('../.')
   .build(function(e,h){if (e){throw e;}});

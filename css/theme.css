@@ -1,92 +1,3 @@
-<html>
-<head>
-  <title></title>
-  <meta name="description" content="">
-  
-  <link rel="stylesheet" href="../../css/highlight.css">
-  <link rel="stylesheet" href="../../css/theme.css"/>
-  
-
-  <script>
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-    ga('create', 'UA-11433118-1', 'auto');
-    ga('send', 'pageview');
-
-  </script>
-
-</head>
-<body>
-
-<header class="site-head">
-  <div class="container">
-    <!-- Vertically center -->
-    <div class="vertical">
-      <div class="site-head-content inner">
-        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
-        <h2 class="blog-description">
-          <ul class="social-nav">
-            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
-            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
-            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
-          </ul>
-        </h2>
-      </div>
-    </div><!-- END .vertical -->
-  </div><!-- END .container -->
-</header>
-
-<div class="sub-head">
-  <div class="container">
-  	
-
-  	
-  </div>
-</div><!-- END .sub-head -->
-
-<div class="container">
-  <main class="content" role="main">
-
-/*David hacks*/
-article:after, section:after {
-  content: " ";
-  clear: both;
-  display: block; }
-
-article {
-  margin-bottom: 3em; }
-
-img.leftimg {
-  float: left;
-  margin-right: 10px;
-  margin-bottom: 10px;
-  max-width: 150px; }
-
-.content > ul {
-  list-style-type: none; }
-
-h2.post-title {
-  line-height: 1.5; }
-
-.post-content {
-  color: #666; }
-
-.post-content h3, .post-content h4 {
-  margin-top: 2em;
-  margin-left: 3em; }
-
-header.site-head {
-  padding: 50px 0; }
-
-.blog-description a {
-  color: white; }
-
-h2.blog-description {
-  font-size: 12pt; }
-
 /*Main Sass file for theme*/
 /*Google fonts*/
 @import url(http://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic);
@@ -304,9 +215,39 @@ ul.social-nav {
   .site-head {
     padding: 50px 0px 50px 0px; } }
 
+/*David hacks*/
+article:after, section:after, .group {
+  content: " ";
+  clear: both;
+  display: block; }
 
-  </main><!-- END role="main" -->
-</div><!-- END .container -->
+article {
+  margin-bottom: 3em; }
 
-</body>
-</html>
+img.leftimg {
+  float: left;
+  margin-right: 10px;
+  margin-bottom: 10px;
+  max-width: 150px; }
+
+.content > ul {
+  list-style-type: none; }
+
+h2.post-title {
+  line-height: 1.5; }
+
+.post-content {
+  color: #666; }
+
+.post-content h3, .post-content h4 {
+  margin-top: 2em;
+  margin-left: 3em; }
+
+header.site-head {
+  padding: 50px 0; }
+
+.blog-description a {
+  color: white; }
+
+h2.blog-description {
+  font-size: 12pt; }

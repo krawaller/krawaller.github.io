@@ -13,12 +13,13 @@
 
   Install the node modules and then add the `metalsmith-templates` key to your `metalsmith.json` plugins. The simplest use case just requires the template engine you want to use:
 
-```js
+```json
 {
   "plugins": {
     "metalsmith-templates": "handlebars"
   }
 }
+```
 
   If you want to specify additional options, pass an object:
 
@@ -43,7 +44,7 @@ var templates = require('metalsmith-templates');
 metalsmith.use(templates('swig'));
 ```
 
-  Pass `options` to the templates plugin and pass it to Metalsmith with the `use` method:
+  To specify additional options:
 
 ```js
 metalsmith.use(templates({
