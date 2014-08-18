@@ -5,6 +5,7 @@ var Metalsmith = require('metalsmith'),
 	metallic = require('metalsmith-metallic'),
   collections = require('metalsmith-collections'),
   sass = require('metalsmith-sass'),
+  drafts = require('metalsmith-drafts'),
   Handlebars = require('handlebars'),
   path = require('path'),
   _ = require('lodash'),
@@ -73,6 +74,7 @@ tags= function(opts){
 };
 
 Metalsmith(__dirname)
+  .use(drafts())
   .use(collections({posts: {pattern:'posts/*.md',sortBy:"date",reverse:true}}))
   .use(tags({path:"tags/"}))
   .use(function(files,metalsmith,done){
