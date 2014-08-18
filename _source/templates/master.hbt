@@ -46,7 +46,7 @@
   	{{#if this.isindex}}
 A blog by the Krawaller brothers <a href='about/david/'>David</a>, <a href='about/hannes/'>Hannes</a> &amp; <a href='about/jacob/'>Jacob</a> where we write about <a href='about/taglist/'>web stuff</a>.
   	{{else}}{{#if this.istag}}
-Posts about {{tag}}:
+Posts <a href="../../about/taglist/">tagged</a> with {{tag}}:
     {{else}}{{#if this.istaglist}}
 A list of all tags used in this blog:
     {{else}}{{#if this.isauthor}}
