@@ -2,20 +2,21 @@
 title: Using master templates with Metalsmith
 author: David
 tags: [metalsmith,handlebars]
-date: 2014-08-18
+date: 2014-08-21
 excerpt: How we used our hack of the metalsmith templates plugin to allow master templates
 type: post
-draft: true
 ---
 
-### Master stuff
+### Master template
 
-moo we [hacked metalsmith-templates](https://github.com/segmentio/metalsmith-templates/pull/21/files) to allow master templates.
+Recently I [hacked the metalsmith-templates plugin](https://github.com/segmentio/metalsmith-templates/pull/21/files) to support master templates. The idea is that you pass in a `master` option, naming a master template file in the templates directory. This template will be applied to all files *after* an eventual file-specific template and/or a default template.
+
+Thus the `contents` variable in the master template file will contain the full result of the previous template, or the raw file contents if no previous template has been run. This enabled us to really clean up our page-specific templates (index, post, author, tag, etc), as they no longer needed to deal with headers and footers and the like.
 
 
-### Partials
+### The power of partials
 
-we have a subdirectory in the `templates` directory named `partials`. Any file put here will automatically be added as a Handlebars partial through the following loop:
+We have a subdirectory in the `templates` directory named `partials`. Any file put here will automatically be added as a Handlebars partial through the following loop:
 
 ```javascript
 _.each(fs.readdirSync('templates/partials'),function(file){
@@ -25,7 +26,7 @@ _.each(fs.readdirSync('templates/partials'),function(file){
 });
 ```
 
-Having a master template to house the head, container stuff, google analytics, etc, means the type-specific templates become really clean. Especially when partials too woo! Here's the full code for the template for the index file:
+Combined with using a master template, this makes for really skinny page templates! Here's the full code for the index page template:
 
 ```html
 {{#posts}}
@@ -35,7 +36,7 @@ Having a master template to house the head, container stuff, google analytics, e
 {{/posts}}
 ```
 
-It loops through the `posts` array, and prints each using the `listedpost` partial. Note that we're also passing a root variable to the partial set to true.
+It loops through the `posts` array, and prints each post using the `listedpost` partial. Note that we're also passing a hash with extra variables which will extend the context, a syntax available since Handlebars 2.
 
 Here's what `listedpost` looks like:
 
@@ -48,7 +49,9 @@ Here's what `listedpost` looks like:
 </article>
 ```
 
-And here's `posthead`, where we finally have use for the `root` variable.:
+Each markdown post file on our blog contains an `excerpt` in the YAML front matter, which is what we use when we show a post in a list.
+
+Here's the `posthead` partial, where we finally have use for the `root` variable.:
 
 ```html
 <header class="post-header">
@@ -70,7 +73,7 @@ And here's `posthead`, where we finally have use for the `root` variable.:
 </header>
 ```
 
-The `posthead` partial is also used in the `post.hbt` template, hence the need for the `root` flag. Here's the `post.hbt` code, with some boring Disqus stuff removed:
+This partial is also used in the `post.hbt` template, hence the need for the `root` flag as a post-specific file is two levels deeper. Here's the `post.hbt` code, with some boring Disqus stuff removed:
 
 ```html
 
@@ -90,7 +93,9 @@ The `posthead` partial is also used in the `post.hbt` template, hence the need f
 
 ### More stuff
 
-looping through all files bla bla:
+To centralize control over template usage, and allow for some further shortcuts in the templates, we invented the notion of page types. In all markdown files to be processed, instead of naming templates, we have a `type` variable in the YAML front matter. So far, type can be `post`, `author`, `index`, `tag` or `taglist`.
+
+Then we have a mini Metalsmith plugin running all files through the following `map`:
 
 ```javascript
 .use(function(files,metalsmith,done){
@@ -109,7 +114,9 @@ template: post.hbt
 ispost: true
 ```
 
-That last thing is added to simplify doing post-specific stuff in the Handlebars templates. Testing for equality in Handlebars is [complicated](http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional), but testing truthiness is easy. For example, here's a snippet from the master template:
+This means that should we change templating tactics, we don't need to update all individual files, instead we can simply add some logic to this loop.
+
+The last thing added in the example above, `ispost: true`, allows us to simplify doing post-specific stuff in the Handlebars templates. Testing for equality in Handlebars is [complicated](http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional), but testing truthiness is easy, which is why the `ispost` type variables are useful. As an example, here's a snippet from the master template:
 
 ```html
 {{#if isindex}}
