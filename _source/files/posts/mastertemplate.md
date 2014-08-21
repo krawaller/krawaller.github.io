@@ -11,7 +11,18 @@ type: post
 
 Recently I [hacked the metalsmith-templates plugin](https://github.com/segmentio/metalsmith-templates/pull/21/files) to support master templates. The idea is that you pass in a `master` option, naming a master template file in the templates directory. This template will be applied to all files *after* an eventual file-specific template and/or a default template.
 
-Thus the `contents` variable in the master template file will contain the full result of the previous template, or the raw file contents if no previous template has been run. This enabled us to really clean up our page-specific templates (index, post, author, tag, etc), as they no longer needed to deal with headers and footers and the like.
+Here's what our call to the templates plugin looks like:
+
+```javascript
+.use(templates({
+  engine: 'handlebars',
+  directory: './templates',
+  master:'master.hbt',
+  pattern: ["*/*/*html","*html"]
+}))
+```
+
+The `contents` variable in the master template file will contain the full result of the previous template, or the raw file contents if no previous template has been run. This enabled us to really clean up our page-specific templates (index, post, author, tag, etc), as they no longer needed to deal with headers and footers and the like.
 
 
 ### The power of partials

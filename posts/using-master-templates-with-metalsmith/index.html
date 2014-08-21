@@ -77,7 +77,15 @@ How we used our hack of the metalsmith templates plugin to allow master template
   <section class='post-content'>
   <h3 id="master-template">Master template</h3>
 <p>Recently I <a href="https://github.com/segmentio/metalsmith-templates/pull/21/files">hacked the metalsmith-templates plugin</a> to support master templates. The idea is that you pass in a <code>master</code> option, naming a master template file in the templates directory. This template will be applied to all files <em>after</em> an eventual file-specific template and/or a default template.</p>
-<p>Thus the <code>contents</code> variable in the master template file will contain the full result of the previous template, or the raw file contents if no previous template has been run. This enabled us to really clean up our page-specific templates (index, post, author, tag, etc), as they no longer needed to deal with headers and footers and the like.</p>
+<p>Here&#39;s what our call to the templates plugin looks like:</p>
+<pre><code>.use(templates({
+  engine: <span class="string">'handlebars'</span>,
+  directory: <span class="string">'./templates'</span>,
+  master:<span class="string">'master.hbt'</span>,
+  pattern: [<span class="string">"*/*/*html"</span>,<span class="string">"*html"</span>]
+}))</code></pre>
+
+<p>The <code>contents</code> variable in the master template file will contain the full result of the previous template, or the raw file contents if no previous template has been run. This enabled us to really clean up our page-specific templates (index, post, author, tag, etc), as they no longer needed to deal with headers and footers and the like.</p>
 <h3 id="the-power-of-partials">The power of partials</h3>
 <p>We have a subdirectory in the <code>templates</code> directory named <code>partials</code>. Any file put here will automatically be added as a Handlebars partial through the following loop:</p>
 <pre><code>_.each(fs.readdirSync(<span class="string">'templates/partials'</span>),<span class="function"><span class="keyword">function</span><span class="params">(file)</span>{</span>
