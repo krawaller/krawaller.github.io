@@ -1,6 +1,6 @@
 So here's my cool app! Here's what it all looks like omg omg omg! :)
 
-<iframe src='http://blog.krawaller.se/ionic-sound-book/www/' style="height:400px;width:100%" />
+<iframe src='http://blog.krawaller.se/ionic-sound-book/www/' style="height:400px;width:100%"></iframe>
 
 Go to [git repo](https://github.com/krawaller/ionic-sound-book/).
 
