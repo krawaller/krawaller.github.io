@@ -114,14 +114,12 @@ A walkthrough of creating a tag plugin for Metalsmith and some accompanying Hand
 <li>To allow plugins to do asynchronous stuff, control isn&#39;t handed back to Metalsmith until the <code>done</code> callback is called.</li>
 </ul>
 <p>Each <code>file</code> object contains the contents of the file, and also information from optional YAML frontmatter. For example, below is the YAML for this very blog post. Note the <code>tags</code> data - that&#39;s of course meant to be consumed by our tags plugin!</p>
-<pre><code><span class="bullet">---
-</span>title: Creating a Metalsmith tag plugin
-author: David
-tags: [metalsmith]
-date: 2014-08-09
-excerpt: A walkthrough of creating a tag plugin for Metalsmith
-<span class="header">template: post.html
----</span></code></pre> 
+<pre><code><span class="attribute">title</span>: <span class="string">Creating a Metalsmith tag plugin</span>
+<span class="attribute">author</span>: <span class="string">David</span>
+<span class="attribute">tags</span>: <span class="string">[metalsmith]</span>
+<span class="attribute">date</span>: <span class="string">2014-08-09</span>
+<span class="attribute">excerpt</span>: <span class="string">A walkthrough of creating a tag plugin for Metalsmith</span>
+<span class="attribute">template</span>: <span class="string">post.html</span></code></pre> 
 
 
 <h3 id="creating-the-tags-plugin">Creating the tags plugin</h3>

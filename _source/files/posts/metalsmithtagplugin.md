@@ -59,14 +59,12 @@ The function returned by the plugin, which then is what is passed to `use`, is g
 Each `file` object contains the contents of the file, and also information from optional YAML frontmatter. For example, below is the YAML for this very blog post. Note the `tags` data - that's of course meant to be consumed by our tags plugin!
 
 ```yaml
----
 title: Creating a Metalsmith tag plugin
 author: David
 tags: [metalsmith]
 date: 2014-08-09
 excerpt: A walkthrough of creating a tag plugin for Metalsmith
 template: post.html
----
 ``` 
 
 
