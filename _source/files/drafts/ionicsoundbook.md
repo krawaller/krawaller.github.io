@@ -1,4 +1,8 @@
-So here's my cool app! Go to [git repo](https://github.com/krawaller/ionic-sound-book/).
+So here's my cool app! Here's what it all looks like omg omg omg! :)
+
+<iframe src='http://blog.krawaller.se/ionic-sound-book/www/' style="height:400px;width:100%" />
+
+Go to [git repo](https://github.com/krawaller/ionic-sound-book/).
 
 Lololol html code from [index.html](https://github.com/krawaller/ionic-sound-book/blob/master/www/index.html):
 
@@ -176,6 +180,3 @@ function render() {
 }
 ```
 
-Here's what it all looks like omg omg omg! :)
-
-<iframe src='http://blog.krawaller.se/ionic-sound-book/www/' style="height:400px;width:100%" />
