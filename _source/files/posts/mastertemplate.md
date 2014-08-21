@@ -102,11 +102,20 @@ This partial is also used in the `post.hbt` template, hence the need for the `ro
 ```
 
 
-### More stuff
+### Page types
 
-To centralize control over template usage, and allow for some further shortcuts in the templates, we invented the notion of page types. In all markdown files to be processed, instead of naming templates, we have a `type` variable in the YAML front matter. So far, type can be `post`, `author`, `index`, `tag` or `taglist`.
+To centralize control over template usage, and allow for some further shortcuts in the templates, we invented the notion of page types. In all markdown files to be processed, instead of naming templates, we have a `type` variable in the YAML front matter. So far, type can be `post`, `author`, `index`, `tag` or `taglist`. For example, here's the YAML for this very post:
 
-Then we have a mini Metalsmith plugin running all files through the following `map`:
+```yaml
+title: Using master templates with Metalsmith
+author: David
+tags: [metalsmith,handlebars]
+date: 2014-08-21
+excerpt: How we used our hack of the metalsmith templates plugin to allow master templates
+type: post
+```
+
+We use the `type` variable through a mini Metalsmith plugin running all files through the following `map`:
 
 ```javascript
 .use(function(files,metalsmith,done){
@@ -117,7 +126,7 @@ Then we have a mini Metalsmith plugin running all files through the following `m
 })
 ```
 
-Now a file with `type` set to `post` will look like this:
+Now a file with `type` set to `post` will have a `template` and `ispost` variable added like thus:
 
 ```yaml
 type: post
@@ -125,7 +134,7 @@ template: post.hbt
 ispost: true
 ```
 
-This means that should we change templating tactics, we don't need to update all individual files, instead we can simply add some logic to this loop.
+This means that should we change templating tactics, we don't need to update all individual files, instead we can simply add some logic to our mini plugin loop.
 
 The last thing added in the example above, `ispost: true`, allows us to simplify doing post-specific stuff in the Handlebars templates. Testing for equality in Handlebars is [complicated](http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional), but testing truthiness is easy, which is why the `ispost` type variables are useful. As an example, here's a snippet from the master template:
 

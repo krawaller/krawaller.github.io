@@ -144,9 +144,16 @@ How we used our hack of the metalsmith templates plugin to allow master template
 <span class="tag">&lt;/<span class="title">article</span>&gt;</span></code></pre>
 
 
-<h3 id="more-stuff">More stuff</h3>
-<p>To centralize control over template usage, and allow for some further shortcuts in the templates, we invented the notion of page types. In all markdown files to be processed, instead of naming templates, we have a <code>type</code> variable in the YAML front matter. So far, type can be <code>post</code>, <code>author</code>, <code>index</code>, <code>tag</code> or <code>taglist</code>.</p>
-<p>Then we have a mini Metalsmith plugin running all files through the following <code>map</code>:</p>
+<h3 id="page-types">Page types</h3>
+<p>To centralize control over template usage, and allow for some further shortcuts in the templates, we invented the notion of page types. In all markdown files to be processed, instead of naming templates, we have a <code>type</code> variable in the YAML front matter. So far, type can be <code>post</code>, <code>author</code>, <code>index</code>, <code>tag</code> or <code>taglist</code>. For example, here&#39;s the YAML for this very post:</p>
+<pre><code><span class="attribute">title</span>: <span class="string">Using master templates with Metalsmith</span>
+<span class="attribute">author</span>: <span class="string">David</span>
+<span class="attribute">tags</span>: <span class="string">[metalsmith,handlebars]</span>
+<span class="attribute">date</span>: <span class="string">2014-08-21</span>
+<span class="attribute">excerpt</span>: <span class="string">How we used our hack of the metalsmith templates plugin to allow master templates</span>
+<span class="attribute">type</span>: <span class="string">post</span></code></pre>
+
+<p>We use the <code>type</code> variable through a mini Metalsmith plugin running all files through the following <code>map</code>:</p>
 <pre><code>.use(<span class="function"><span class="keyword">function</span><span class="params">(files,metalsmith,done)</span>{</span>
   _.map(files,<span class="function"><span class="keyword">function</span><span class="params">(file)</span>{</span>
     <span class="keyword">return</span> file.type ? _.extend(file,{template:file.type+<span class="string">".hbt"</span>},_.object([<span class="string">"is"</span>+file.type],[<span class="literal">true</span>])) : file;
@@ -154,12 +161,12 @@ How we used our hack of the metalsmith templates plugin to allow master template
   done();
 })</code></pre>
 
-<p>Now a file with <code>type</code> set to <code>post</code> will look like this:</p>
+<p>Now a file with <code>type</code> set to <code>post</code> will have a <code>template</code> and <code>ispost</code> variable added like thus:</p>
 <pre><code><span class="attribute">type</span>: <span class="string">post</span>
 <span class="attribute">template</span>: <span class="string">post.hbt</span>
 <span class="attribute">ispost</span>: <span class="string">true</span></code></pre>
 
-<p>This means that should we change templating tactics, we don&#39;t need to update all individual files, instead we can simply add some logic to this loop.</p>
+<p>This means that should we change templating tactics, we don&#39;t need to update all individual files, instead we can simply add some logic to our mini plugin loop.</p>
 <p>The last thing added in the example above, <code>ispost: true</code>, allows us to simplify doing post-specific stuff in the Handlebars templates. Testing for equality in Handlebars is <a href="http://stackoverflow.com/questions/8853396/logical-operator-in-a-handlebars-js-if-conditional">complicated</a>, but testing truthiness is easy, which is why the <code>ispost</code> type variables are useful. As an example, here&#39;s a snippet from the master template:</p>
 <pre><code>{{#if isindex}}
   <span class="tag">&lt;<span class="title">link</span> <span class="attribute">rel</span>=<span class="value">"stylesheet"</span> <span class="attribute">href</span>=<span class="value">"css/theme.css"</span>/&gt;</span>
