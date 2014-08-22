@@ -1,6 +1,6 @@
 React experiment! :)
 
-<iframe src='http://blog.krawaller.se/reactexperiment/' style="height:70px;width:100%"></iframe>
+<iframe src='http://blog.krawaller.se/reactexperiment/' style="height:100px;width:100%"></iframe>
 
 
 traps:
