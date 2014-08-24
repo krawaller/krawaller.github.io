@@ -51,12 +51,195 @@
 <div class="container">
   <main class="content" role="main">
 
-<p>React experiment! :)</p>
+<p>React experiment woo! I built a memory game:</p>
 <iframe src='http://blog.krawaller.se/reactexperiment/' style="height:140px;width:100%"></iframe>
+
+
+<h3 id="the-code">The code</h3>
+<p>So here&#39;s the structure. 5 different components:</p>
+<p><img src="../../img/reactexperiment.png" alt="structure"></p>
+<p>bla bla game.js:</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Game = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> {playing: <span class="literal">false</span>,tiles:[]};
+  },
+  startGame: <span class="function"><span class="keyword">function</span><span class="params">(words)</span>{</span>
+    <span class="keyword">this</span>.setState({tiles:words.concat(words),playing:<span class="literal">true</span>,seed:<span class="built_in">Math</span>.random()});
+  },
+  endGame: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">this</span>.setState({playing:<span class="literal">false</span>});
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">{this.state.playing</span> ? "<span class="attribute">showing</span>" <span class="attribute">:</span> "<span class="attribute">hidden</span>"}&gt;</span>
+          <span class="tag">&lt;<span class="title">Board</span> <span class="attribute">endGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">tiles</span>=<span class="value">{this.state.tiles}</span> <span class="attribute">key</span>=<span class="value">{this.state.seed}</span>/&gt;</span>
+        <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">{this.state.playing</span> ? "<span class="attribute">hidden</span>" <span class="attribute">:</span> "<span class="attribute">showing</span>"}&gt;</span>
+          <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">startGame</span>=<span class="value">{this.startGame}</span> /&gt;</span>
+        <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  }
+});</span></code></pre>
+
+<p>moo moo wordform:</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Wordform = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span><span class="keyword">return</span> {error:<span class="string">""</span>};},
+  setError: <span class="function"><span class="keyword">function</span><span class="params">(msg)</span>{</span>
+    <span class="keyword">this</span>.setState({error:msg});
+    setTimeout((<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+      <span class="keyword">this</span>.setState({error:<span class="string">""</span>});
+    }).bind(<span class="keyword">this</span>),<span class="number">2000</span>);
+  },
+  submitWords: <span class="function"><span class="keyword">function</span><span class="params">(e)</span>{</span>
+    <span class="keyword">var</span> node = <span class="keyword">this</span>.refs[<span class="string">"wordfield"</span>].getDOMNode(),
+        words = (node.value || <span class="string">""</span>).replace(<span class="regexp">/\W{1,}/g</span>,<span class="string">" "</span>).replace(<span class="regexp">/^\W|\W$/g</span>,<span class="string">""</span>).split(<span class="string">" "</span>);
+    <span class="keyword">if</span> (words.length &lt;= <span class="number">2</span>) {
+      <span class="keyword">this</span>.setError(<span class="string">"Enter at least 3 words!"</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (words.length !== _.unique(words).length) {
+      <span class="keyword">this</span>.setError(<span class="string">"Words should be unique!"</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (_.filter(words,<span class="function"><span class="keyword">function</span><span class="params">(w)</span>{</span><span class="keyword">return</span> w.length &gt; <span class="number">6</span>}).length) {
+      <span class="keyword">this</span>.setError(<span class="string">"Words should not be longer than 6 characters!"</span>);
+    } <span class="keyword">else</span> {
+      <span class="keyword">this</span>.props.startGame(words);
+      node.value = <span class="string">""</span>;        
+    }
+    <span class="keyword">return</span> <span class="literal">false</span>;
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">form</span> <span class="attribute">onSubmit</span>=<span class="value">{this.submitWords}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">p</span>&gt;</span>Enter words separated by spaces!<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">'text'</span> <span class="attribute">ref</span>=<span class="value">'wordfield'</span> /&gt;</span>
+        <span class="tag">&lt;<span class="title">button</span> <span class="attribute">type</span>=<span class="value">'submit'</span>&gt;</span>Start!<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">p</span> <span class="attribute">className</span>=<span class="value">'error'</span> <span class="attribute">ref</span>=<span class="value">'errormsg'</span>&gt;</span>{this.state.error}<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">form</span>&gt;</span>
+    );
+  }
+});</span></code></pre>
+
+<p>and the board:</p>
+<pre><code>/** @jsx React.DOM */
+
+var Board = React.createClass({
+  getInitialState: function() { return {found: 0, message: "choosetile"}; },
+  clickedTile: function(tile){
+    if (!this.wait){
+      // turn up lone tile 
+      if (!this.flippedtile){
+        this.flippedtile = tile;
+        tile.flipAndSearch();
+        this.setState({found:this.state.found,message:"findmate"});
+      // clicked second
+      } else {
+        this.wait = true;
+        if (this.flippedtile.props.word === tile.props.word){
+          this.setState({found: this.state.found+1,message: "foundmate"});
+          tile.revealAndSucceed();
+          this.flippedtile.marryNewlyfound();
+        } else {
+          this.setState({found:this.state.found,message:"wrong"});
+          tile.revealAndFail();
+          this.flippedtile.hideInSorrow();
+        }
+        setTimeout((function(){
+          this.wait = false;
+          this.setState({found:this.state.found,message:"choosetile"});
+          delete this.flippedtile;
+        }).bind(this),2000);
+      }
+    }
+  },
+  render: function() {
+    return (
+      &lt;div&gt;
+        &lt;button onClick={this.props.endGame}&gt;End game&lt;/button&gt;
+        &lt;Status found={this.state.found} max={this.props.tiles.length/2} message={this.state.message} /&gt;
+        {this.props.tiles.map(function(b,n){
+          return &lt;Tile word={b} key={n} clickedTile={this.clickedTile} /&gt;;
+        },this)}
+      &lt;/div&gt;
+    );
+  }
+});</code></pre>
+
+<p>board has status:</p>
+<pre><code><span class="javadoc">/** <span class="javadoctag">@jsx</span> React.DOM */</span>
+
+<span class="keyword">var</span> Status = React.createClass({
+  render: function() {
+    <span class="keyword">var</span> found = <span class="keyword">this</span>.props.found,
+        max = <span class="keyword">this</span>.props.max,
+        texts = {
+            choosetile:<span class="string">"Choose a tile!"</span>,
+            findmate:<span class="string">"Now try to find the matching tile!"</span>,
+            wrong:<span class="string">"Sorry, those didn't match!"</span>,
+            foundmate:<span class="string">"Yey, they matched!"</span>,
+            foundall:<span class="string">"You've found all "</span>+max+<span class="string">" pairs! Well done!"</span>
+        };
+    <span class="keyword">return</span> &lt;p&gt;({found}/{max})&amp;nbsp;&amp;nbsp;{texts[<span class="keyword">this</span>.props.message]}&lt;/p&gt;;
+  }
+});</code></pre>
+
+<p>And finally Tile:</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Tile = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span> <span class="keyword">return</span> {flipped: <span class="literal">false</span>}; },
+  catchClick: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.state.flipped){
+      <span class="keyword">this</span>.props.clickedTile(<span class="keyword">this</span>);
+    }
+  },
+  flipAndSearch: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">this</span>.setState({flipped:<span class="literal">true</span>});
+  },
+  hideInSorrow: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    setTimeout((<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span><span class="keyword">this</span>.setState({flipped:<span class="literal">false</span>});}).bind(<span class="keyword">this</span>),<span class="number">2000</span>);
+  },
+  revealAndFail: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">this</span>.setState({flipped:<span class="literal">true</span>});
+    setTimeout((<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span><span class="keyword">this</span>.setState({flipped:<span class="literal">false</span>});}).bind(<span class="keyword">this</span>),<span class="number">2000</span>);
+  },
+  revealAndSucceed: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">this</span>.setState({flipped:<span class="literal">true</span>});
+  },
+  marryNewlyfound: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> (
+      &lt;div className={<span class="string">'brick'</span>+(<span class="keyword">this</span>.state.flipped ? <span class="string">' flipped'</span> : <span class="string">''</span>)} onClick={<span class="keyword">this</span>.catchClick}&gt;
+        &lt;div className=<span class="string">"front"</span>&gt;?&lt;/div&gt;
+        &lt;div className=<span class="string">"back"</span>&gt;{<span class="keyword">this</span>.props.word}&lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+});</code></pre>
+
+
 
 
 <p>traps:</p>
 <p>return {this.props.name}  correct: return <div>{this.props.name}</div></p>
+<p>nogo:
+return (
+      {this.state.playing ? <Board tiles={this.state.tiles}/> : <Wordform />}
+    );</p>
+<p>no good: </p>
+<p>return (
+      <div>{this.state.playing ? <Board endGame={this.endGame} tiles={this.state.tiles}/> : <Wordform startGame={this.startGame} />}</div>
+    );
+  }</p>
+<p>more no good:</p>
+<p><Board className={this.state.playing ? "showing" : "hidden"} endGame={this.endGame} tiles={this.state.tiles}/>
+        <Wordform className={this.state.playing ? "hidden" : "showing"} startGame={this.startGame} /></p>
+<p>old solution:           //return (<div onClick={this.handleQlick.bind(this, n)} key={n}><Tile word={b} ref={"brick"+n} /></div>);</p>
 
 
   </main><!-- END role="main" -->
