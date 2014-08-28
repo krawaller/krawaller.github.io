@@ -11,7 +11,7 @@ type: post
 
 The last few days I've been toying with [React.js](http://facebook.github.io/react/), Facebook's excellent view abstraction library. In order to grokk it I built a simple memory game, which we'll dissect in this post.
 
-First off, here's the game running in a iframe. The repo can be found [here](https://github.com/krawaller/reactexperiment/).
+First off, here's the game running in a iframe (here's a [link](http://blog.krawaller.se/reactexperiment/) if you want it in a separate tab). The repo can be found [here](https://github.com/krawaller/reactexperiment/).
 
 <iframe src='http://blog.krawaller.se/reactexperiment/' style="height:140px;width:100%"></iframe>
 
