@@ -330,3 +330,24 @@ h2.post-title{
 header.site-head {padding: 50px 0;}
 .blog-description a {color: white;}
 h2.blog-description {font-size:12pt;}
+
+
+.content table {
+	background-color: #EEE;
+	border-collapse: collapse;
+	font-size: 0.8em;
+	text-align: center;
+	cell-spacing: none;
+	margin-left: 1em;
+}
+
+.content table, .content table th, .content table td {
+	border: 1px solid #666;
+	padding: 4px;
+	min-width: 70px;
+}
+
+.content table th {
+	padding: 8px;
+	background-color: #dedede;
+}

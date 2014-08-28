@@ -116,7 +116,7 @@ This post dissects a memory game built with React, focusing on structure and the
   <span class="tag">&lt;/<span class="title">body</span>&gt;</span>
 <span class="tag">&lt;/<span class="title">html</span>&gt;</span></code></pre>
 
-<p>We&#39;ll now walk through each of the five React components.</p>
+<p>We&#39;ll now walk through each of the five React components, and how they map to the fundamental React principle; initial data that won&#39;t change should be passed to a component as a property, while changing data should be handle in a component&#39;s <code>state</code>. If we need to communicate from a child to a parent, we do this by calling a callback that was passed to the child as a property.</p>
 <h3 id="the-game-component">The Game component</h3>
 <p>First off is the Game component. It is responsible for switching between the form and the board, and passing data from the form to the board.</p>
 <pre><code><span class="comment">/** @jsx React.DOM */</span>
@@ -149,6 +149,13 @@ This post dissects a memory game built with React, focusing on structure and the
   }
 });</span></code></pre>
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td></td><td>playing<br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
+  </tbody>
+</table>
+
 <p>The <code>Game</code> component has two <code>state</code> variables:</p>
 <ul>
 <li><code>playing</code> which controls which sub component to show or hide.</li>
@@ -167,7 +174,7 @@ This post dissects a memory game built with React, focusing on structure and the
 <p>...which actually worked, but generated a React error message about an unmounted component. The official docs also state that instead of generating different components, we should generate them all and show/hide them as needed.</p>
 <p>Also related to the life cycle of a component is the <code>key</code> property of the <code>Board</code>. Changing <code>key</code> ensures we have a new <code>Board</code> instance whenever we enter new words in the form, otherwise React will just repopulate the existing <code>Board</code> with new words. That means that previously flipped tiles will still be flipped, even though they now contain new words. Remove the <code>seed</code> property and try it!</p>
 <h3 id="the-wordform-component">The Wordform component</h3>
-<p>This component displays a form for entering words to be used as tiles, validates the input and passes it back up to <code>Game</code> by calling <code>startGame</code> which it received as a property.</p>
+<p>This component displays a form for entering words to be used as tiles.</p>
 <pre><code><span class="comment">/** @jsx React.DOM */</span>
 
 <span class="keyword">var</span> Wordform = React.createClass({
@@ -207,8 +214,16 @@ This post dissects a memory game built with React, focusing on structure and the
   }
 });</span></code></pre>
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>startGame()</td><td>error</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>The <code>Wordform</code> component validates the input and passes it back up to <code>Game</code> by calling the <code>startGame</code> method which it received as a property.</p>
 <p>In order to collect the contents of the input field we use the <code>refs</code> instance property, with the same key (<code>wordfield</code>) as given to the <code>ref</code> property of the corresponding node in the render output.</p>
-<p>Note how showing and hiding error messages are done through simple calls to <code>setState</code>, which triggers the rerender. It feels almost like we have a two-way data binding!</p>
+<p>Note how showing and hiding error messages are done through changing the <code>error</code> state variable, which triggers the rerender. It feels almost like we have a two-way data binding!</p>
 <h3 id="the-board-component">The Board component</h3>
 <p>Here&#39;s the code for the <code>Board</code> component, which displays the game board:</p>
 <pre><code><span class="comment">/** @jsx React.DOM */</span>
@@ -258,6 +273,14 @@ This post dissects a memory game built with React, focusing on structure and the
   }
 });</span></code></pre>
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>tiles<br/>endGame()</td><td>found<br/>message</td><td>Status<br/>Tile</td><td>wait<br/>flippedtile</td></tr>
+  </tbody>
+</table>
+
+<p>The Board component was passed a <code>tiles</code> array and an <code>endGame</code> callback from its parent.</p>
 <p>It has two state variables:</p>
 <ul>
 <li><code>found</code> which counts how many pairs the player has found</li>
@@ -271,8 +294,9 @@ This post dissects a memory game built with React, focusing on structure and the
 <p>The <code>clickedTile</code> callback will be called from the individual tiles, with the tile instance as parameter. As you can see, this method contains the full logic for the actual game.</p>
 <p>Note how this method uses the instance variables <code>this.wait</code> and <code>this.flippedtile</code>. These do NOT need to be <code>state</code> variables, as they don&#39;t affect the rendering! Only state which might affect what the component looks like need to be stored using <code>this.setState</code>.</p>
 <h3 id="the-status-component">The Status component</h3>
-<p>This component was passed <code>found</code>, <code>max</code> and <code>message</code> from its parent. It then bakes this together into a UI info row.</p>
 <pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+This component renders the info row above the game board.
 
 <span class="keyword">var</span> Status = React.createClass({
   render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
@@ -289,8 +313,17 @@ This post dissects a memory game built with React, focusing on structure and the
   }
 });</code></pre>
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>found<br/>max<br/>message</td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>The <code>Status</code> component was passed <code>found</code>, <code>max</code> and <code>message</code> from its parent. It then bakes this together into a UI info row.</p>
+<p>Note how even though the status row is constantly changing while playing, this is a totally static component. It contains no state variables, and all updates are controlled in the parent!</p>
 <h3 id="the-tile-component">The Tile component</h3>
-<p>This component represents an individual tile. It was passed a <code>word</code> and a <code>clickedTile</code> callback.</p>
+<p>This component represents an individual tile.</p>
 <pre><code><span class="comment">/** @jsx React.DOM */</span>
 
 <span class="keyword">var</span> Tile = React.createClass({
@@ -323,13 +356,21 @@ This post dissects a memory game built with React, focusing on structure and the
   }
 });</span></code></pre>
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>word<br/>clickedTile()</td><td>flipped</br>wrong<br/>correct</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>It was passed two properties from the parent; a <code>word</code> variable and a <code>clickedTile</code> callback.</p>
 <p>The component has three <code>state</code> variables:</p>
 <ul>
 <li><code>flipped</code> is a flag to show if the tile has been flipped up or not. While flipped it will not receive clicks.</li>
 <li><code>wrong</code> is true if the tile was part of a failed match attempt.</li>
 <li><code>correct</code> is true if the tile has been matched to a partner.</li>
 </ul>
-<p>When clicked the component will call the <code>catchClick</code> callback passing itself as a parameter. All game logic is in <code>Board</code>, as we saw previously.</p>
+<p>When clicked the component will call the <code>clickedTile</code> callback passing itself as a parameter. All game logic is in <code>Board</code>, as we saw previously.</p>
 <h3 id="wrapping-up">Wrapping up</h3>
 <p>I&#39;m totally in love with React! It took a while to grasp the thinking, like for example the differentiation between <code>state</code> and <code>props</code>, and how <code>state</code> can belong in <code>props</code> when passed to a child. But when that mentality was in place, putting it all together was a breeze. I really appreciate not having to write any update or cleanup code (I&#39;m looking at you, Backbone), delegating all that headache to React!</p>
 <p>Passing callbacks to allow for upstream communication can feel a bit clunky, and I look forward to trying out the Flux approach instead. I also want to integrate a Router, and see how that plays along with it all.</p>

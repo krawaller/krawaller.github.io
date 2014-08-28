@@ -62,7 +62,7 @@ Finally `index.html` is a super simple bootstrap kicking it all off:
 </html>
 ```
 
-We'll now walk through each of the five React components.
+We'll now walk through each of the five React components, and how they map to the fundamental React principle; initial data that won't change should be passed to a component as a property, while changing data should be handle in a component's `state`. If we need to communicate from a child to a parent, we do this by calling a callback that was passed to the child as a property.
 
 ### The Game component
 
@@ -100,6 +100,13 @@ var Game = React.createClass({
 });
 ```
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td></td><td>playing<br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
+  </tbody>
+</table>
+
 The `Game` component has two `state` variables:
 
 *    `playing` which controls which sub component to show or hide.
@@ -125,7 +132,7 @@ Also related to the life cycle of a component is the `key` property of the `Boar
 
 ###The Wordform component
 
-This component displays a form for entering words to be used as tiles, validates the input and passes it back up to `Game` by calling `startGame` which it received as a property.
+This component displays a form for entering words to be used as tiles.
 
 ```javascript
 /** @jsx React.DOM */
@@ -168,9 +175,18 @@ var Wordform = React.createClass({
 });
 ```
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>startGame()</td><td>error</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+The `Wordform` component validates the input and passes it back up to `Game` by calling the `startGame` method which it received as a property.
+
 In order to collect the contents of the input field we use the `refs` instance property, with the same key (`wordfield`) as given to the `ref` property of the corresponding node in the render output.
 
-Note how showing and hiding error messages are done through simple calls to `setState`, which triggers the rerender. It feels almost like we have a two-way data binding!
+Note how showing and hiding error messages are done through changing the `error` state variable, which triggers the rerender. It feels almost like we have a two-way data binding!
 
 ### The Board component
 
@@ -225,6 +241,15 @@ var Board = React.createClass({
 });
 ```
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>tiles<br/>endGame()</td><td>found<br/>message</td><td>Status<br/>Tile</td><td>wait<br/>flippedtile</td></tr>
+  </tbody>
+</table>
+
+The Board component was passed a `tiles` array and an `endGame` callback from its parent.
+
 It has two state variables:
 
 *    `found` which counts how many pairs the player has found
@@ -243,10 +268,11 @@ Note how this method uses the instance variables `this.wait` and `this.flippedti
 
 ###The Status component
 
-This component was passed `found`, `max` and `message` from its parent. It then bakes this together into a UI info row.
 
 ```javascript
 /** @jsx React.DOM */
+
+This component renders the info row above the game board.
 
 var Status = React.createClass({
   render: function() {
@@ -264,9 +290,20 @@ var Status = React.createClass({
 });
 ```
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>found<br/>max<br/>message</td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+The `Status` component was passed `found`, `max` and `message` from its parent. It then bakes this together into a UI info row.
+
+Note how even though the status row is constantly changing while playing, this is a totally static component. It contains no state variables, and all updates are controlled in the parent!
+
 ###The Tile component
 
-This component represents an individual tile. It was passed a `word` and a `clickedTile` callback.
+This component represents an individual tile.
 
 ```javascript
 /** @jsx React.DOM */
@@ -302,13 +339,22 @@ var Tile = React.createClass({
 });
 ```
 
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>word<br/>clickedTile()</td><td>flipped</br>wrong<br/>correct</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+It was passed two properties from the parent; a `word` variable and a `clickedTile` callback.
+
 The component has three `state` variables:
 
 *    `flipped` is a flag to show if the tile has been flipped up or not. While flipped it will not receive clicks.
 *    `wrong` is true if the tile was part of a failed match attempt.
 *    `correct` is true if the tile has been matched to a partner.
 
-When clicked the component will call the `catchClick` callback passing itself as a parameter. All game logic is in `Board`, as we saw previously.
+When clicked the component will call the `clickedTile` callback passing itself as a parameter. All game logic is in `Board`, as we saw previously.
 
 
 ###Wrapping up
