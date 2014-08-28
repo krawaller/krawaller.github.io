@@ -25,7 +25,7 @@ This is the full contents of the repo:
 
 The `lib` folder contains the only 3 dependencies:
 
-*    `react.js` is the react librabry itself
+*    `react.js` is the react librabry itself. We don't need the add-on version, just plain vanilla React.
 *    `JSXTransformer.js` translates the JSX syntax. In production this should of course be part of the build process.
 *    `lodash.js` is used merely to make for some cleaner code in the game logic.
 
@@ -127,7 +127,7 @@ return (
 
 ...which actually worked, but generated a React error message about an unmounted component. The official docs also state that instead of generating different components, we should generate them all and show/hide them as needed.
 
-Also related to the life cycle of a component is the `key` property of the `Board`. Changing `key` ensures we have a new `Board` instance whenever we enter new words in the form, otherwise React will just repopulate the existing `Board` with new words. That means that previously flipped tiles will still be flipped, even though they now contain new words. Remove the `seed` property and try it!
+Also related to the life cycle of a component is the `key` property of the `Board`. Changing `key` ensures we have a new `Board` instance whenever we enter new words in the form, otherwise React will just repopulate the existing `Board` with new words. That means that previously flipped tiles will still be flipped, even though they now contain new words. Remove the `key` property and try it!
 
 
 ###The Wordform component
@@ -205,7 +205,7 @@ var Board = React.createClass({
       if (!this.flippedtile){
         this.flippedtile = tile;
         tile.reveal();
-        this.setState({found:this.state.found,message:"findmate"});
+        this.setState({message:"findmate"});
       // clicked second
       } else {
         this.wait = true;
@@ -214,13 +214,13 @@ var Board = React.createClass({
           tile.succeed();
           this.flippedtile.succeed();
         } else {
-          this.setState({found:this.state.found,message:"wrong"});
+          this.setState({message:"wrong"});
           tile.fail();
           this.flippedtile.fail();
         }
         setTimeout((function(){
           this.wait = false;
-          this.setState({found:this.state.found,message:"choosetile"});
+          this.setState({message:"choosetile"});
           delete this.flippedtile;
         }).bind(this),2000);
       }

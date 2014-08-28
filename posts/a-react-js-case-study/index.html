@@ -84,7 +84,7 @@ This post dissects a memory game built with React, focusing on structure and the
 <p><img src='../../img/reactexperimentsource.png' style="margin-left:4em;" /></p>
 <p>The <code>lib</code> folder contains the only 3 dependencies:</p>
 <ul>
-<li><code>react.js</code> is the react librabry itself</li>
+<li><code>react.js</code> is the react librabry itself. We don&#39;t need the add-on version, just plain vanilla React.</li>
 <li><code>JSXTransformer.js</code> translates the JSX syntax. In production this should of course be part of the build process.</li>
 <li><code>lodash.js</code> is used merely to make for some cleaner code in the game logic.</li>
 </ul>
@@ -172,7 +172,7 @@ This post dissects a memory game built with React, focusing on structure and the
 );</code></pre> 
 
 <p>...which actually worked, but generated a React error message about an unmounted component. The official docs also state that instead of generating different components, we should generate them all and show/hide them as needed.</p>
-<p>Also related to the life cycle of a component is the <code>key</code> property of the <code>Board</code>. Changing <code>key</code> ensures we have a new <code>Board</code> instance whenever we enter new words in the form, otherwise React will just repopulate the existing <code>Board</code> with new words. That means that previously flipped tiles will still be flipped, even though they now contain new words. Remove the <code>seed</code> property and try it!</p>
+<p>Also related to the life cycle of a component is the <code>key</code> property of the <code>Board</code>. Changing <code>key</code> ensures we have a new <code>Board</code> instance whenever we enter new words in the form, otherwise React will just repopulate the existing <code>Board</code> with new words. That means that previously flipped tiles will still be flipped, even though they now contain new words. Remove the <code>key</code> property and try it!</p>
 <h3 id="the-wordform-component">The Wordform component</h3>
 <p>This component displays a form for entering words to be used as tiles.</p>
 <pre><code><span class="comment">/** @jsx React.DOM */</span>
@@ -238,7 +238,7 @@ This post dissects a memory game built with React, focusing on structure and the
       <span class="keyword">if</span> (!<span class="keyword">this</span>.flippedtile){
         <span class="keyword">this</span>.flippedtile = tile;
         tile.reveal();
-        <span class="keyword">this</span>.setState({found:<span class="keyword">this</span>.state.found,message:<span class="string">"findmate"</span>});
+        <span class="keyword">this</span>.setState({message:<span class="string">"findmate"</span>});
       <span class="comment">// clicked second</span>
       } <span class="keyword">else</span> {
         <span class="keyword">this</span>.wait = <span class="literal">true</span>;
@@ -247,13 +247,13 @@ This post dissects a memory game built with React, focusing on structure and the
           tile.succeed();
           <span class="keyword">this</span>.flippedtile.succeed();
         } <span class="keyword">else</span> {
-          <span class="keyword">this</span>.setState({found:<span class="keyword">this</span>.state.found,message:<span class="string">"wrong"</span>});
+          <span class="keyword">this</span>.setState({message:<span class="string">"wrong"</span>});
           tile.fail();
           <span class="keyword">this</span>.flippedtile.fail();
         }
         setTimeout((<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
           <span class="keyword">this</span>.wait = <span class="literal">false</span>;
-          <span class="keyword">this</span>.setState({found:<span class="keyword">this</span>.state.found,message:<span class="string">"choosetile"</span>});
+          <span class="keyword">this</span>.setState({message:<span class="string">"choosetile"</span>});
           <span class="keyword">delete</span> <span class="keyword">this</span>.flippedtile;
         }).bind(<span class="keyword">this</span>),<span class="number">2000</span>);
       }
