@@ -31,7 +31,7 @@ The `lib` folder contains the only 3 dependencies:
 
 The `src` folder then contains files for all of our React components. The hierarchy looks like thus:
 
-<img src='../../img/reactexperiment.png' style="height:200px;margin-left:4em" />
+<img src='../../img/reactexperiment.png' style="height:300px;margin-left:4em" />
 
 Finally `index.html` is a super simple bootstrap kicking it all off:
 
