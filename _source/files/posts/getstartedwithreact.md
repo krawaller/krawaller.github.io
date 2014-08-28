@@ -13,7 +13,7 @@ The last few days I've been toying with [React.js](http://facebook.github.io/rea
 
 First off, here's the game running in a iframe (here's a [link](http://blog.krawaller.se/reactexperiment/) if you want it in a separate tab). The repo can be found [here](https://github.com/krawaller/reactexperiment/).
 
-<iframe src='http://blog.krawaller.se/reactexperiment/' style="height:140px;width:100%"></iframe>
+<iframe src='http://blog.krawaller.se/reactexperiment/' style="height:240px;width:100%"></iframe>
 
 As you can see the game is rather simple, yet included enough state and compositions to force me to actually use React.
 
@@ -31,7 +31,7 @@ The `lib` folder contains the only 3 dependencies:
 
 The `src` folder then contains files for all of our React components. The hierarchy looks like thus:
 
-<img src='../../img/reactexperiment.png' style="height:300px;margin-left:4em" />
+<img src='../../img/reactexperiment.png' style="height:200px;margin-left:4em" />
 
 Finally `index.html` is a super simple bootstrap kicking it all off:
 
