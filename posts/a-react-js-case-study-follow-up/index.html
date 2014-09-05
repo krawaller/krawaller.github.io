@@ -160,7 +160,7 @@ This post details a refactoring of the previous React case study. We also touch 
   : <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">onWordsEntered</span>=<span class="value">{this.startGame}</span> /&gt;</span>
 );</span></code></pre>
 
-<p>Note also how we no longer need to throw a random seed into the <code>key</code> property of <code>Board</code> to force it to rerender, as it will always be a new board since it previously didn&#39;t exist in the Shadow DOM.</p>
+<p>Note also how we no longer need to throw a random seed into the <code>key</code> property of <code>Board</code> to force it to rerender, as it will always be a new board since it previously didn&#39;t exist in the virtual DOM.</p>
 <p>A side note; if we used React with addons, we could use <a href="http://facebook.github.io/react/docs/animation.html">ReactCSSTransitionGroup</a> to animate the components as they enter/leave.</p>
 <h3 id="decoupling-through-callback-names">Decoupling through callback names</h3>
 <p>Sharp eyes will also note how the new version passes <code>this.startGame</code> to <code>Wordform</code> as a property called <code>onWordsEntered</code> instead of <code>startGame</code>. This was another <a href="https://github.com/ianobermiller/reactexperiment/commit/1d2335876ba85d17929212e538e5823db84eabe7">good point of feedback from Ian</a>; name your properties to make the child less coupled to the parent. <code>Wordform</code> doesn&#39;t care what happens when the words are submitted, it merely calls a callback when that happens. The name should reflect that.</p>

@@ -120,7 +120,7 @@ return (
 );
 ```
 
-Note also how we no longer need to throw a random seed into the `key` property of `Board` to force it to rerender, as it will always be a new board since it previously didn't exist in the Shadow DOM.
+Note also how we no longer need to throw a random seed into the `key` property of `Board` to force it to rerender, as it will always be a new board since it previously didn't exist in the virtual DOM.
 
 A side note; if we used React with addons, we could use [ReactCSSTransitionGroup](http://facebook.github.io/react/docs/animation.html) to animate the components as they enter/leave.
 
