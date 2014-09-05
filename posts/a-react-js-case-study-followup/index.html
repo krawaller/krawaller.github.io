@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A React.js case study followup</title>
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+This post details a refactoring of the previous React case study. We also touch on some Underscore usage.
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/a-react-js-case-study-followup">A React.js case study followup</a>
+    <span class="post-meta">
+      <time datetime="Fri Sep 05 2014 02:00:00 GMT+0200 (CEST)">Sep 5th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/react/'>react</a></span>
+      
+        <span><a href='../../tags/underscore/'>underscore</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="react-memory-game-version-2">React Memory Game version 2</h3>
+<p>A week ago I wrote a <a href="../a-react-js-case-study">case study on a small React experiment</a>, a memory game I whipped up to learn the ins and outs of React. Here&#39;s the game in an iframe again (here&#39;s a <a href="http://blog.krawaller.se/reactexperiment/">link</a> if you want it in a separate tab), to save you from hopping back to check it out. The repo, as before, can be found <a href="https://github.com/krawaller/reactexperiment/">here</a>.</p>
+<iframe src='http://blog.krawaller.se/reactexperiment/' style="height:240px;width:100%"></iframe>
+
+<p>Since this was my first foray into React the code was, well, less than perfect. But I was fortunate to receive lots of excellent feedback in the comments and <a href="https://news.ycombinator.com/item?id=8247223">on Hacker News</a>, foremost of which was Facebook&#39;s <a href="http://ianobermiller.com/">Ian Obermiller</a> who took the time to do a <a href="https://github.com/ianobermiller/reactexperiment/">fork of the repo</a> with <a href="https://github.com/ianobermiller/reactexperiment/commits/">in-depth comments to each commit</a>.</p>
+<p>After digesting all the feedback, and having spent more time with the React docs, I went over the Memory game code again. This post walks through those changes and the lessons learned. The text assumes you&#39;ve already read the <a href="../a-react-js-case-study">previous post</a>, so please hop over there if you came straight here.</p>
+<h3 id="es6-transformation">ES6 Transformation</h3>
+<p>First off, Ian and others pointed out that the JSX Transformation also contains support for some ES6 features, so there&#39;s really no reason not to use them! Throughout the new code I&#39;ve therefore made use of these, primarily the <a href="http://tc39wiki.calculist.org/es6/arrow-functions/">Arrow Functions</a> and <a href="http://tc39wiki.calculist.org/es6/object-literal-enhancements/">Method Definition Shorthand</a>.</p>
+<p>The Arrow Function syntax has many nuances, but primarily it is a way to define a function more succinctly. The created function is also bound to the current scope.</p>
+<pre><code><span class="comment">// old way</span>
+<span class="keyword">var</span> myFunc = (<span class="function"><span class="keyword">function</span><span class="params">(arg)</span>{</span>
+    <span class="comment">// do stuff</span>
+}).bind(<span class="keyword">this</span>);
+
+<span class="comment">// ES6 way</span>
+<span class="keyword">var</span> myFunc = (arg)=&gt;{
+    <span class="comment">// do stuff</span>
+}</code></pre>
+
+<p>And here&#39;s the method definition shorthand example:</p>
+<pre><code><span class="comment">// old way</span>
+<span class="keyword">var</span> o = {
+  method: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> <span class="string">"Hello!"</span>;
+  }
+};
+
+<span class="comment">//ES6 way</span>
+<span class="keyword">var</span> o = {
+  method() {
+    <span class="keyword">return</span> <span class="string">"Hello!"</span>;
+  }
+};</code></pre>
+
+
+<h3 id="the-new-game-component-code">The new Game component code</h3>
+<p>Now to the React stuff! Starting again with the top-level <code>Game</code> component, here&#39;s the updated code:</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Game = React.createClass({
+  getInitialState() {<span class="keyword">return</span> {};},
+  startGame(words){
+    <span class="keyword">this</span>.setState({
+      words:_.shuffle(words.concat(words)),
+      playing:<span class="literal">true</span>
+    });
+  },
+  endGame(){
+    <span class="keyword">this</span>.setState({playing:<span class="literal">false</span>});
+  },
+  render(){
+    <span class="keyword">return</span> (
+      <span class="keyword">this</span>.state.playing ? <span class="xml"><span class="tag">&lt;<span class="title">Board</span> <span class="attribute">onEndGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">words</span>=<span class="value">{this.state.words}</span>/&gt;</span>
+      : <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">onWordsEntered</span>=<span class="value">{this.startGame}</span> /&gt;</span>
+    );
+  }
+});</span></code></pre>
+
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td></td><td>playing<br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
+  </tbody>
+</table>
+
+<p>For each component I&#39;ll also show the same table as before, highlighting any differences. The table for <code>Game</code> shown here is the same as before.</p>
+<h3 id="show-amp-hide-versus-rendering-only-relevant-components">Show &amp; hide versus rendering only relevant components</h3>
+<p>in my first version I alternated between showing the <code>Board</code> and <code>Wordform</code> through always rendering both, but showing and hiding them as appropriate. This is the old render function containing this approach:</p>
+<pre><code><span class="keyword">return</span> (
+  <span class="xml"><span class="tag">&lt;<span class="title">div</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">{this.state.playing</span> ? "<span class="attribute">showing</span>" <span class="attribute">:</span> "<span class="attribute">hidden</span>"}&gt;</span>
+      <span class="tag">&lt;<span class="title">Board</span> <span class="attribute">endGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">tiles</span>=<span class="value">{this.state.tiles}</span> <span class="attribute">max</span>=<span class="value">{this.state.tiles.length</span>/<span class="attribute">2</span>} <span class="attribute">key</span>=<span class="value">{this.state.seed}</span>/&gt;</span>
+    <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">{this.state.playing</span> ? "<span class="attribute">hidden</span>" <span class="attribute">:</span> "<span class="attribute">showing</span>"}&gt;</span>
+      <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">startGame</span>=<span class="value">{this.startGame}</span> /&gt;</span>
+    <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+  <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+);</span></code></pre>
+
+<p>By misreading the docs and misunderstanding an error message, I was fooled into believing that this was the way to go, instead of choosing what component to render. As it turns out, there is no problem with the latter approach, which of course makes for much cleaner code:</p>
+<pre><code><span class="keyword">return</span> (
+  <span class="keyword">this</span>.state.playing ? <span class="xml"><span class="tag">&lt;<span class="title">Board</span> <span class="attribute">onEndGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">words</span>=<span class="value">{this.state.words}</span>/&gt;</span>
+  : <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">onWordsEntered</span>=<span class="value">{this.startGame}</span> /&gt;</span>
+);</span></code></pre>
+
+<p>Note also how we no longer need to throw a random seed into the <code>key</code> property of <code>Board</code> to force it to rerender, as it will always be a new board since it previously didn&#39;t exist in the Shadow DOM.</p>
+<h3 id="decoupling-through-callback-names">Decoupling through callback names</h3>
+<p>Sharp eyes will also note how the new version passes <code>this.startGame</code> to <code>Wordform</code> as a property called <code>onWordsEntered</code> instead of <code>startGame</code>. This was another <a href="https://github.com/ianobermiller/reactexperiment/commit/1d2335876ba85d17929212e538e5823db84eabe7">good point of feedback from Ian</a>; name your properties to make the child less coupled to the parent. <code>Wordform</code> doesn&#39;t care what happens when the words are submitted, it merely calls a callback when that happens. The name should reflect that.</p>
+<p>Similar renamings have been done throughout the code base.</p>
+<h3 id="the-new-wordform-component-code">The new Wordform component code</h3>
+<p>Here&#39;s what the new <code>Wordform</code> component code looks like:</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Wordform = React.createClass({
+  propTypes: {
+    onWordsEntered: React.PropTypes.func.isRequired
+  },
+  getInitialState(){
+    <span class="keyword">return</span> {error:<span class="string">''</span>};
+  },
+  setError(msg){
+    <span class="keyword">this</span>.setState({error:msg});
+    setTimeout(()=&gt;{<span class="keyword">this</span>.setState({error:<span class="string">''</span>});},<span class="number">2000</span>);
+  },
+  submitWords(e){
+    <span class="keyword">var</span> node = <span class="keyword">this</span>.refs[<span class="string">'wordfield'</span>].getDOMNode(),
+        words = (node.value || <span class="string">''</span>).trim().replace(<span class="regexp">/\W+/g</span>,<span class="string">' '</span>).split(<span class="string">' '</span>);
+    <span class="keyword">if</span> (words.length &lt;= <span class="number">2</span>) {
+      <span class="keyword">this</span>.setError(<span class="string">'Enter at least 3 words!'</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (words.length !== _.unique(words).length) {
+      <span class="keyword">this</span>.setError(<span class="string">'Don\'t enter duplicate words!'</span>);
+    } <span class="keyword">else</span> <span class="keyword">if</span> (_.find(words,(w)=&gt;w.length &gt; <span class="number">8</span>)) {
+      <span class="keyword">this</span>.setError(<span class="string">'Words should not be longer than 8 characters!'</span>);
+    } <span class="keyword">else</span> {
+      <span class="keyword">this</span>.props.onWordsEntered(words);
+      node.value = <span class="string">''</span>;
+    }
+    <span class="keyword">return</span> <span class="literal">false</span>;
+  },
+  render() {
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">form</span> <span class="attribute">onSubmit</span>=<span class="value">{this.submitWords}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">p</span>&gt;</span>Enter words separated by spaces!<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">input</span> <span class="attribute">type</span>=<span class="value">'text'</span> <span class="attribute">ref</span>=<span class="value">'wordfield'</span> /&gt;</span>
+        <span class="tag">&lt;<span class="title">button</span> <span class="attribute">type</span>=<span class="value">'submit'</span>&gt;</span>Start!<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">p</span> <span class="attribute">className</span>=<span class="value">'error'</span> <span class="attribute">ref</span>=<span class="value">'errormsg'</span>&gt;</span>{this.state.error}<span class="tag">&lt;/<span class="title">p</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">form</span>&gt;</span>
+    );
+  }
+});</span></code></pre>
+
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td><em>onWordsEntered()</em></td><td>error</td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>The only change in the table is the already mentioned renaming, shown here through the italizicing of <code>onWordsEntered</code>.</p>
+<h3 id="defining-expected-properties-through-proptypes">Defining expected properties through propTypes</h3>
+<p>The primary point of interest in <code>Wordform</code> is up top; Ian made me aware of the <code>propTypes</code> property which allows you to clearly communicate what properties your component expects (and also validate them while in development mode).</p>
+<pre><code>propTypes: {
+  onWordsEntered: React.PropTypes.func.isRequired
+},</code></pre>
+
+<p>As we see here <code>Wordform</code> just expects the one, namely the previously mentioned callback which got a new name.</p>
+<h3 id="semi-defining-the-state-variables">Semi-defining the state variables</h3>
+<p>Note our call to <code>getInitialState</code>:</p>
+<pre><code>getInitialState(){
+  <span class="keyword">return</span> {error:<span class="string">''</span>};
+}</code></pre>
+
+<p>Returning an empty object here would suffice, but explicitly setting the <code>error</code> property to an empty string communicates that the component will make use of this state variable.</p>
+<p>This, along with the <code>propTypes</code> literal above, goes a long way to help the reader to gain immediate understanding of the component&#39;s functionality. Together they give you the same information as my data table!</p>
+<h3 id="underscore-elitism">Underscore elitism</h3>
+<p>There is one other tiny change regarding <code>Wordform</code>; in the old code, I used the following expression to test if any word was too long;</p>
+<pre><code>_.filter(words,<span class="function"><span class="keyword">function</span><span class="params">(w)</span>{</span><span class="keyword">return</span> w.length &gt; <span class="number">8</span>;}).length</code></pre>
+
+<p>...while in the new code, I&#39;m doing this (shown here without ES6 stuff):</p>
+<pre><code>_.find(words,<span class="function"><span class="keyword">function</span><span class="params">(w)</span>{</span> <span class="keyword">return</span> w.length &gt; <span class="number">8</span>;})</code></pre>
+
+<p>Functionally it makes absolutely no difference, but it touches on something I feel is important, albeight on a pedantic level - knowing your tools is important. Learning Underscore/Lodash (along with functional programming) levelled me up quite a bit as a programmer, and I took pride in being able to write shorter code. Making this &quot;mistake&quot; therefore itched quite a bit.</p>
+<h3 id="the-new-board-component-code">The new Board component code</h3>
+<p>Now for the big one! <code>Board</code> was already the most complex component, so it is only natural that it contains the most changes. Here&#39;s the new code in full:</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Board = React.createClass({
+  propTypes: {
+    words: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    onEndGame: React.PropTypes.func.isRequired
+  },
+  getInitialState() {
+    <span class="keyword">return</span> {
+      found: <span class="number">0</span>,
+      message: <span class="string">'choosetile'</span>,
+      tilestates: _.map(_.range(<span class="keyword">this</span>.props.words.length),()=&gt;<span class="string">'unturned'</span>)
+    };
+  },
+  componentWillMount() {
+    <span class="keyword">this</span>.max = <span class="keyword">this</span>.props.words.length/<span class="number">2</span>;
+  },
+  clickedTile(index){
+    <span class="keyword">if</span> (<span class="keyword">this</span>.state.tilestates[index]===<span class="string">'unturned'</span>){
+      <span class="comment">// turn up lone tile</span>
+      <span class="keyword">if</span> (<span class="keyword">this</span>.flippedTileIndex === <span class="literal">undefined</span>) {
+        <span class="keyword">this</span>.flippedTileIndex = index;
+        <span class="keyword">this</span>.setState({
+          message: <span class="string">'findmate'</span>,
+          tilestates: _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index],[<span class="string">'revealed'</span>]))
+        });
+      <span class="comment">// clicked second tile</span>
+      } <span class="keyword">else</span> {
+        <span class="keyword">var</span> otherindex = <span class="keyword">this</span>.flippedTileIndex,
+            matched = <span class="keyword">this</span>.props.words[index] === <span class="keyword">this</span>.props.words[otherindex];
+        <span class="keyword">delete</span> <span class="keyword">this</span>.flippedTileIndex;
+        <span class="comment">// found mathing pair</span>
+        <span class="keyword">if</span> (matched) {
+          <span class="keyword">this</span>.setState({
+            found: <span class="keyword">this</span>.state.found+<span class="number">1</span>,
+            message: <span class="string">'foundmate'</span>,
+            tilestates: _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index,otherindex],[<span class="string">'correct'</span>,<span class="string">'correct'</span>]))
+          });
+        <span class="comment">// pair didn't match</span>
+        } <span class="keyword">else</span> {
+          <span class="keyword">this</span>.setState({
+            message: <span class="string">'wrong'</span>,
+            tilestates: _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index,otherindex],[<span class="string">'wrong'</span>,<span class="string">'wrong'</span>]))
+          });
+        }
+        <span class="comment">// restore UI message after 1500, and flip back eventual failed attempt</span>
+        setTimeout(()=&gt;{
+          <span class="keyword">if</span> (<span class="keyword">this</span>.isMounted()) {
+            <span class="keyword">this</span>.setState({
+              message: <span class="keyword">this</span>.state.message === <span class="string">'findmate'</span> ? <span class="string">'findmate'</span> : <span class="keyword">this</span>.max === <span class="keyword">this</span>.state.found ? <span class="string">'foundall'</span> : <span class="string">'choosetile'</span>,
+              tilestates: matched ? <span class="keyword">this</span>.state.tilestates : _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index,otherindex],[<span class="string">'unturned'</span>,<span class="string">'unturned'</span>]))
+            });
+          }
+        },<span class="number">1500</span>);
+      }
+    }
+  },
+  render() {
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{this.props.onEndGame}</span>&gt;</span>End game<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">Status</span> <span class="attribute">found</span>=<span class="value">{this.state.found}</span> <span class="attribute">max</span>=<span class="value">{this.max}</span> <span class="attribute">message</span>=<span class="value">{this.state.message}</span> /&gt;</span>
+        {this.props.words.map(
+          (b,n) =&gt; <span class="tag">&lt;<span class="title">div</span> <span class="attribute">onClick</span>=<span class="value">{_.partial(this.clickedTile,n)}</span>&gt;</span><span class="tag">&lt;<span class="title">Tile</span> <span class="attribute">word</span>=<span class="value">{b}</span> <span class="attribute">status</span>=<span class="value">{this.state.tilestates[n]}</span> /&gt;</span><span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+        )}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  }
+});</span></code></pre>
+
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td><em>words</em><br/><em>onEndGame()</em></td><td>found<br/>message<br/><span style='color:green;'><strong>tilestates</strong></span></td><td>Status<br/>Tile</td><td><span style='color:red;text-decoration:line-through;'>wait</span><br/><em>flippedTileIndex</em></td></tr>
+  </tbody>
+</table>
+
+<p>As said, lots of changes, which we&#39;ll now walk through!</p>
+<h3 id="waiting-is-boring">Waiting is boring</h3>
+<p>First off, the old version contained a <code>wait</code> flag which made sure that after you turned up a pair, you couldn&#39;t click a new tile for 2 seconds while the succeed/fail animations took place. This &quot;feature&quot; was badly communicated and rather frustrating, and most people thought it was a bug.</p>
+<p>Therefore I decided to simply remove it, hence the stricken out <code>wait</code> instance variable in the component data table.</p>
+<h3 id="property-generated-constant">Property-generated constant</h3>
+<p>In the previous version <code>Board</code> didn&#39;t make use of <code>max</code>. It was just passed as a property to <code>Status</code>, calculated at that point:</p>
+<pre><code>&lt;Status found={<span class="keyword">this</span>.state.found} max={<span class="keyword">this</span>.props.tiles.length/<span class="number">2</span>} message={<span class="keyword">this</span>.state.message} /&gt;</code></pre>
+
+<p>Inside <code>Status</code> we used the <code>max</code> information to decide what to display when the message instruction from <code>Board</code> was <code>choosetile</code>:</p>
+<pre><code><span class="keyword">this</span>.props.message === <span class="string">"choosetile"</span> &amp;&amp; found === max ? <span class="string">"foundall"</span> : <span class="keyword">this</span>.props.message</code></pre>
+
+<p>Going over the code it felt weird to have just that particular logic in <code>Status</code>. It seemed to belong in the parent, so I decided to move it there. But that means <code>Board</code> now needs to use the <code>max</code> value, which raised a seemingly innocent question - how to handle that?</p>
+<p>The <code>max</code> value is calculated by doing <code>words.length/2</code>, but I don&#39;t want to calculate it on the fly every time I need it. An older version of the code passed <code>max</code> along with <code>words</code> from <code>Game</code> to <code>Board</code>, but that seems silly too. It should be calculated from <code>words</code> when the <code>Board</code> instance is initialized.</p>
+<p>The premier place for turned out to be the <code>componentWillMount</code> hook. At this point in the component life cycle the properties are accessible, so <code>max</code> can be set as an instance variable like thus:</p>
+<pre><code>componentWillMount() {
+    <span class="keyword">this</span>.max = <span class="keyword">this</span>.props.words.length/<span class="number">2</span>;
+},</code></pre>
+
+<p>Throughout the rest of the code I could then replace <code>this.props.max</code> with <code>this.max</code>. A small gain, but the real win was cleaning up the logic in the child component, <code>Status</code>, without having to increase the complexity of <code>Board</code>&#39;s signature by expecting <code>max</code> as a property.</p>
+<p>Note how the <code>componentWillMount</code> call sits up top with <code>propTypes</code> and <code>getInitialState</code>, as it also is communicating contents from my component data table!</p>
+<h3 id="state-variable-vs-instance-variable">State variable VS instance variable</h3>
+<p>I noticed Ian refactored the old <code>wait</code> instance variable to be a state variable, but I can&#39;t (yet?) see the advantage to that. Why put variables in this.state, with all the overhead that means, if they will never affect the output of the <code>render</code> method? That&#39;s why I didn&#39;t make <code>max</code> a state variable, which would of course also have worked:</p>
+<pre><code>getInitialState() {
+  <span class="keyword">return</span> {
+    max: <span class="keyword">this</span>.props.words.length/<span class="number">2</span>,
+    <span class="comment">// the other variables redacted</span>
+  };
+},</code></pre>
+
+<p>It would even mean less code, as the one extra line in the <code>getInitialState</code> object literal replaced the call to <code>componentWillMount</code>. Still, in my head, using <code>this.state</code> solely for rendering-affecting state took precedence.</p>
+<h3 id="the-new-status-component-code">The new Status component code</h3>
+<p>Here&#39;s the full code for the updated Status component.</p>
+<pre><code><span class="comment">/** @jsx React.DOM */</span>
+
+<span class="keyword">var</span> Status = React.createClass({
+  propTypes: {
+    found: React.PropTypes.number.isRequired,
+    max: React.PropTypes.number.isRequired,
+    message: React.PropTypes.oneOf([<span class="string">'choosetile'</span>,<span class="string">'findmate'</span>,<span class="string">'wrong'</span>,<span class="string">'foundmate'</span>,<span class="string">'foundall'</span>]).isRequired
+  },
+  render() {
+    <span class="keyword">var</span> found = <span class="keyword">this</span>.props.found,
+        max = <span class="keyword">this</span>.props.max,
+        texts = {
+          choosetile:<span class="string">'Choose a tile!'</span>,
+          findmate:<span class="string">'Now try to find the matching tile!'</span>,
+          wrong:<span class="string">'Sorry, those didn\'t match!'</span>,
+          foundmate:<span class="string">'Yey, they matched!'</span>,
+          foundall:<span class="string">'You\'ve found all '</span>+max+<span class="string">' pairs! Well done!'</span>
+        };
+    <span class="keyword">return</span> <span class="xml"><span class="tag">&lt;<span class="title">p</span>&gt;</span>({found}/{max})&amp;nbsp;&amp;nbsp;{texts[this.props.message]}<span class="tag">&lt;/<span class="title">p</span>&gt;</span>;</span>
+  }
+});</code></pre>
+
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>found<br/>max<br/>message</td><td></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>The only change is the already discussed extraction of logic deciding whether to show <code>foundall</code> or <code>choosetile</code>.</p>
+<p>Note also the neat syntax for defining an enum proptype, used here for the <code>message</code> property.</p>
+<p>Performance-wise it would probably be beneficial to move the <code>texts</code> variable out of the <code>createClass</code> call, to prevent it having to be created everytime <code>render</code> is called. As is, though, it hardly matters.</p>
+<h3 id="the-state-of-a-tile">The state of a tile</h3>
+<p>In the old version, the <code>Tile</code> component made use of three state variables; <code>flipped</code>, <code>correct</code> and <code>wrong</code>. This was really bad design on my part, which also made for needlessly complex code. When a tile is flipped, it is either correct or wrong. If wrong, I&#39;ll reset flipped to false after 2 seconds. </p>
+<p>A much better design is to bake this into a single tile status variable with the possible values of <code>unturned</code>, <code>correct</code> and <code>wrong</code>!</p>
+<p>So why are we discussing the innards of <code>Tile</code> while going over changes to <code>Board</code>? Because having refactored everything into that single <code>status</code> enum variable, I realised that this value should be passed to <code>Tile</code> from <code>Board</code>. Before, when they were three different variables, I didn&#39;t even see the possibility. Ian did, so his <a href="https://github.com/ianobermiller/reactexperiment/commit/eb99289124a0154edfcd59486afc45e47bfefa77">new version of <code>Board</code></a> contains two state arrays tracking this; <code>wrongIndexes</code> and <code>correctIndexes</code>.</p>
+<p>Having baked it all together into an enum variable, my approach was instead to give <code>Board</code> a single <code>tilestates</code> array containing these values. We initially set them all to <code>unturned</code>:</p>
+<pre><code>getInitialState() {
+  <span class="keyword">return</span> {
+    tilestates: _.map(_.range(<span class="keyword">this</span>.props.words.length),()=&gt;<span class="string">'unturned'</span>),
+    <span class="comment">// the other variables redacted</span>
+  };
+},</code></pre>
+
+<p>When we render the tiles, each tile is passed its status as a property along with the word:</p>
+<pre><code>&lt;Tile word={b} status={<span class="keyword">this</span>.state.tilestates[n]} /&gt;</code></pre>
+
+<p>As the game progresses, we merely need to update the corresponding indexes in <code>tilestates</code> in <code>Board</code>, and the faux data binding of React&#39;s &quot;rerender everything&quot; approach will take care of the rest!</p>
+<h3 id="more-underscore-shenanigans">More underscore shenanigans</h3>
+<p>Speaking of updating the <code>tilestates</code> array, here&#39;s a closer look at the code where that is done:</p>
+<pre><code><span class="comment">// revealing a lone tile</span>
+<span class="keyword">this</span>.setState({
+  message: <span class="string">'findmate'</span>,
+  tilestates: _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index],[<span class="string">'revealed'</span>]))
+});
+
+<span class="comment">// marking a pair as correct</span>
+<span class="keyword">this</span>.setState({
+  found: <span class="keyword">this</span>.state.found+<span class="number">1</span>,
+  message: <span class="string">'foundmate'</span>,
+  tilestates: _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index,otherindex],[<span class="string">'correct'</span>,<span class="string">'correct'</span>]))
+});
+
+<span class="comment">// marking a pair as wrong</span>
+<span class="keyword">this</span>.setState({
+  message: <span class="string">'wrong'</span>,
+  tilestates: _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index,otherindex],[<span class="string">'wrong'</span>,<span class="string">'wrong'</span>]))
+});
+
+<span class="comment">// turning a pair back down</span>
+<span class="keyword">this</span>.setState({
+  message: <span class="keyword">this</span>.state.message === <span class="string">'findmate'</span> ? <span class="string">'findmate'</span> : <span class="keyword">this</span>.max === <span class="keyword">this</span>.state.found ? <span class="string">'foundall'</span> : <span class="string">'choosetile'</span>,
+  tilestates: matched ? <span class="keyword">this</span>.state.tilestates : _.extend(<span class="keyword">this</span>.state.tilestates,_.object([index,otherindex],[<span class="string">'unturned'</span>,<span class="string">'unturned'</span>]))
+});</code></pre>
+
+<p>The <code>_.extend</code> call calculating the new <code>tilestates</code> array is succinct to the point of arrogance, but I feel it is warranted here. Expressing this functionality as a one-liner makes the code much less verbose, which I argue is worth the heightened cognitive cost of understanding what the hell the line actually does. This is understood contextually, even for those who can&#39;t decipher the code.</p>
+<p>There&#39;s another reason why I didn&#39;t make a helper function containing the same functionality in a more readable way; we should never mutate anything in <code>this.state</code> except through calls to <code>this.setState</code>. And not mutating an array while we&#39;re operating on it over several LOC&#39;s isn&#39;t feasible. That means we&#39;d have to copy the array, mutate the copy, and then finally pass that to <code>setState</code>.</p>
+<p>Doing it that way would amount to lots of work and lots of LOC&#39;s, which I use as an excuse to get away with my arrogant one-liner. I concede that there are probably times when I make this exact argument that I&#39;m in the wrong, but the point remains; wielded with responsibility, the powerful expressiveness of Underscore/Lodash can really help you make the code less bulky.</p>
+<h3 id="tile-click-catching-attempt-1-passing-back-instance">Tile click catching attempt #1 - passing back instance</h3>
+<p>When a <code>Tile</code> is clicked, we need to act on this in <code>Board</code>. In my first version, I pass a click handler from <code>Board</code> to <code>Tile</code>. Inside tile, the tile will then call the handler passing itself as a parameter.</p>
+<pre><code><span class="comment">// old click handler inside `Tile`</span>
+catchClick: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+  <span class="keyword">if</span> (!<span class="keyword">this</span>.state.flipped){
+    <span class="keyword">this</span>.props.clickedTile(<span class="keyword">this</span>);
+  }
+},</code></pre>
+
+<p>This way board got access to the instance, and can call the relevant methods on the tile to show or hide it.</p>
+<pre><code><span class="comment">// old clickedTile method in Board was passed tile instance and called methods on that</span>
+clickedTile: <span class="function"><span class="keyword">function</span><span class="params">(tile)</span>{</span>
+  <span class="keyword">if</span> (!<span class="keyword">this</span>.wait){
+    <span class="keyword">if</span> (!<span class="keyword">this</span>.flippedtile){
+      tile.reveal();
+      <span class="comment">// ...rest redacted...</span>
+    } <span class="keyword">else</span> {
+      <span class="keyword">this</span>.wait = <span class="literal">true</span>;
+      <span class="keyword">if</span> (<span class="keyword">this</span>.flippedtile.props.word === tile.props.word){
+        tile.succeed();
+        <span class="keyword">this</span>.flippedtile.succeed();
+        <span class="comment">// ...rest redacted...</span>
+      } <span class="keyword">else</span> {
+        tile.fail();
+        <span class="keyword">this</span>.flippedtile.fail();
+        <span class="comment">// ...rest redacted...</span>
+      }
+      <span class="comment">// ...rest redacted...</span>
+    }
+  }
+},</code></pre>
+
+<p>This is needlessly complex, and, as Ian pointed out, an antipattern when React structure is concerned. You should never pass a component instance upstream, there&#39;s always a better choice.</p>
+<h3 id="tile-click-catching-attempt-2-passing-back-index">Tile click catching attempt #2 - passing back index</h3>
+<p>After refactoring the tile status to the <code>tilestates</code> array in <code>Board</code>, it would be enough if we told <code>Board</code> the index of the clicked <code>Tile</code>. In this version the rendering of the tiles inside the <code>Board</code> render method looked like this:</p>
+<pre><code>{<span class="keyword">this</span>.props.words.map(
+  <span class="function"><span class="keyword">function</span><span class="params">(w,n)</span>{</span>
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">Tile</span> <span class="attribute">clickedTile</span>=<span class="value">{this.clickedTile}</span> <span class="attribute">word</span>=<span class="value">{w}</span> <span class="attribute">status</span>=<span class="value">{this.state.tilestates[n]}</span> <span class="attribute">key</span>=<span class="value">{n}</span>/&gt;</span>);
+  }
+)}</span></code></pre>
+
+<p>And in <code>Tile</code>, the click handler passes the <code>key</code> property instead of the instance as in attempt #1.</p>
+<pre><code>catchClick: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+  <span class="keyword">if</span> (<span class="keyword">this</span>.props.status===<span class="string">'unturned'</span>){
+    <span class="keyword">this</span>.props.clickedTile(<span class="keyword">this</span>.props.key);
+  }
+},</code></pre>
+
+<h3 id="tile-click-catching-attempt-3-calling-prefilled-callback">Tile click catching attempt #3 - calling prefilled callback</h3>
+<p>In attempt #2, we&#39;re passing <code>key</code> to <code>Tile</code> only to have <code>Tile</code> pass it right back in the click handler. That seems needlessly clunky. There&#39;s no computation done inside <code>Tile</code> that <code>Board</code> is interested in, we&#39;re just getting back stuff we already know.</p>
+<p>But we have to pass a callback to <code>Tile</code>, and we have to know the index of the clicked tile. That gave me the idea for attempt #3 - how about, instead of passing <code>clickedTile</code>, we pass a function wich calls <code>clickedTile</code> with the correct index? Here&#39;s the new render loop doing that, using <code>_.partial</code> to create the callback:</p>
+<pre><code>{<span class="keyword">this</span>.props.words.map(
+  <span class="function"><span class="keyword">function</span><span class="params">(w,n)</span>{</span>
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">Tile</span> <span class="attribute">clickedTile</span>=<span class="value">{_.partial(this.clickedTile,n)).bind(this)}</span> <span class="attribute">word</span>=<span class="value">{w}</span> <span class="attribute">status</span>=<span class="value">{this.state.tilestates[n]}</span> <span class="attribute">key</span>=<span class="value">{n}</span>/&gt;</span>);
+  }
+)}</span></code></pre>
+
+<p>And here&#39;s the new <code>catchClick</code> in <code>Tile</code>, which now just calls the callback:</p>
+<pre><code>catchClick: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+  <span class="keyword">if</span> (<span class="keyword">this</span>.props.status===<span class="string">'unturned'</span>){
+    <span class="keyword">this</span>.props.clickedTile();
+  }
+},</code></pre>
+
+<h3 id="tile-click-catching-attempt-4-moving-the-unturned-check-up-to-board-">Tile click catching attempt #4 - moving the <code>unturned</code> check up to <code>Board</code></h3>
+<p>Having the check to prevent clicking turned tiles inside <code>Tile</code> didn&#39;t really sit right with me. All other computations regarding the <code>status</code> of a tile is right there in <code>Board</code>&#39;s <code>clickedTile</code> method. I therefore moved the check here:</p>
+<pre><code>clickedTile(index){
+  <span class="keyword">if</span> (<span class="keyword">this</span>.state.tilestates[index]===<span class="string">'unturned'</span>){
+    <span class="comment">// ...redacted ...</span>
+  }
+}</code></pre>
+
+<p>The click handler inside <code>Tile</code> is now reduced to this:</p>
+<pre><code>catchClick: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+  <span class="keyword">this</span>.props.clickedTile();
+},</code></pre>
+
+<h3 id="tile-click-catching-final-version-catching-click-in-board">Tile click catching final version - catching click in Board</h3>
+<p>It&#39;s getting cleaner, but even this sleek version felt weird. Why bother catching the click event inside <code>Tile</code> at all? There&#39;s absolutely no computations going on, and we&#39;re not passing anything back. Why not simply catch the clicks in Board?</p>
+<p>I decided to try this, wrapping all tiles in a div which container the click handler. Here&#39;s the final version of the render loop:</p>
+<pre><code>{<span class="keyword">this</span>.props.words.map(
+  (b,n) =&gt; {
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">onClick</span>=<span class="value">{_.partial(this.clickedTile,n)}</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">Tile</span> <span class="attribute">word</span>=<span class="value">{b}</span> <span class="attribute">status</span>=<span class="value">{this.state.tilestates[n]}</span> /&gt;</span>
+    <span class="tag">&lt;<span class="title">div</span>&gt;</span>)
+  }
+)}</span></code></pre>
+
+<p>There&#39;s an added cost in form of the wrapping div tags, but the upside is that <code>Tile</code> no longer contains a click handler at all. Whether this final version is actually cleaner than attempt #4 is definitely debatable. As <code>clickedTile</code> is already very complex, you could even argue that attempt #3, where the <code>unturned</code> check lives in the Tile click handler, is the ideal solution.</p>
+<p>Having the click handler inside Tile also lets you put it on the clickable side. Here&#39;s the <code>render</code> code for <code>Tile</code> before this final version:</p>
+<pre><code>render(){
+  <span class="keyword">return</span> (
+    &lt;<span class="keyword">div</span> className={<span class="string">'brick '</span>+<span class="keyword">this</span>.props.status}&gt;
+      &lt;<span class="keyword">div</span> className=<span class="string">"front"</span> onClick={<span class="keyword">this</span>.catchClick}&gt;?&lt;/<span class="keyword">div</span>&gt;
+      &lt;<span class="keyword">div</span> className=<span class="string">"back"</span>&gt;{<span class="keyword">this</span>.props.word}&lt;/<span class="keyword">div</span>&gt;
+    &lt;/<span class="keyword">div</span>&gt;
+  );
+}</code></pre>
+
+<p>However, the value of the &quot;correct&quot; placement of the click handler is limited - since we&#39;re animating the flipping of tiles, we still need to check the status of a clicked tile, as it would otherwise be possible to do a quick doubleclick on a tile and match it to itself.</p>
+<h3 id="the-new-tile-component-code">The new Tile component code</h3>
+<p>Finally, here&#39;s what&#39;s left of the now pitiful Tile component:</p>
+<pre><code><span class="javadoc">/** <span class="javadoctag">@jsx</span> React.DOM */</span>
+
+<span class="keyword">var</span> Tile = React.createClass({
+  propTypes: {
+    status: React.PropTypes.string.isRequired, 
+    word: React.PropTypes.string.isRequired
+  },
+  render(){
+    <span class="keyword">return</span> (
+      &lt;div className={<span class="string">'brick '</span>+<span class="keyword">this</span>.props.status}&gt;
+        &lt;div className=<span class="string">'front'</span>&gt;?&lt;/div&gt;
+        &lt;div className=<span class="string">'back'</span>&gt;{<span class="keyword">this</span>.props.word}&lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+});</code></pre>
+
+<table>
+  <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
+  <tbody>
+    <tr><td>word<br/><span style='color:red;text-decoration:line-through;'>clickedTile()</span><br/><span style='color:green;'><strong>status</strong></span></td><td><span style='color:red;text-decoration:line-through;'>flipped</span></br><span style='color:red;text-decoration:line-through;'>wrong</span><br/><span style='color:red;text-decoration:line-through;'>correct</span></td><td></td><td></td></tr>
+  </tbody>
+</table>
+
+<p>Because of my <code>status</code> refactoring I no longer need the css class shenanigans of the previous version, I merely add the value of <code>this.props.status</code> as a class. But if I had kept the previous approach of separate flag variables, I would be better of using the <a href="http://facebook.github.io/react/docs/class-name-manipulation.html">classSet</a> addon. See <a href="https://github.com/ianobermiller/reactexperiment/commit/072431f2d81dd37ff8c30d5eecb6b338f1244a91">Ian&#39;s version</a> for what that might look like.</p>
+<h3 id="wrapping-up-again-">Wrapping up (again)</h3>
+<p>Diving back down, and diving this deep into sometimes trivial details, was again a powerful learning experience for me! I am hugely grateful to Ian for supplying his fork, which really helped me propelling my understanding along.</p>
+<p>I hope you poor souls who survived through all these ramblings also managed to get something out of it!</p>
+<p>And again, the main takeaway for me was: React is really, really powerful stuff. Absolutely loving it, and can&#39;t wait to explore the flux architecture and routing solutions!</p>
+
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>

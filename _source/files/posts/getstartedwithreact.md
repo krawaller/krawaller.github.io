@@ -7,6 +7,13 @@ excerpt: This post dissects a memory game built with React, focusing on structur
 type: post
 ---
 
+<span style="color:red;">
+###NOTE
+
+Some code and conclusions expressed here are not idiomatic React. See the [follow-up post](../a-react-js-case-study-follow-up) for more details!
+
+</span>
+
 ### The game
 
 The last few days I've been toying with [React.js](http://facebook.github.io/react/), Facebook's excellent view abstraction library. In order to grokk it I built a simple memory game, which we'll dissect in this post.
@@ -92,7 +99,7 @@ var Game = React.createClass({
           <Wordform startGame={this.startGame} />
         </div>
         <div className={this.state.playing ? "showing" : "hidden"}>
-          <Board endGame={this.endGame} tiles={this.state.tiles} max={this.state.tiles.length/2} key={this.state.seed}/>
+          <Board endGame={this.endGame} tiles={this.state.tiles} key={this.state.seed}/>
         </div>
       </div>
     );

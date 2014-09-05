@@ -73,7 +73,11 @@ This post dissects a memory game built with React, focusing on structure and the
 </header>
 
   <section class='post-content'>
-  <h3 id="the-game">The game</h3>
+  <p><span style="color:red;"></p>
+<h3 id="note">NOTE</h3>
+<p>Some code and conclusions expressed here are not idiomatic React. See the <a href="../a-react-js-case-study-follow-up">follow-up post</a> for more details!</p>
+<p></span></p>
+<h3 id="the-game">The game</h3>
 <p>The last few days I&#39;ve been toying with <a href="http://facebook.github.io/react/">React.js</a>, Facebook&#39;s excellent view abstraction library. In order to grokk it I built a simple memory game, which we&#39;ll dissect in this post.</p>
 <p>First off, here&#39;s the game running in a iframe (here&#39;s a <a href="http://blog.krawaller.se/reactexperiment/">link</a> if you want it in a separate tab). The repo can be found <a href="https://github.com/krawaller/reactexperiment/">here</a>.</p>
 <iframe src='http://blog.krawaller.se/reactexperiment/' style="height:240px;width:100%"></iframe>
@@ -142,7 +146,7 @@ This post dissects a memory game built with React, focusing on structure and the
           <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">startGame</span>=<span class="value">{this.startGame}</span> /&gt;</span>
         <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
         <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">{this.state.playing</span> ? "<span class="attribute">showing</span>" <span class="attribute">:</span> "<span class="attribute">hidden</span>"}&gt;</span>
-          <span class="tag">&lt;<span class="title">Board</span> <span class="attribute">endGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">tiles</span>=<span class="value">{this.state.tiles}</span> <span class="attribute">max</span>=<span class="value">{this.state.tiles.length</span>/<span class="attribute">2</span>} <span class="attribute">key</span>=<span class="value">{this.state.seed}</span>/&gt;</span>
+          <span class="tag">&lt;<span class="title">Board</span> <span class="attribute">endGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">tiles</span>=<span class="value">{this.state.tiles}</span> <span class="attribute">key</span>=<span class="value">{this.state.seed}</span>/&gt;</span>
         <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
       <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
     );
