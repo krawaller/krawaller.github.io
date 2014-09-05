@@ -306,7 +306,7 @@ var Board = React.createClass({
 <table>
   <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
   <tbody>
-    <tr><td>*words*<br/>*onEndGame()*</td><td>found<br/>message<br/><span style='color:green;'>**tilestates**</span></td><td>Status<br/>Tile</td><td><span style='color:red;text-decoration:line-through;'>wait</span><br/>*flippedTileIndex*</td></tr>
+    <tr><td>*words*<br/>*onEndGame()*</td><td>found<br/>message<br/><span style='color:green;'>**tilestates**</span></td><td>Status<br/>Tile</td><td><span style='color:red;text-decoration:line-through;'>wait</span><br/>*flippedTileIndex*<br/><span style='color:green;'>**max**</span></td></tr>
   </tbody>
 </table>
 
