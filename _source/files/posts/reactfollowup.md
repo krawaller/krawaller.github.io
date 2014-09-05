@@ -592,7 +592,9 @@ I decided to try this, wrapping all tiles in a div which container the click han
 )}
 ```
 
-There's an added cost in form of the wrapping div tags, but the upside is that `Tile` no longer contains a click handler at all. Whether this final version is actually cleaner than attempt #4 is definitely debatable. As `clickedTile` is already very complex, you could even argue that attempt #3, where the `unturned` check lives in the Tile click handler, is the ideal solution.
+There's an added cost in form of the wrapping div tags, but the upside is that `Tile` no longer contains a click handler at all.
+
+Whether this final version is actually cleaner than attempt #4 is definitely debatable. As `clickedTile` is already very complex, you could even argue that attempt #3, where the `unturned` check lives in the Tile click handler, is the ideal solution.
 
 Having the click handler inside Tile also lets you put it on the clickable side. Here's the `render` code for `Tile` before this final version:
 

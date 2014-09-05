@@ -514,7 +514,8 @@ clickedTile: <span class="function"><span class="keyword">function</span><span c
   }
 )}</span></code></pre>
 
-<p>There&#39;s an added cost in form of the wrapping div tags, but the upside is that <code>Tile</code> no longer contains a click handler at all. Whether this final version is actually cleaner than attempt #4 is definitely debatable. As <code>clickedTile</code> is already very complex, you could even argue that attempt #3, where the <code>unturned</code> check lives in the Tile click handler, is the ideal solution.</p>
+<p>There&#39;s an added cost in form of the wrapping div tags, but the upside is that <code>Tile</code> no longer contains a click handler at all.</p>
+<p>Whether this final version is actually cleaner than attempt #4 is definitely debatable. As <code>clickedTile</code> is already very complex, you could even argue that attempt #3, where the <code>unturned</code> check lives in the Tile click handler, is the ideal solution.</p>
 <p>Having the click handler inside Tile also lets you put it on the clickable side. Here&#39;s the <code>render</code> code for <code>Tile</code> before this final version:</p>
 <pre><code>render(){
   <span class="keyword">return</span> (
