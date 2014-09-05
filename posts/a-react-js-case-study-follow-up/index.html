@@ -118,16 +118,15 @@ This post details a refactoring of the previous React case study. We also touch 
   getInitialState() {<span class="keyword">return</span> {};},
   startGame(words){
     <span class="keyword">this</span>.setState({
-      words:_.shuffle(words.concat(words)),
-      playing:<span class="literal">true</span>
+      words:_.shuffle(words.concat(words))
     });
   },
   endGame(){
-    <span class="keyword">this</span>.setState({playing:<span class="literal">false</span>});
+    <span class="keyword">this</span>.setState({words:<span class="literal">undefined</span>});
   },
   render(){
     <span class="keyword">return</span> (
-      <span class="keyword">this</span>.state.playing ? <span class="xml"><span class="tag">&lt;<span class="title">Board</span> <span class="attribute">onEndGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">words</span>=<span class="value">{this.state.words}</span>/&gt;</span>
+      <span class="keyword">this</span>.state.words ? <span class="xml"><span class="tag">&lt;<span class="title">Board</span> <span class="attribute">onEndGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">words</span>=<span class="value">{this.state.words}</span>/&gt;</span>
       : <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">onWordsEntered</span>=<span class="value">{this.startGame}</span> /&gt;</span>
     );
   }
@@ -136,11 +135,12 @@ This post details a refactoring of the previous React case study. We also touch 
 <table>
   <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
   <tbody>
-    <tr><td></td><td>playing<br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
+    <tr><td></td><td><span style='color:red;text-decoration:line-through;'>playing</span><br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
   </tbody>
 </table>
 
-<p>For each component I&#39;ll also show the same table as before, highlighting any differences. The table for <code>Game</code> shown here is the same as before.</p>
+<p>For each component I&#39;ll also show the same table as before, highlighting any differences.</p>
+<p>As you can see here, I removed the <code>playing</code> flag from <code>Game</code>, opting instead to set <code>words</code> to undefined on game end. Slightly less obvious code, but one less state variable. Which is preferrable is pure philosophy, and mine is to go for brevity.</p>
 <h3 id="show-amp-hide-versus-rendering-only-relevant-components">Show &amp; hide versus rendering only relevant components</h3>
 <p>in my first version I alternated between showing the <code>Board</code> and <code>Wordform</code> through always rendering both, but showing and hiding them as appropriate. This is the old render function containing this approach:</p>
 <pre><code><span class="keyword">return</span> (

@@ -67,16 +67,15 @@ var Game = React.createClass({
   getInitialState() {return {};},
   startGame(words){
     this.setState({
-      words:_.shuffle(words.concat(words)),
-      playing:true
+      words:_.shuffle(words.concat(words))
     });
   },
   endGame(){
-    this.setState({playing:false});
+    this.setState({words:undefined});
   },
   render(){
     return (
-      this.state.playing ? <Board onEndGame={this.endGame} words={this.state.words}/>
+      this.state.words ? <Board onEndGame={this.endGame} words={this.state.words}/>
       : <Wordform onWordsEntered={this.startGame} />
     );
   }
@@ -86,11 +85,13 @@ var Game = React.createClass({
 <table>
   <thead><th>Props</th><th>State</th><th>Sub components</th><th>Instance variables</th></thead>
   <tbody>
-    <tr><td></td><td>playing<br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
+    <tr><td></td><td><span style='color:red;text-decoration:line-through;'>playing</span><br/>tiles</td><td>Wordform<br/>Board</td><td></td></tr>
   </tbody>
 </table>
 
-For each component I'll also show the same table as before, highlighting any differences. The table for `Game` shown here is the same as before.
+For each component I'll also show the same table as before, highlighting any differences.
+
+As you can see here, I removed the `playing` flag from `Game`, opting instead to set `words` to undefined on game end. Slightly less obvious code, but one less state variable. Which is preferrable is pure philosophy, and mine is to go for brevity.
 
 
 ###Show &amp; hide versus rendering only relevant components
