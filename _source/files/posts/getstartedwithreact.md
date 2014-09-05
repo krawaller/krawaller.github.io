@@ -7,12 +7,10 @@ excerpt: This post dissects a memory game built with React, focusing on structur
 type: post
 ---
 
-<span style="color:red;">
-###NOTE
 
-Some code and conclusions expressed here are not idiomatic React. See the [follow-up post](../a-react-js-case-study-follow-up) for more details!
+<span style="color:red;">###NOTE</span>
 
-</span>
+<span style="color:red;">Some code and conclusions expressed here are not idiomatic React. See the [follow-up post](../a-react-js-case-study-follow-up) for more details!</span>
 
 ### The game
 
