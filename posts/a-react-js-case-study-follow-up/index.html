@@ -337,7 +337,8 @@ This post details a refactoring of the previous React case study. We also touch 
 <p>Throughout the rest of the code I could then replace <code>this.props.max</code> with <code>this.max</code>. A small gain, but the real win was cleaning up the logic in the child component, <code>Status</code>, without having to increase the complexity of <code>Board</code>&#39;s signature by expecting <code>max</code> as a property.</p>
 <p>Note how the <code>componentWillMount</code> call sits up top with <code>propTypes</code> and <code>getInitialState</code>, as it also is communicating contents from my component data table!</p>
 <h3 id="state-variable-vs-instance-variable">State variable VS instance variable</h3>
-<p>I noticed Ian refactored the old <code>wait</code> instance variable to be a state variable, but I can&#39;t (yet?) see the advantage to that. Why put variables in this.state, with all the overhead that means, if they will never affect the output of the <code>render</code> method? That&#39;s why I didn&#39;t make <code>max</code> a state variable, which would of course also have worked:</p>
+<p>I noticed Ian refactored the old <code>wait</code> instance variable to be a state variable, but I can&#39;t (yet?) see the advantage to that. Why put variables in this.state, with all the overhead that means, if they will never affect the output of the <code>render</code> method?</p>
+<p>That&#39;s why I didn&#39;t make <code>max</code> a state variable, which would of course also have worked:</p>
 <pre><code>getInitialState() {
   <span class="keyword">return</span> {
     max: <span class="keyword">this</span>.props.words.length/<span class="number">2</span>,

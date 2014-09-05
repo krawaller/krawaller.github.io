@@ -350,7 +350,9 @@ Note how the `componentWillMount` call sits up top with `propTypes` and `getInit
 
 ###State variable VS instance variable
 
-I noticed Ian refactored the old `wait` instance variable to be a state variable, but I can't (yet?) see the advantage to that. Why put variables in this.state, with all the overhead that means, if they will never affect the output of the `render` method? That's why I didn't make `max` a state variable, which would of course also have worked:
+I noticed Ian refactored the old `wait` instance variable to be a state variable, but I can't (yet?) see the advantage to that. Why put variables in this.state, with all the overhead that means, if they will never affect the output of the `render` method?
+
+That's why I didn't make `max` a state variable, which would of course also have worked:
 
 ```javascript
 getInitialState() {
