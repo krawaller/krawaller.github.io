@@ -364,3 +364,5 @@ When clicked the component will call the `clickedTile` callback passing itself a
 I'm totally in love with React! It took a while to grasp the thinking, like for example the differentiation between `state` and `props`, and how `state` can belong in `props` when passed to a child. But when that mentality was in place, putting it all together was a breeze. I really appreciate not having to write any update or cleanup code (I'm looking at you, Backbone), delegating all that headache to React!
 
 Passing callbacks to allow for upstream communication can feel a bit clunky, and I look forward to trying out the Flux approach instead. I also want to integrate a Router, and see how that plays along with it all.
+
+<span style="color:red;">**NOTE:** If you haven't already, check out the [follow-up post](../a-react-js-case-study-follow-up) for a detailed refactoring of the code to be more idiomatic to React!</span>
