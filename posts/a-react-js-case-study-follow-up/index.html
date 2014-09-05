@@ -479,7 +479,7 @@ clickedTile: <span class="function"><span class="keyword">function</span><span c
 <p>But we have to pass a callback to <code>Tile</code>, and we have to know the index of the clicked tile. That gave me the idea for attempt #3 - how about, instead of passing <code>clickedTile</code>, we pass a function wich calls <code>clickedTile</code> with the correct index? Here&#39;s the new render loop doing that, using <code>_.partial</code> to create the callback:</p>
 <pre><code>{<span class="keyword">this</span>.props.words.map(
   <span class="function"><span class="keyword">function</span><span class="params">(w,n)</span>{</span>
-    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">Tile</span> <span class="attribute">clickedTile</span>=<span class="value">{_.partial(this.clickedTile,n)).bind(this)}</span> <span class="attribute">word</span>=<span class="value">{w}</span> <span class="attribute">status</span>=<span class="value">{this.state.tilestates[n]}</span> <span class="attribute">key</span>=<span class="value">{n}</span>/&gt;</span>);
+    <span class="keyword">return</span> (<span class="xml"><span class="tag">&lt;<span class="title">Tile</span> <span class="attribute">clickedTile</span>=<span class="value">{_.partial(this.clickedTile,n))}</span> <span class="attribute">word</span>=<span class="value">{w}</span> <span class="attribute">status</span>=<span class="value">{this.state.tilestates[n]}</span> <span class="attribute">key</span>=<span class="value">{n}</span>/&gt;</span>);
   }
 )}</span></code></pre>
 

@@ -541,7 +541,7 @@ But we have to pass a callback to `Tile`, and we have to know the index of the c
 ```javascript
 {this.props.words.map(
   function(w,n){
-    return (<Tile clickedTile={_.partial(this.clickedTile,n)).bind(this)} word={w} status={this.state.tilestates[n]} key={n}/>);
+    return (<Tile clickedTile={_.partial(this.clickedTile,n))} word={w} status={this.state.tilestates[n]} key={n}/>);
   }
 )}
 ```
