@@ -1,5 +1,5 @@
 ---
-title: A React.js case study followup
+title: A React.js case study follow-up
 author: David
 tags: [react,underscore]
 date: 2014-09-05
@@ -9,7 +9,7 @@ type: post
 
 ###React Memory Game version 2
 
-A week ago I wrote a [case study on a small React experiment](../a-react-js-case-study), a memory game I whipped up to learn the ins and outs of React. Here's the game in an iframe again (here's a [link](http://blog.krawaller.se/reactexperiment/) if you want it in a separate tab), to save you from hopping back to check it out. The repo, as before, can be found [here](https://github.com/krawaller/reactexperiment/).
+A week ago I wrote a [case study on a small React experiment](../a-react-js-case-study), a memory game I whipped up to learn the ins and outs of React. Here's the game in an iframe again (here's a [link](http://blog.krawaller.se/reactexperiment/) if you want it in a separate tab), to save you from hopping back to refresh your memory (...). The repo, as before, can be found [here](https://github.com/krawaller/reactexperiment/).
 
 <iframe src='http://blog.krawaller.se/reactexperiment/' style="height:240px;width:100%"></iframe>
 
