@@ -156,7 +156,7 @@ This post details a refactoring of the previous React case study. We also touch 
 
 <p>By misreading the docs and misunderstanding an error message, I was fooled into believing that this was the way to go, instead of choosing what component to render. As it turns out, there is no problem with the latter approach, which of course makes for much cleaner code:</p>
 <pre><code><span class="keyword">return</span> (
-  <span class="keyword">this</span>.state.playing ? <span class="xml"><span class="tag">&lt;<span class="title">Board</span> <span class="attribute">onEndGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">words</span>=<span class="value">{this.state.words}</span>/&gt;</span>
+  <span class="keyword">this</span>.state.words ? <span class="xml"><span class="tag">&lt;<span class="title">Board</span> <span class="attribute">onEndGame</span>=<span class="value">{this.endGame}</span> <span class="attribute">words</span>=<span class="value">{this.state.words}</span>/&gt;</span>
   : <span class="tag">&lt;<span class="title">Wordform</span> <span class="attribute">onWordsEntered</span>=<span class="value">{this.startGame}</span> /&gt;</span>
 );</span></code></pre>
 

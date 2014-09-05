@@ -115,7 +115,7 @@ By misreading the docs and misunderstanding an error message, I was fooled into 
 
 ```javascript
 return (
-  this.state.playing ? <Board onEndGame={this.endGame} words={this.state.words}/>
+  this.state.words ? <Board onEndGame={this.endGame} words={this.state.words}/>
   : <Wordform onWordsEntered={this.startGame} />
 );
 ```
