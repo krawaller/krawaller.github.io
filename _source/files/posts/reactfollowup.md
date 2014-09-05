@@ -122,6 +122,8 @@ return (
 
 Note also how we no longer need to throw a random seed into the `key` property of `Board` to force it to rerender, as it will always be a new board since it previously didn't exist in the Shadow DOM.
 
+A side note; if we used React with addons, we could use [ReactCSSTransitionGroup](http://facebook.github.io/react/docs/animation.html) to animate the components as they enter/leave.
+
 ###Decoupling through callback names
 
 Sharp eyes will also note how the new version passes `this.startGame` to `Wordform` as a property called `onWordsEntered` instead of `startGame`. This was another [good point of feedback from Ian](https://github.com/ianobermiller/reactexperiment/commit/1d2335876ba85d17929212e538e5823db84eabe7); name your properties to make the child less coupled to the parent. `Wordform` doesn't care what happens when the words are submitted, it merely calls a callback when that happens. The name should reflect that.
