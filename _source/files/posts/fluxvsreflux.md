@@ -57,7 +57,7 @@ The Flux and Reflux versions are exactly the same, apart from requiring differen
 
 ###Comparing component listening to store changes
 
-Now let's compare components who are listening to changes from a store, where there are slight differences between Flux and Reflux. Below is the code for a link to the Cart tab, which also shows the current number of items and total cost (this was not in Egghead's tutorial).
+Now let's compare components who are listening to changes from a store, where there are slight differences between Flux and Reflux. Below is the code for a link to the Cart tab, which also shows the current number of items and total cost and therefore needs to update when the cart contents change(this was not in Egghead's tutorial).
 
 First the Flux version:
 
@@ -136,6 +136,7 @@ Reflux.createStore({
     this.listenTo(actions.decreaseItem,_decreaseItem);
   },
   // rest redacted
+});
 ```
 
 The simpler structure of Reflux is beginning to shine!

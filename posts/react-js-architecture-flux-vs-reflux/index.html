@@ -102,7 +102,7 @@ Comparing two architectures for React.js apps: Flux, and the Reflux adaption
 
 <p>The Flux and Reflux versions are exactly the same, apart from requiring different versions of <code>appActions</code>. All they do is call the relevant action function, in this case with an index as data.</p>
 <h3 id="comparing-component-listening-to-store-changes">Comparing component listening to store changes</h3>
-<p>Now let&#39;s compare components who are listening to changes from a store, where there are slight differences between Flux and Reflux. Below is the code for a link to the Cart tab, which also shows the current number of items and total cost (this was not in Egghead&#39;s tutorial).</p>
+<p>Now let&#39;s compare components who are listening to changes from a store, where there are slight differences between Flux and Reflux. Below is the code for a link to the Cart tab, which also shows the current number of items and total cost and therefore needs to update when the cart contents change(this was not in Egghead&#39;s tutorial).</p>
 <p>First the Flux version:</p>
 <pre><code><span class="keyword">var</span> CartLink = React.createClass({
   componentDidMount:<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
@@ -165,7 +165,8 @@ Comparing two architectures for React.js apps: Flux, and the Reflux adaption
     <span class="keyword">this</span>.listenTo(actions.increaseItem,_increaseItem);
     <span class="keyword">this</span>.listenTo(actions.decreaseItem,_decreaseItem);
   },
-  <span class="comment">// rest redacted</span></code></pre>
+  <span class="comment">// rest redacted</span>
+});</code></pre>
 
 <p>The simpler structure of Reflux is beginning to shine!</p>
 <h3 id="comparing-actions">Comparing actions</h3>
