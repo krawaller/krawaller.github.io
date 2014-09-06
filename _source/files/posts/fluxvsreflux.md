@@ -210,6 +210,6 @@ That's right - Reflux does away entirely with the concept of an app-specific dis
 
 Probably Flux proponents can find many things being not entirely fair in this comparison, but for me, changing to Reflux made me breathe easier. The code is sleek, and I have a firm grasp of how the parts are wired. Components listen to stores and call actions. Stores listen to actions and toot when they're updated. Simple as that!
 
-<img src='../../img/reflux-flow.jpg' style="margin-left:4em;" />
+<img src='../../img/reflux-flow.jpg' style="margin-left:4em;max-height:300px;" />
 
 I've glanced at some other Flux-inspired libraries, of which there are many. So far Reflux seems to be the most solid option, and I'm excited to follow along in its continued development!
