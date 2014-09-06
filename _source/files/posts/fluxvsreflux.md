@@ -57,12 +57,10 @@ The Flux and Reflux versions are exactly the same, apart from requiring differen
 
 ###Comparing component listening to store changes
 
-Now let's compare components who are listening to changes from a store, where there are slight differences between Flux and Reflux. Below is the code for a link to the Cart tab, which also shows the current number of items and total cost and therefore needs to update when the cart contents change(this was not in Egghead's tutorial).
-
-First the Flux version:
+Now let's compare components who are listening to changes from a store, where there are slight differences between Flux and Reflux. First the Flux version:
 
 ```
-var CartLink = React.createClass({
+var Cart = React.createClass({
   componentDidMount:function(){
     appStore.addChangeListener(this._onStuffChange)
   },
@@ -75,7 +73,7 @@ In `componentDidMount` we add a change listener, which then takes care of the re
 Now for the Reflux version:
 
 ```
-var CartLink = React.createClass({
+var Cart = React.createClass({
   mixins: [Reflux.ListenerMixin],
   componentDidMount: function() {
     this.listenTo(appStore, this._onStuffChange);
