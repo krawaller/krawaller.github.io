@@ -94,7 +94,22 @@ Note how we can't use `this._onStuffChange` as an argument to the factory call, 
 
 The idea of using mixin factories have also been used in other places in the new Reflux version.
 
-###Meaner &amp; leaner
+###Connecting state
+
+Consider what might be going on in `_onStuffChange` in the above example. A very common scenario when a React component listens to a Reflux Store is that we want to update the state of the component with the data sent from the store.
+
+Since this is such a prevalent use case, Reflux now has a convenience method for this. Instead of the listenTo factory we can use the connect factory:
+
+```
+var Cart = React.createClass({
+  mixins: [Reflux.connect(appStore)],
+  // rest redacted (and doesn't need to contain a callback at all)
+});
+```
+
+This will set the state of the component to whatever is transmitted from the store. If you want the store data as a property of your state, you can instead do `connect(publisher,propname)`.
+
+###Much wants more
 
 The [previous post](../react-js-architecture-flux-vs-reflux) also contained a Store comparison, which Reflux won by a wide margin. However, the winning code was still rather verbose:
 
