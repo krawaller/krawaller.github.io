@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Reflux refinement</title>
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+Looking at some improvements in newer Reflux versions
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/reflux-refinement">Reflux refinement</a>
+    <span class="post-meta">
+      <time datetime="Fri Oct 31 2014 01:00:00 GMT+0100 (CET)">Oct 31st 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/react/'>react</a></span>
+      
+        <span><a href='../../tags/reflux/'>reflux</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="flux-gt-reflux-">Flux &gt; Reflux?</h3>
+<p>In a <a href="../react-js-architecture-flux-vs-reflux">somewhat recent post</a> I walked through how much simpler the codebase of a small React app became when I switched out <a href="http://facebook.github.io/react/docs/flux-overview.html">Flux</a> for <a href="https://github.com/spoike/refluxjs">Reflux</a>.</p>
+<p>However, I kind of glossed over that in one of the comparisons Flux actually &quot;won&quot; by a single LOC! It was the one comparing components listening to store changes:</p>
+<pre><code><span class="comment">// Flux version</span>
+<span class="keyword">var</span> Cart = React.createClass({
+  componentDidMount:<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    appStore.addChangeListener(<span class="keyword">this</span>._onStuffChange)
+  },
+  <span class="comment">// rest redacted</span>
+});
+
+<span class="comment">// Reflux version</span>
+<span class="keyword">var</span> Cart = React.createClass({
+  mixins: [Reflux.ListenerMixin],
+  componentDidMount: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.listenTo(appStore, <span class="keyword">this</span>._onStuffChange);
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>In the Reflux we need the additional <code>mixins</code> row, which makes it even more boilerplaty than the Flux version!</p>
+<h3 id="throwing-mixin-into-the-mixer">Throwing Mixin into the mixer</h3>
+<p>Let&#39;s take a peek at the internals of <code>ListenerMixin</code> to see what&#39;s going on there. Here&#39;s the full object:</p>
+<pre><code>ListenerMixin = {
+    componentWillMount: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">this</span>.subscriptions = [];
+    },
+    listenTo: <span class="function"><span class="keyword">function</span><span class="params">(listenable, callback, defaultCallback)</span> {</span>
+        <span class="keyword">var</span> unsubscribe = listenable.listen(callback, <span class="keyword">this</span>);
+        <span class="keyword">this</span>.subscriptions.push(unsubscribe);
+        _.handleDefaultCallback(<span class="keyword">this</span>, listenable, defaultCallback);
+    },
+    componentWillUnmount: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">this</span>.subscriptions.forEach(<span class="function"><span class="keyword">function</span><span class="params">(unsubscribe)</span> {</span>
+            unsubscribe();
+        });
+        <span class="keyword">this</span>.subscriptions = [];
+    }
+};</code></pre>
+
+<p>As you can see it supplies the <code>listenTo</code> method we used, as well as two life cycle methods, <code>componentWillMount</code> and <code>componentWillUnmount</code>, dealing with setup and teardown of the listener.</p>
+<p>Note the cleverness of the Reflux listenables - a call to their <code>listen</code> method returns an <code>unsubscribe</code> function, which takes care of all the cleanup for you when called.</p>
+<h3 id="using-a-factory-call-as-a-mixin">Using a factory call as a mixin</h3>
+<p>Looking at the source code got me thinking - why couldn&#39;t the mixin provide the <code>componentDidMount</code> call too? Well, that&#39;s where the call to <code>listenTo</code> happens, which needs a reference to the listenable and some callbacks.</p>
+<p>So how about we give those to a factory instead, which then bakes out a mixin for us? After several iterations and thoughtful input from Reflux creator Michael, we now have a mixin factory which imports the listening functionality and sets up the listener to the given listenable. </p>
+<p>This means that this verbose Reflux version that lost to Flux...</p>
+<pre><code><span class="keyword">var</span> Cart = React.createClass({
+  mixins: [Reflux.ListenerMixin],
+  componentDidMount: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.listenTo(appStore, <span class="keyword">this</span>._onStuffChange);
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>...can now be reduced to this:</p>
+<pre><code><span class="keyword">var</span> Cart = React.createClass({
+  mixins: [Reflux.listenTo(appStore,<span class="string">'_onStuffChange'</span>)],
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>Three lines shorter than the Flux version! Mission accomplished! </p>
+<p>Note how we can&#39;t use <code>this._onStuffChange</code> as an argument to the factory call, as <code>this</code> doesn&#39;t point to the instance at this point in time.</p>
+<p>The idea of using mixin factories have also been used in other places in the new Reflux version.</p>
+<h3 id="meaner-amp-leaner">Meaner &amp; leaner</h3>
+<p>The <a href="../react-js-architecture-flux-vs-reflux">previous post</a> also contained a Store comparison, which Reflux won by a wide margin. However, the winning code was still rather verbose:</p>
+<pre><code>Reflux.createStore({
+  init: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.listenTo(actions.addItem,_addItem);
+    <span class="keyword">this</span>.listenTo(actions.removeItem,_removeItem);
+    <span class="keyword">this</span>.listenTo(actions.increaseItem,_increaseItem);
+    <span class="keyword">this</span>.listenTo(actions.decreaseItem,_decreaseItem);
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>The new version introduces a <code>listenToMany</code> function which can be given an object where the values are publishers and the keys are assumed to correspond to methods on the listening object. If <code>_addItem</code>, <code>_removeItem</code> etc were local methods, that means the above code could be reduced to this:</p>
+<pre><code>Reflux.createStore({
+  init: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.listenToMany({
+        _addItem:actions.addItem,
+        _removeItem:actions.removeItem,
+        _increaseItem:actions.increaseItem,
+        _decreaseItem:actions.decreaseItem
+    );
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+Somewhat elegant, but still very noisy. However, if we change the callback names to correspond to the action names, we could simply do this:
+
+<pre><code>Reflux.createStore({
+  init: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.listenToMany(actions);
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>Now things are really beginning to shine! As an added bonus you can call your method <code>onActionname</code>, and Reflux will realise it is a callback for <code>actionname</code>.</p>
+<p>But we&#39;re not done yet! We can make it leaner still through the new <code>listenables</code> property:</p>
+<pre><code>Reflux.createStore({
+  listenables: actions,
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>What I&#39;m really trying to say is this; Reflux has grown by leaps and bounds, meaning your code will shrink proportionally! I&#39;m still amazed at the power of Michael&#39;s simpler Flux model, and if you haven&#39;t tried Reflux out yet I strongly encourage you to do so!</p>
+
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>

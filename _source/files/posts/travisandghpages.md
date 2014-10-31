@@ -68,7 +68,7 @@ node_js:
   - "0.11"
   - "0.10"
   - "0.8"
-before_script:
+before_install:
   - "npm i -g jasmine-node"
 branches:
   only:

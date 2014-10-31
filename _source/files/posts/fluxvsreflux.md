@@ -7,6 +7,8 @@ excerpt: "Comparing two architectures for React.js apps: Flux, and the Reflux ad
 type: post
 ---
 
+<span style="color:red;">**NOTE:** Reflux has gotten even leaner since this post was written. Read the [follow-up post](../reflux-refinement) for more details!</span>
+
 ###Flustered with Flux
 
 Recently I've been trying to wrap my brain around using the [Flux architecture](http://facebook.github.io/react/docs/flux-overview.html) in a React.js app. I watched the vids, read the blogs, went through [Egghead's excellent tutorial series](https://egghead.io/series/react-flux-architecture) on the subject, but still didn't feel entirely comfortable.
