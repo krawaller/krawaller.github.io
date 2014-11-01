@@ -148,6 +148,13 @@ The value of flex-grow dictates how much the elements should grow in proportion 
 
 If we had not put `min-height:40px` on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn't need to grow.
 
+###Retrospective
+
+So what did we actually do? In essence we used flex for two different things:
+
+*    By making the outer main element a flex row we used the default `stretch` value of `align-items` to make sure the columns would get equal height. This would otherwise be difficult to do.
+*    By then making each column a flex column, we used `flex-grow` to make sure the elements filled out the column height in the way we wanted. This would be really difficult by other means!
+
 ###Pseudofying
 
 Although already seriously neat, it still felt somewhat icky having to have the spacer `li` elements in the markup. I tried to add them as pseudo elements using `:before` and `:after`, but couldn't get it to work. The reason is simple - despite their names, the pseudoclasses don't actually create the pseudo element **before** or **after** the target element, but inside them (at the top or bottom). That means the spacers wouldn't be siblings but cousins, and they wouldn't be children of the flex column. Thus the flex growth won't happen.

@@ -194,6 +194,12 @@ Dissecting a tournament bracket built with the CSS3 flex tech
 <p>The elements with <code>flex-grow</code> will be resized to give the container its expected height, which due to <code>align-items</code> being set to <code>stretch</code> should result in columns with equal height.</p>
 <p>The value of flex-grow dictates how much the elements should grow in proportion to each other. This means the team spacers and the game spacer <code>li</code> will all be the same height, with a minimum of 40. The first and last <code>li</code> will be half that, which is Aron&#39;s brilliant way of ensuring vertical centering inside the column without actually having to even use the (otherwise very powerful) <code>justify-content</code> flex property.</p>
 <p>If we had not put <code>min-height:40px</code> on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn&#39;t need to grow.</p>
+<h3 id="retrospective">Retrospective</h3>
+<p>So what did we actually do? In essence we used flex for two different things:</p>
+<ul>
+<li>By making the outer main element a flex row we used the default <code>stretch</code> value of <code>align-items</code> to make sure the columns would get equal height. This would otherwise be difficult to do.</li>
+<li>By then making each column a flex column, we used <code>flex-grow</code> to make sure the elements filled out the column height in the way we wanted. This would be really difficult by other means!</li>
+</ul>
 <h3 id="pseudofying">Pseudofying</h3>
 <p>Although already seriously neat, it still felt somewhat icky having to have the spacer <code>li</code> elements in the markup. I tried to add them as pseudo elements using <code>:before</code> and <code>:after</code>, but couldn&#39;t get it to work. The reason is simple - despite their names, the pseudoclasses don&#39;t actually create the pseudo element <strong>before</strong> or <strong>after</strong> the target element, but inside them (at the top or bottom). That means the spacers wouldn&#39;t be siblings but cousins, and they wouldn&#39;t be children of the flex column. Thus the flex growth won&#39;t happen.</p>
 <p>If there had been some css pseudo class equivalents of <code>:before</code> and <code>:after</code> that actually did create siblings to the target element, then it would have worked! But without that I don&#39;t see that it is possible to do the bracket without vilifying the markup.</p>
