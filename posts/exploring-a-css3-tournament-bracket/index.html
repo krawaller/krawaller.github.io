@@ -174,6 +174,12 @@ Dissecting a tournament bracket built with the CSS3 flex tech
 
 <h3 id="the-magic">The magic</h3>
 <p>All <code>flex</code> boxes have a <code>flex-direction</code> which is <code>row</code> (default) or <code>column</code>. The <code>main</code> element is a flex row, and contains 4 <code>ul</code> elements. These are given a fixed width of 200px, and will be laid out as columns. Because the flex prop <code>align-items</code> default to <code>stretch</code>, all columns will be given the same height inside the container.</p>
+<pre><code><span class="tag">&lt;<span class="title">main</span>&gt;</span> <span class="comment">&lt;!-- flex row with align-items stretch --&gt;</span>
+  <span class="tag">&lt;<span class="title">ul</span>&gt;</span> <span class="comment">&lt;!-- 200px wide column. this first round has most markup and will dictate height of the others --&gt;</span>
+  <span class="tag">&lt;<span class="title">ul</span>&gt;</span> <span class="comment">&lt;!-- 200px wide column. will grow in height to match the first column --&gt;</span>
+  <span class="comment">&lt;!-- ...and so on... --&gt;</span>
+<span class="tag">&lt;/<span class="title">main</span>&gt;</span></code></pre>
+
 <p>Now for the interesting stuff - what&#39;s actually going on inside the columns? Here&#39;s how the rules will be applied:</p>
 <pre><code><span class="tag">&lt;<span class="title">ul</span>&gt;</span> <span class="comment">&lt;!-- flex column --&gt;</span>
   <span class="tag">&lt;<span class="title">li</span>&gt;</span> <span class="comment">&lt;!-- first and last li will be given flex-grow .5 --&gt;</span>

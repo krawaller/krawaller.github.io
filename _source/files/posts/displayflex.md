@@ -121,6 +121,14 @@ li:first-child,li:last-child {
 
 All `flex` boxes have a `flex-direction` which is `row` (default) or `column`. The `main` element is a flex row, and contains 4 `ul` elements. These are given a fixed width of 200px, and will be laid out as columns. Because the flex prop `align-items` default to `stretch`, all columns will be given the same height inside the container.
 
+```html
+<main> <!-- flex row with align-items stretch -->
+  <ul> <!-- 200px wide column. this first round has most markup and will dictate height of the others -->
+  <ul> <!-- 200px wide column. will grow in height to match the first column -->
+  <!-- ...and so on... -->
+</main>
+```
+
 Now for the interesting stuff - what's actually going on inside the columns? Here's how the rules will be applied:
 
 ```html
