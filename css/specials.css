@@ -10,15 +10,18 @@
   padding: 10px;
   line-height: 1.4em; }
 .tournament1 main, .tournament1 ul {
-  display: flex; }
+  display: -webkit-flex; }
 .tournament1 ul {
+  -webkit-flex-direction: column;
   flex-direction: column;
-  flex-grow: 1;
+  width: 200px;
   list-style: none;
   padding: 0; }
 .tournament1 .game + li {
+  -webkit-flex-grow: 1;
   flex-grow: 1; }
 .tournament1 li:first-child, .tournament1 li:last-child {
+  -webkit-flex-grow: 0.5;
   flex-grow: 0.5; }
 .tournament1 .game {
   padding-left: 20px; }
@@ -41,13 +44,16 @@
   padding: 10px;
   line-height: 1.4em; }
 .tournament2 main, .tournament2 ul {
+  display: -webkit-flex;
   display: flex; }
 .tournament2 ul {
   flex-direction: column;
-  flex-grow: 1;
+  -flex-direction: column;
+  width: 200px;
   list-style: none;
   padding: 0; }
 .tournament2 .game + li {
+  -webkit-flex-grow: 1;
   flex-grow: 1; }
 .tournament2 ul:before, .tournament2 ul:after {
   display: inline-block;

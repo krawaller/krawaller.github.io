@@ -15,21 +15,24 @@ main {
 }
 
 main, ul {
-  display:flex;
+  display:-webkit-flex;
 }
 
 ul {
+  -webkit-flex-direction:column;
   flex-direction:column;
-  flex-grow: 1;
+  width: 200px;
   list-style:none;
   padding:0;
 }
 
 .game + li {
+  -webkit-flex-grow:1;
   flex-grow:1;
 }
 
 li:first-child,li:last-child {
+  -webkit-flex-grow:.5;
   flex-grow:.5;
 }
 
@@ -72,17 +75,20 @@ main {
 }
 
 main, ul {
+  display:-webkit-flex;
   display:flex;
 }
 
 ul {
   flex-direction:column;
-  flex-grow:1;
+  -flex-direction:column;
+  width: 200px;
   list-style:none;
   padding:0;
 }
 
 .game + li {
+  -webkit-flex-grow:1;
   flex-grow:1;
 }
 
