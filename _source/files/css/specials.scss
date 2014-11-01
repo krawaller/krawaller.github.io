@@ -95,6 +95,7 @@ ul {
 ul:before, ul:after {
   display: inline-block;
   content: " ";
+  -webkit-flex-grow:0.5;
   flex-grow:0.5;
 }
 

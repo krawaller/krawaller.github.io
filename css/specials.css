@@ -58,6 +58,7 @@
 .tournament2 ul:before, .tournament2 ul:after {
   display: inline-block;
   content: " ";
+  -webkit-flex-grow: 0.5;
   flex-grow: 0.5; }
 .tournament2 .game {
   padding-left: 20px; }
