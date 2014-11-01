@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Exploring a tournament bracket built with CSS3 flex items</title>
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/specials.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+Toying around with the CSS3 flex tech
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/exploring-a-tournament-bracket-built-with-css3-flex-items">Exploring a tournament bracket built with CSS3 flex items</a>
+    <span class="post-meta">
+      <time datetime="Sat Nov 01 2014 01:00:00 GMT+0100 (CET)">Nov 1st 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/css3/'>css3</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="sports-go-team-">Sports! Go team!</h3>
+<p>Since I spend my days on the bottom of the JavaScript rabbit hole my CSS fu has seriously waned. It was therefore just the other day I was made aware of the existence of the <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/flex">CSS3 flexbox tech</a> - holy crap, why didn&#39;t anyone tell me about this? This is seriously awesome!</p>
+<p>While reading the <a href="http://css-tricks.com/snippets/css/a-guide-to-flexbox/">excellent guide on CSSTricks</a> I stumbled upon a <a href="http://codepen.io/aronduby/pen/qliuj">really neat Codepen</a> by developer <a href="http://aronduby.com/">Aron Duby</a>, where he used flex to build a tournament bracket without having to resort to any other positioning. Here&#39;s what it looks like:</p>
+<div class='panel tournament1'>
+<main>
+<ul>
+<li>&nbsp;</li><li class="game game-top winner">Lousville <span>79</span></li><li>&nbsp;</li><li class="game game-bottom ">NC A&amp;T <span>48</span></li><li>&nbsp;</li><li class="game game-top winner">Colo St <span>84</span></li><li>&nbsp;</li><li class="game game-bottom ">Missouri <span>72</span></li><li>&nbsp;</li><li class="game game-top ">Oklahoma St <span>55</span></li><li>&nbsp;</li><li class="game game-bottom winner">Oregon <span>68</span></li><li>&nbsp;</li><li class="game game-top winner">Saint Louis <span>64</span></li><li>&nbsp;</li><li class="game game-bottom ">New Mexico St <span>44</span></li><li>&nbsp;</li><li class="game game-top winner">Memphis <span>54</span></li><li>&nbsp;</li><li class="game game-bottom ">St Mary&#39;s <span>52</span></li><li>&nbsp;</li><li class="game game-top winner">Mich St <span>65</span></li><li>&nbsp;</li><li class="game game-bottom ">Valparaiso <span>54</span></li><li>&nbsp;</li><li class="game game-top winner">Creighton <span>67</span></li><li>&nbsp;</li><li class="game game-bottom ">Cincinnati <span>63</span></li><li>&nbsp;</li><li class="game game-top winner">Duke <span>73</span></li><li>&nbsp;</li><li class="game game-bottom ">Albany <span>61</span></li><li>&nbsp;</li></ul><ul><li>&nbsp;</li><li class="game game-top winner">Lousville <span>82</span></li><li>&nbsp;</li><li class="game game-bottom ">Colo St <span>56</span></li><li>&nbsp;</li><li class="game game-top winner">Oregon <span>74</span></li><li>&nbsp;</li><li class="game game-bottom ">Saint Louis <span>57</span></li><li>&nbsp;</li><li class="game game-top ">Memphis <span>48</span></li><li>&nbsp;</li><li class="game game-bottom winner">Mich St <span>70</span></li><li>&nbsp;</li><li class="game game-top ">Creighton <span>50</span></li><li>&nbsp;</li><li class="game game-bottom winner">Duke <span>66</span></li><li>&nbsp;</li></ul><ul><li>&nbsp;</li><li class="game game-top winner">Lousville <span>77</span></li><li>&nbsp;</li><li class="game game-bottom ">Oregon <span>69</span></li><li>&nbsp;</li><li class="game game-top ">Mich St <span>61</span></li><li>&nbsp;</li><li class="game game-bottom winner">Duke <span>71</span></li><li>&nbsp;</li></ul><ul><li>&nbsp;</li><li class="game game-top winner">Lousville <span>85</span></li><li>&nbsp;</li><li class="game game-bottom ">Duke <span>63</span></li><li>&nbsp;</li></ul></main>
+</div>
+
+<h3 id="the-code">The code</h3>
+<p>I took the liberty of distilling the HTML down to its bare minimum:</p>
+<pre><code><span class="tag">&lt;<span class="title">main</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Lousville <span class="tag">&lt;<span class="title">span</span>&gt;</span>79<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>NC A&amp;T <span class="tag">&lt;<span class="title">span</span>&gt;</span>48<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Colo St <span class="tag">&lt;<span class="title">span</span>&gt;</span>84<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>Missouri <span class="tag">&lt;<span class="title">span</span>&gt;</span>72<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="comment">&lt;!-- REDACTED SOME GAMES ---&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Duke <span class="tag">&lt;<span class="title">span</span>&gt;</span>73<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>Albany <span class="tag">&lt;<span class="title">span</span>&gt;</span>61<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="comment">&lt;!-- redacted, same structure as round 1 --&gt;</span>
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="comment">&lt;!-- redacted --&gt;</span>    
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Lousville <span class="tag">&lt;<span class="title">span</span>&gt;</span>85<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>Duke <span class="tag">&lt;<span class="title">span</span>&gt;</span>63<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>        
+<span class="tag">&lt;/<span class="title">main</span>&gt;</span></code></pre>
+
+<p>And here&#39;s the magical CSS (adapted to the simpler HTML):</p>
+<pre><code><span class="tag">main</span>, <span class="tag">ul</span> <span class="rules">{
+  <span class="rule"><span class="attribute">display</span>:<span class="value">flex</span></span>;
+<span class="rule">}</span></span>
+
+<span class="tag">ul</span> <span class="rules">{
+  <span class="rule"><span class="attribute">flex-direction</span>:<span class="value">column</span></span>;
+  <span class="rule"><span class="attribute">width</span>:<span class="value"><span class="number">200</span>px</span></span>;
+  <span class="rule"><span class="attribute">list-style</span>:<span class="value">none</span></span>;
+  <span class="rule"><span class="attribute">padding</span>:<span class="value"><span class="number">0</span></span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.game</span> + <span class="tag">li</span> <span class="rules">{
+  <span class="rule"><span class="attribute">flex-grow</span>:<span class="value"><span class="number">1</span></span></span>;
+<span class="rule">}</span></span>
+
+<span class="tag">li</span><span class="pseudo">:first-child</span>,<span class="tag">li</span><span class="pseudo">:last-child</span> <span class="rules">{
+  <span class="rule"><span class="attribute">flex-grow</span>:<span class="value">.<span class="number">5</span></span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.game</span> <span class="rules">{
+  <span class="rule"><span class="attribute">padding-left</span>:<span class="value"><span class="number">20</span>px</span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.winner</span> <span class="rules">{
+  <span class="rule"><span class="attribute">font-weight</span>:<span class="value">bold</span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.game</span> <span class="tag">span</span> <span class="rules">{
+  <span class="rule"><span class="attribute">float</span>:<span class="value">right</span></span>;
+  <span class="rule"><span class="attribute">margin-right</span>:<span class="value"><span class="number">5</span>px</span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.game-top</span> <span class="rules">{
+  <span class="rule"><span class="attribute">border-bottom</span>:<span class="value"><span class="number">1</span>px solid <span class="hexcolor">#aaa</span></span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.game-top</span> + <span class="tag">li</span> <span class="rules">{
+  <span class="rule"><span class="attribute">border-right</span>:<span class="value"><span class="number">1</span>px solid <span class="hexcolor">#aaa</span></span></span>; <span class="rule"><span class="attribute">min-height</span>:<span class="value"><span class="number">40</span>px</span></span>;
+<span class="rule">}</span></span>
+
+<span class="class">.game-bottom</span> <span class="rules">{
+  <span class="rule"><span class="attribute">border-top</span>:<span class="value"><span class="number">1</span>px solid <span class="hexcolor">#aaa</span></span></span>;
+<span class="rule">}</span></span></code></pre>
+
+<h3 id="the-magic">The magic</h3>
+<p>All <code>flex</code> boxes have a <code>flex-direction</code> which is <code>row</code> (default) or <code>column</code>. The <code>main</code> element is a flex row, and contains 4 <code>ul</code> elements. These are given a fixed width of 200px, and will be laid out as columns. Because the flex prop <code>align-items</code> default to <code>stretch</code>, all columns will be given the same height inside the container.</p>
+<p>Now for the interesting stuff - what&#39;s actually going on inside the columns? Here&#39;s how the rules will be applied:</p>
+<pre><code><span class="tag">&lt;<span class="title">ul</span>&gt;</span> <span class="comment">&lt;!-- flex column --&gt;</span>
+  <span class="tag">&lt;<span class="title">li</span>&gt;</span> <span class="comment">&lt;!-- first and last li will be given flex-grow .5 --&gt;</span>
+  <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">'game-top'</span>&gt;</span> <span class="comment">&lt;!-- home team gets a border-bottom --&gt;</span>
+  <span class="tag">&lt;<span class="title">li</span>&gt;</span> <span class="comment">&lt;!-- li between teams gets min-height 40, a border-right and flex-grow 1 --&gt;</span>
+  <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">'game-bottom'</span>&gt;</span> <span class="comment">&lt;!-- away team gets border-top --&gt;</span>
+  <span class="tag">&lt;<span class="title">li</span>&gt;</span> <span class="comment">&lt;!-- li between games just gets flex-grow 1 --&gt;</span>
+  <span class="comment">&lt;!-- ...and so on... --&gt;</span>
+<span class="tag">&lt;/<span class="title">ul</span>&gt;</span></code></pre>
+
+<p>The elements with <code>flex-grow</code> will be resized to give the container its expected height, which due to <code>align-items</code> being set to <code>stretch</code> should result in columns with equal height.</p>
+<p>The value of flex-grow dictates how much the elements shouldgrow in proportion to each other. This means the team spacers and the game spacer <code>li</code> will all be the same height, with a minimum of 40. The first and last <code>li</code> will be half that, which is Aron&#39;s brilliant way of ensuring vertical centering inside the column without actually having to even use (the otherwise very powerful) <code>justify-content</code> flex property.</p>
+<p>If we had not put <code>min-height:40px</code> on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn&#39;t need to grow.</p>
+<h3 id="pseudofying">Pseudofying</h3>
+<p>Although already seriously neat, it still felt somewhat icky having to have the spacer <code>li</code> elements in the markup. I tried to add them as pseudo elements using <code>:before</code> and <code>:after</code>, but couldn&#39;t get it to work. The reason is simple - despite their names, the pseudoclasses don&#39;t actually create the pseudo element <strong>before</strong> or <strong>after</strong> the target element, but inside them (at the top or bottom). That means the spacers wouldn&#39;t be siblings but cousins, and they wouldn&#39;t be children of the flex column. Thus the flex growth won&#39;t happen.</p>
+<p>If there had been some css pseudo class equivalents of <code>:before</code> and <code>:after</code> that actually did create siblings to the target element, then it would have worked! But without that I don&#39;t see that it is possible to do the bracket without vilifying the markup.</p>
+<p>The exception is the first and last spacer in the round - them we can create using pseudo classes on the columns! So we replace this rule...</p>
+<pre><code><span class="tag">li</span><span class="pseudo">:first-child</span>,<span class="tag">li</span><span class="pseudo">:last-child</span> <span class="rules">{
+  <span class="rule"><span class="attribute">flex-grow</span>:<span class="value">.<span class="number">5</span></span></span>;
+<span class="rule">}</span></span></code></pre>
+
+<p>...with this rule...</p>
+<pre><code><span class="tag">ul</span><span class="pseudo">:before</span>, <span class="tag">ul</span><span class="pseudo">:after</span> <span class="rules">{
+  <span class="rule"><span class="attribute">content</span>:<span class="value"> <span class="string">" "</span>,
+  display: 
+  flex-grow:.<span class="number">5</span></span></span>;
+<span class="rule">}</span></span></code></pre>
+
+<p>...and rip out the first and last spacer in each round...</p>
+<pre><code><span class="tag">&lt;<span class="title">main</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Lousville <span class="tag">&lt;<span class="title">span</span>&gt;</span>79<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>NC A&amp;T <span class="tag">&lt;<span class="title">span</span>&gt;</span>48<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Colo St <span class="tag">&lt;<span class="title">span</span>&gt;</span>84<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>Missouri <span class="tag">&lt;<span class="title">span</span>&gt;</span>72<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+
+        <span class="comment">&lt;!-- REDACTED SOME GAMES ---&gt;</span>
+
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Duke <span class="tag">&lt;<span class="title">span</span>&gt;</span>73<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>Albany <span class="tag">&lt;<span class="title">span</span>&gt;</span>61<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="comment">&lt;!-- redacted, same structure as round 1 --&gt;</span>
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="comment">&lt;!-- redacted --&gt;</span>    
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ul</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-top winner"</span>&gt;</span>Lousville <span class="tag">&lt;<span class="title">span</span>&gt;</span>85<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span>&gt;</span>&amp;nbsp;<span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">li</span> <span class="attribute">class</span>=<span class="value">"game game-bottom "</span>&gt;</span>Duke <span class="tag">&lt;<span class="title">span</span>&gt;</span>63<span class="tag">&lt;/<span class="title">span</span>&gt;</span><span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>        
+<span class="tag">&lt;/<span class="title">main</span>&gt;</span></code></pre>
+
+<p>...and we still get the same result as before:</p>
+<div class='panel tournament2'>
+<main>
+<ul>
+<li class="game game-top winner">Lousville <span>79</span></li><li>&nbsp;</li><li class="game game-bottom ">NC A&amp;T <span>48</span></li><li>&nbsp;</li><li class="game game-top winner">Colo St <span>84</span></li><li>&nbsp;</li><li class="game game-bottom ">Missouri <span>72</span></li><li>&nbsp;</li><li class="game game-top ">Oklahoma St <span>55</span></li><li>&nbsp;</li><li class="game game-bottom winner">Oregon <span>68</span></li><li>&nbsp;</li><li class="game game-top winner">Saint Louis <span>64</span></li><li>&nbsp;</li><li class="game game-bottom ">New Mexico St <span>44</span></li><li>&nbsp;</li><li class="game game-top winner">Memphis <span>54</span></li><li>&nbsp;</li><li class="game game-bottom ">St Mary&#39;s <span>52</span></li><li>&nbsp;</li><li class="game game-top winner">Mich St <span>65</span></li><li>&nbsp;</li><li class="game game-bottom ">Valparaiso <span>54</span></li><li>&nbsp;</li><li class="game game-top winner">Creighton <span>67</span></li><li>&nbsp;</li><li class="game game-bottom ">Cincinnati <span>63</span></li><li>&nbsp;</li><li class="game game-top winner">Duke <span>73</span></li><li>&nbsp;</li><li class="game game-bottom ">Albany <span>61</span></li></ul><ul><li class="game game-top winner">Lousville <span>82</span></li><li>&nbsp;</li><li class="game game-bottom ">Colo St <span>56</span></li><li>&nbsp;</li><li class="game game-top winner">Oregon <span>74</span></li><li>&nbsp;</li><li class="game game-bottom ">Saint Louis <span>57</span></li><li>&nbsp;</li><li class="game game-top ">Memphis <span>48</span></li><li>&nbsp;</li><li class="game game-bottom winner">Mich St <span>70</span></li><li>&nbsp;</li><li class="game game-top ">Creighton <span>50</span></li><li>&nbsp;</li><li class="game game-bottom winner">Duke <span>66</span></li></ul><ul><li class="game game-top winner">Lousville <span>77</span></li><li>&nbsp;</li><li class="game game-bottom ">Oregon <span>69</span></li><li>&nbsp;</li><li class="game game-top ">Mich St <span>61</span></li><li>&nbsp;</li><li class="game game-bottom winner">Duke <span>71</span></li></ul><ul><li class="game game-top winner">Lousville <span>85</span></li><li>&nbsp;</li><li class="game game-bottom ">Duke <span>63</span></li></ul></main>
+</div>
+
+
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>I thoroughly enjoyed picking apart Aron&#39;s neat codepen, and adding flex to my toolbelt felt like it levelled up my CSS fu several times over. The already mentioned <a href="http://css-tricks.com/snippets/css/a-guide-to-flexbox/">CSSTricks guide</a> really is very good, so if you&#39;ve been underground for as long as me and want to catch up, go check it out!</p>
+<p>Still, I wonder if there really is no way to create the tournament bracket without having to resort to markup spacers. This really feels like the girl who got away! If YOU are sitting on the secret, do get in touch!</p>
+
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>

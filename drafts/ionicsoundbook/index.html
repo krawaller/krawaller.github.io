@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title></title>
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/specials.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+<p>So here&#39;s my cool app! Here&#39;s what it all looks like omg omg omg! :)</p>
+<iframe src='http://blog.krawaller.se/ionic-sound-book/www/' style="height:400px;width:100%"></iframe>
+
+<p>Go to <a href="https://github.com/krawaller/ionic-sound-book/">git repo</a>.</p>
+<p>Lololol html code from <a href="https://github.com/krawaller/ionic-sound-book/blob/master/www/index.html">index.html</a>:</p>
+<pre><code><span class="tag">&lt;<span class="title">body</span> <span class="attribute">ng-app</span>=<span class="value">"starter"</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">ion-pane</span> <span class="attribute">ng-controller</span>=<span class="value">"SlideBox"</span>&gt;</span>
+      <span class="tag">&lt;<span class="title">ion-slide-box</span> <span class="attribute">does-continue</span>=<span class="value">"true"</span> <span class="attribute">show-pager</span>=<span class="value">"false"</span> <span class="attribute">active-slide</span>=<span class="value">"activeSlide"</span> <span class="attribute">on-slide-changed</span>=<span class="value">"slideChanged(index)"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">ion-slide</span> <span class="attribute">ng-repeat</span>=<span class="value">"slide in slides"</span>&gt;</span>
+          <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"listz row"</span> <span class="attribute">ng-class</span>=<span class="value">"(slideIndex == slide.index) ? 'active' : ''"</span>&gt;</span>
+            <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"col item animated"</span>
+                 <span class="attribute">ng-repeat</span>=<span class="value">"item in slide.items"</span>
+                 <span class="attribute">style</span>=<span class="value">"background-color: {{item.background}};"</span>
+                 <span class="attribute">ng-click</span>=<span class="value">"playSound(item, $event)"</span>&gt;</span>
+
+              <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"item-image"</span> <span class="attribute">style</span>=<span class="value">"background-image: url('items/{{item.image}}');"</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">div</span> <span class="attribute">class</span>=<span class="value">"label animated"</span>&gt;</span>{{ item.label }}<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+              <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+            <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+          <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+        <span class="tag">&lt;/<span class="title">ion-slide</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">ion-slide-box</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">ion-pane</span>&gt;</span>
+    <span class="tag">&lt;<span class="title">script</span> <span class="attribute">src</span>=<span class="value">"js/game.js"</span>&gt;</span><span class="javascript"></span><span class="tag">&lt;/<span class="title">script</span>&gt;</span>
+  <span class="tag">&lt;/<span class="title">body</span>&gt;</span></code></pre>
+
+<p>Mooo moo <a href="https://raw.githubusercontent.com/krawaller/ionic-sound-book/master/www/js/controllers.js">controllers.js</a>:</p>
+<pre><code><span class="keyword">var</span> items = [{
+  image: <span class="string">'banan.JPG'</span>,
+  label: <span class="string">'banan'</span>,
+  sound: <span class="string">'banan.m4a'</span>,
+  background: <span class="string">'#DFA954'</span>
+},
+{
+  image: <span class="string">'bil.JPG'</span>,
+  label: <span class="string">'bil'</span>,
+  sound: <span class="string">'bil.m4a'</span>,
+  background: <span class="string">'#0083EA'</span>
+},
+{
+  image: <span class="string">'flaska.JPG'</span>,
+  label: <span class="string">'flaska'</span>,
+  sound: <span class="string">'flaska.m4a'</span>,
+  background: <span class="string">'#DDEBF3'</span>
+},
+{
+  image: <span class="string">'klocka.JPG'</span>,
+  label: <span class="string">'klocka'</span>,
+  sound: <span class="string">'klocka.m4a'</span>,
+  background: <span class="string">'#BF9D7C'</span>
+},
+{
+  image: <span class="string">'kopp.JPG'</span>,
+  label: <span class="string">'kopp'</span>,
+  sound: <span class="string">'kopp.m4a'</span>,
+  background: <span class="string">'#E00931'</span>
+},
+{
+  image: <span class="string">'napp.JPG'</span>,
+  label: <span class="string">'napp'</span>,
+  sound: <span class="string">'napp.m4a'</span>,
+  background: <span class="string">'#FE0D45'</span>
+},
+{
+  image: <span class="string">'sked.JPG'</span>,
+  label: <span class="string">'sked'</span>,
+  sound: <span class="string">'sked.m4a'</span>,
+  background: <span class="string">'#FF4433'</span>
+},
+{
+  image: <span class="string">'skor.JPG'</span>,
+  label: <span class="string">'skor'</span>,
+  sound: <span class="string">'skor.m4a'</span>,
+  background: <span class="string">'#A40F29'</span>
+}]
+
+angular.module(<span class="string">'IlonPlayer.controllers'</span>, [])
+
+.controller(<span class="string">'SlideBox'</span>, <span class="function"><span class="keyword">function</span><span class="params">($scope, $state, $ionicNavBarDelegate)</span> {</span>
+
+  items.forEach(<span class="function"><span class="keyword">function</span><span class="params">(item)</span> {</span>
+    <span class="keyword">if</span> (item.sound) {
+      createjs.Sound.registerSound(<span class="string">'items/'</span> + item.sound, item.label);
+    }
+  });
+
+  <span class="keyword">var</span> slides = [];
+  <span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; items.length; i += <span class="number">2</span>) {
+    slides.push({ items: [items[i], items[i + <span class="number">1</span>]], index: i / <span class="number">2</span> })
+  };
+  $scope.slides = slides;
+
+  $scope.playSound = <span class="function"><span class="keyword">function</span><span class="params">(item, $event)</span> {</span>
+    createjs.Sound.play(item.label);
+
+    $event.target.classList.add(<span class="string">'tapped'</span>);
+    setTimeout(<span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+      $event.target.classList.remove(<span class="string">'tapped'</span>);
+    }, <span class="number">300</span>)
+
+  };
+
+  <span class="comment">// Called each time the slide changes</span>
+  $scope.slideChanged = <span class="function"><span class="keyword">function</span><span class="params">(index)</span> {</span>
+    $scope.slideIndex = index;
+  };
+  <span class="comment">//start at 0</span>
+  $scope.slideIndex = <span class="number">0</span>;
+
+
+  <span class="keyword">var</span> timeout = setTimeout(animateIdle, <span class="number">5000</span>);;
+  ionic.on(<span class="string">'tap'</span>, <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+    clearTimeout(timeout)
+    timeout = setTimeout(animateIdle, <span class="number">5000</span>);
+  }, document.body);
+
+  <span class="function"><span class="keyword">function</span> <span class="title">animateIdle</span><span class="params">()</span> {</span>
+    <span class="keyword">var</span> labels = document.querySelectorAll(<span class="string">'.listz.active .label'</span>);
+    <span class="keyword">var</span> label = labels[<span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * labels.length)];
+    <span class="keyword">var</span> animations = [<span class="string">'swing'</span>, <span class="string">'wobble'</span>, <span class="string">'tada'</span>, <span class="string">'shake'</span>, <span class="string">'rubberBand'</span>]
+    <span class="keyword">var</span> animation = animations[<span class="built_in">Math</span>.floor(<span class="built_in">Math</span>.random() * animations.length)];
+    label.style.animationName = label.style.webkitAnimationName = animation;
+
+    timeout = setTimeout(animateIdle, <span class="number">4000</span>);
+  }
+})</code></pre>
+
+
+<p>BLa bla stars using Phaser omg omg! It&#39;s in <a href="https://github.com/krawaller/ionic-sound-book/blob/master/www/js/game.js">game.js</a></p>
+<pre><code><span class="keyword">var</span> game = <span class="keyword">new</span> Phaser.Game(innerWidth, innerHeight, Phaser.CANVAS, <span class="string">'canvas'</span>, { preload: preload, create: create, update: update, render: render }, <span class="literal">true</span>);
+
+<span class="function"><span class="keyword">function</span> <span class="title">preload</span><span class="params">()</span> {</span>
+  game.load.spritesheet(<span class="string">'stars'</span>, <span class="string">'img/stars.png'</span>, <span class="number">50</span>, <span class="number">49</span>);
+}
+
+<span class="keyword">var</span> emitter;
+
+<span class="function"><span class="keyword">function</span> <span class="title">create</span><span class="params">()</span> {</span>
+
+  game.stage.backgroundColor = <span class="string">'#ffffff'</span>;
+
+  emitter = game.add.emitter(<span class="number">0</span>, <span class="number">0</span>, <span class="number">100</span>);
+
+  emitter.makeParticles(<span class="string">'stars'</span>, [<span class="number">0</span>, <span class="number">2</span>]);
+  emitter.gravity = <span class="number">0</span>;
+
+  emitter.setYSpeed(-<span class="number">400</span>, <span class="number">400</span>);
+  emitter.setXSpeed(-<span class="number">400</span>, <span class="number">400</span>);
+
+}
+
+ionic.on(<span class="string">'tap'</span>, <span class="function"><span class="keyword">function</span><span class="params">(event)</span> {</span>
+
+  emitter.x = event.gesture.center.pageX;
+  emitter.y = event.gesture.center.pageY;
+
+  <span class="comment">//  The first parameter sets the effect to "explode" which means all particles are emitted at once</span>
+  <span class="comment">//  The second gives each particle a 2000ms lifespan</span>
+  <span class="comment">//  The third is ignored when using burst/explode mode</span>
+  <span class="comment">//  The final parameter (10) is how many particles will be emitted in this single burst</span>
+  emitter.start(<span class="literal">true</span>, <span class="number">1000</span>, <span class="literal">null</span>, <span class="number">10</span>);
+}, document.body)
+
+<span class="function"><span class="keyword">function</span> <span class="title">update</span><span class="params">()</span> {</span>
+
+}
+
+<span class="function"><span class="keyword">function</span> <span class="title">render</span><span class="params">()</span> {</span>
+
+}</code></pre>
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>
