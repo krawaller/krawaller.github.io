@@ -144,7 +144,7 @@ Now for the interesting stuff - what's actually going on inside the columns? Her
 
 The elements with `flex-grow` will be resized to give the container its expected height, which due to `align-items` being set to `stretch` should result in columns with equal height.
 
-The value of flex-grow dictates how much the elements shouldgrow in proportion to each other. This means the team spacers and the game spacer `li` will all be the same height, with a minimum of 40. The first and last `li` will be half that, which is Aron's brilliant way of ensuring vertical centering inside the column without actually having to even use (the otherwise very powerful) `justify-content` flex property.
+The value of flex-grow dictates how much the elements should grow in proportion to each other. This means the team spacers and the game spacer `li` will all be the same height, with a minimum of 40. The first and last `li` will be half that, which is Aron's brilliant way of ensuring vertical centering inside the column without actually having to even use the (otherwise very powerful) `justify-content` flex property.
 
 If we had not put `min-height:40px` on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn't need to grow.
 
