@@ -148,7 +148,9 @@ The value of flex-grow dictates how much the elements should grow in proportion 
 
 If we had not put `min-height:40px` on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn't need to grow.
 
-To make this more visible, here's the bracket again but with the `flex-grow:1` items marked in yellow and the `flex-grow:0.5` items marked in blue:
+###Spectral glasses
+
+To make this more visible here's the bracket again but with the `flex-grow:1` items marked in yellow and the `flex-grow:0.5` items marked in blue:
 
 <div class='panel tournament3'>
 <main>

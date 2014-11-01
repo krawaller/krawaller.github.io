@@ -192,9 +192,10 @@ Dissecting a tournament bracket built with the CSS3 flex tech
 <span class="tag">&lt;/<span class="title">ul</span>&gt;</span></code></pre>
 
 <p>The elements with <code>flex-grow</code> will be resized to give the container its expected height, which due to <code>align-items</code> being set to <code>stretch</code> should result in columns with equal height.</p>
-<p>The value of flex-grow dictates how much the elements should grow in proportion to each other. This means the team spacers and the game spacer <code>li</code> will all be the same height, with a minimum of 40. The first and last <code>li</code> will be half that, which is Aron&#39;s brilliant way of ensuring vertical centering inside the column without actually having to even use the (otherwise very powerful) <code>justify-content</code> flex property.</p>
+<p>The value of flex-grow dictates how much the elements should grow in proportion to each other. This means the team spacers and the game spacer <code>li</code> will all be the same height although the latter has a minimum of 40. The first and last <code>li</code> will be half size, which is Aron&#39;s brilliant way of ensuring vertical centering inside the column without actually having to even use the (otherwise very powerful) <code>justify-content</code> flex property.</p>
 <p>If we had not put <code>min-height:40px</code> on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn&#39;t need to grow.</p>
-<p>To make this more visible, here&#39;s the bracket again but with the <code>flex-grow:1</code> items marked in yellow and the <code>flex-grow:0.5</code> items marked in blue:</p>
+<h3 id="spectral-glasses">Spectral glasses</h3>
+<p>To make this more visible here&#39;s the bracket again but with the <code>flex-grow:1</code> items marked in yellow and the <code>flex-grow:0.5</code> items marked in blue:</p>
 <div class='panel tournament3'>
 <main>
 <ul>
