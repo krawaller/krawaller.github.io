@@ -13,7 +13,7 @@
   display: flex; }
 .tournament1 ul {
   flex-direction: column;
-  width: 200px;
+  flex-grow: 1;
   list-style: none;
   padding: 0; }
 .tournament1 .game + li {
@@ -44,7 +44,7 @@
   display: flex; }
 .tournament2 ul {
   flex-direction: column;
-  width: 200px;
+  flex-grow: 1;
   list-style: none;
   padding: 0; }
 .tournament2 .game + li {

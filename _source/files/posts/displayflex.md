@@ -77,7 +77,7 @@ main, ul {
 
 ul {
   flex-direction:column;
-  width:200px;
+  flex-grow:1;
   list-style:none;
   padding:0;
 }
@@ -119,12 +119,14 @@ li:first-child,li:last-child {
 
 ###The magic
 
-All `flex` boxes have a `flex-direction` which is `row` (default) or `column`. The `main` element is a flex row, and contains 4 `ul` elements. These are given a fixed width of 200px, and will be laid out as columns. Because the flex prop `align-items` default to `stretch`, all columns will be given the same height inside the container.
+All `flex` boxes have a `flex-direction` which is `row` (default) or `column`. The `main` element is a flex row, and contains 4 `ul` elements. These are all given a `flex-grow` of 1, which together with the flex prop `align-items` defaulting to `stretch` means that they will all get the same width.
+
+The same applies to the items within the column; since they too default to `stretch`, all columns will be given the same height inside the container.
 
 ```html
 <main> <!-- flex row with align-items stretch -->
-  <ul> <!-- 200px wide column. this first round has most markup and will dictate height of the others -->
-  <ul> <!-- 200px wide column. will grow in height to match the first column -->
+  <ul> <!-- column. this first round has most markup and will dictate height of the others -->
+  <ul> <!-- column. will grow in height to match the first column -->
   <!-- ...and so on... -->
 </main>
 ```
