@@ -218,7 +218,9 @@ ul.social-nav {
 /*David hacks*/
 @media (max-width: 600px) {
   .container {
-    max-width: 94%; } }
+    max-width: 94%; }
+  .blog-title a {
+    font-size: 30pt; } }
 
 article:after, section:after, .group {
   content: " ";
