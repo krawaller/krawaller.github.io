@@ -4,38 +4,38 @@
   border-radius: 5px;
   overflow-x: auto; }
 
-.tournament1 main {
+.tournament1 main, .tournament3 main {
   font-family: sans-serif;
   font-size: small;
   padding: 10px;
   line-height: 1.4em; }
-.tournament1 main, .tournament1 ul {
+.tournament1 main, .tournament1 ul, .tournament3 main, .tournament3 ul {
   display: -webkit-flex; }
-.tournament1 ul {
+.tournament1 ul, .tournament3 ul {
   -webkit-flex-direction: column;
   flex-direction: column;
   width: 200px;
   list-style: none;
   padding: 0; }
-.tournament1 .game + li {
+.tournament1 .game + li, .tournament3 .game + li {
   -webkit-flex-grow: 1;
   flex-grow: 1; }
-.tournament1 li:first-child, .tournament1 li:last-child {
+.tournament1 li:first-child, .tournament1 li:last-child, .tournament3 li:first-child, .tournament3 li:last-child {
   -webkit-flex-grow: 0.5;
   flex-grow: 0.5; }
-.tournament1 .game {
+.tournament1 .game, .tournament3 .game {
   padding-left: 20px; }
-.tournament1 .winner {
+.tournament1 .winner, .tournament3 .winner {
   font-weight: bold; }
-.tournament1 .game span {
+.tournament1 .game span, .tournament3 .game span {
   float: right;
   margin-right: 5px; }
-.tournament1 .game-top {
+.tournament1 .game-top, .tournament3 .game-top {
   border-bottom: 1px solid #aaa; }
-.tournament1 .game-top + li {
+.tournament1 .game-top + li, .tournament3 .game-top + li {
   border-right: 1px solid #aaa;
   min-height: 40px; }
-.tournament1 .game-bottom {
+.tournament1 .game-bottom, .tournament3 .game-bottom {
   border-top: 1px solid #aaa; }
 
 .tournament2 main {
@@ -74,3 +74,8 @@
   min-height: 40px; }
 .tournament2 .game-bottom {
   border-top: 1px solid #aaa; }
+
+.tournament3 .game + li {
+  background-color: yellow; }
+.tournament3 li:first-child, .tournament3 li:last-child {
+  background-color: blue; }

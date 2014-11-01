@@ -5,7 +5,7 @@
   overflow-x: auto;
 }
 
-.tournament1 {
+.tournament1, .tournament3 {
 
 main {
   font-family:sans-serif;
@@ -122,6 +122,18 @@ ul:before, ul:after {
 
 .game-bottom {
   border-top:1px solid #aaa;
+}
+
+}
+
+.tournament3 {
+
+.game + li {
+  background-color: yellow;
+}
+
+li:first-child,li:last-child {
+  background-color: blue;
 }
 
 }

@@ -148,6 +148,14 @@ The value of flex-grow dictates how much the elements should grow in proportion 
 
 If we had not put `min-height:40px` on the spacers the first round would be totally squashed, since it due to having the tallest content is the one dictating the height of the other columns, and thus doesn't need to grow.
 
+To make this more visible, here's the bracket again but with the `flex-grow:1` items marked in yellow and the `flex-grow:0.5` items marked in blue:
+
+<div class='panel tournament3'>
+<main>
+<ul>
+<li>&nbsp;</li><li class="game game-top winner">Lousville <span>79</span></li><li>&nbsp;</li><li class="game game-bottom ">NC A&T <span>48</span></li><li>&nbsp;</li><li class="game game-top winner">Colo St <span>84</span></li><li>&nbsp;</li><li class="game game-bottom ">Missouri <span>72</span></li><li>&nbsp;</li><li class="game game-top ">Oklahoma St <span>55</span></li><li>&nbsp;</li><li class="game game-bottom winner">Oregon <span>68</span></li><li>&nbsp;</li><li class="game game-top winner">Saint Louis <span>64</span></li><li>&nbsp;</li><li class="game game-bottom ">New Mexico St <span>44</span></li><li>&nbsp;</li><li class="game game-top winner">Memphis <span>54</span></li><li>&nbsp;</li><li class="game game-bottom ">St Mary's <span>52</span></li><li>&nbsp;</li><li class="game game-top winner">Mich St <span>65</span></li><li>&nbsp;</li><li class="game game-bottom ">Valparaiso <span>54</span></li><li>&nbsp;</li><li class="game game-top winner">Creighton <span>67</span></li><li>&nbsp;</li><li class="game game-bottom ">Cincinnati <span>63</span></li><li>&nbsp;</li><li class="game game-top winner">Duke <span>73</span></li><li>&nbsp;</li><li class="game game-bottom ">Albany <span>61</span></li><li>&nbsp;</li></ul><ul><li>&nbsp;</li><li class="game game-top winner">Lousville <span>82</span></li><li>&nbsp;</li><li class="game game-bottom ">Colo St <span>56</span></li><li>&nbsp;</li><li class="game game-top winner">Oregon <span>74</span></li><li>&nbsp;</li><li class="game game-bottom ">Saint Louis <span>57</span></li><li>&nbsp;</li><li class="game game-top ">Memphis <span>48</span></li><li>&nbsp;</li><li class="game game-bottom winner">Mich St <span>70</span></li><li>&nbsp;</li><li class="game game-top ">Creighton <span>50</span></li><li>&nbsp;</li><li class="game game-bottom winner">Duke <span>66</span></li><li>&nbsp;</li></ul><ul><li>&nbsp;</li><li class="game game-top winner">Lousville <span>77</span></li><li>&nbsp;</li><li class="game game-bottom ">Oregon <span>69</span></li><li>&nbsp;</li><li class="game game-top ">Mich St <span>61</span></li><li>&nbsp;</li><li class="game game-bottom winner">Duke <span>71</span></li><li>&nbsp;</li></ul><ul><li>&nbsp;</li><li class="game game-top winner">Lousville <span>85</span></li><li>&nbsp;</li><li class="game game-bottom ">Duke <span>63</span></li><li>&nbsp;</li></ul></main>
+</div>
+
 ###Retrospective
 
 So what did we actually do? In essence we used flex for two different things:
