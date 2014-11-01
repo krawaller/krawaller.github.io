@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>{{title}}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="A web developer blog talking mostly about JavaScript">
   {{#if this.isindex}}
   <link rel="stylesheet" href="css/theme.css"/>

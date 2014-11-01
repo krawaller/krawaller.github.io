@@ -302,6 +302,13 @@ h1, h2, h3, h4, h5, h6{
 
 
 /*David hacks*/
+
+@media (max-width: 600px) {
+  .container {
+    max-width: 94%
+  }
+}
+
 article:after, section:after, .group {
 	content: " ";
 	clear: both;

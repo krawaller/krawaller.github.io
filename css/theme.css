@@ -216,6 +216,10 @@ ul.social-nav {
     padding: 50px 0px 50px 0px; } }
 
 /*David hacks*/
+@media (max-width: 600px) {
+  .container {
+    max-width: 94%; } }
+
 article:after, section:after, .group {
   content: " ";
   clear: both;
