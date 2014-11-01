@@ -168,7 +168,7 @@ li:first-child,li:last-child {
 ```css
 ul:before, ul:after {
   content: " ",
-  display: 
+  display: inline-block;
   flex-grow:.5;
 }
 ```
