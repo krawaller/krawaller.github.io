@@ -80,8 +80,8 @@ main, ul {
 }
 
 ul {
+  -webkit-flex-direction:column;
   flex-direction:column;
-  -flex-direction:column;
   width: 200px;
   list-style:none;
   padding:0;
