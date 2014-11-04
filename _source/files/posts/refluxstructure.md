@@ -7,7 +7,7 @@ excerpt: "Exploring the Reflux data flow model, advocating why it is a good idea
 type: post
 ---
 
-###Reflux?
+###Rewhat?
 
 At its heart, [Reflux](https://github.com/spoike/refluxjs) is really just a PubSub library. That is, we have a Publisher API for objects who transmit events, and a Subscriber API for objects who want to listen to such events.
 
