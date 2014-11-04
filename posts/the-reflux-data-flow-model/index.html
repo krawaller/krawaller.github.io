@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>The Reflux data flow model</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/specials.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+Exploring the Reflux data flow model, advocating why it is a good idea, and showing what it can look like in a React app
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/the-reflux-data-flow-model">The Reflux data flow model</a>
+    <span class="post-meta">
+      <time datetime="Tue Nov 04 2014 01:00:00 GMT+0100 (CET)">Nov 4th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/react/'>react</a></span>
+      
+        <span><a href='../../tags/reflux/'>reflux</a></span>
+      
+        <span><a href='../../tags/backbone/'>backbone</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="reflux-">Reflux?</h3>
+<p>At its heart, <a href="https://github.com/spoike/refluxjs">Reflux</a> is really just a PubSub library. That is, we have a Publisher API for objects who transmit events, and a Subscriber API for objects who want to listen to such events.</p>
+<p>There is however a paradigm shift in how Reflux expects you to structure your data flow, which can be <a href="https://github.com/spoike/refluxjs/issues/105">hard to grasp initially</a>. This post will try to explain this approach.</p>
+<h3 id="the-regular-pubsub-approach">The regular pubsub approach</h3>
+<p>For a look at what a pubsub API normally looks like let&#39;s take a look at Backbone, which has a very traditional implementation in its Events module. This module contains both publisher and subscriber functionality and is mixed in to all Views, Models and Controllers, as well as into the Backbone object itself.</p>
+<p>The main subscriber method is <code>listenTo</code>:</p>
+<pre><code>subscriber<span class="preprocessor">.listenTo</span>(publisher,eventname,callback)<span class="comment">;</span></code></pre>
+
+<p>The publishers then have a corresponding <code>trigger</code> method. So if the publisher above did this:</p>
+<pre><code>publisher<span class="preprocessor">.trigger</span>(eventname,data1,data2)<span class="comment">;</span></code></pre>
+
+<p>Then this call would be made in response:</p>
+<pre><code><span class="function">callback(data1,data2)</span>;</code></pre>
+
+<p>You could say that each publisher is a radio transmitter with different frequency channels. A subscriber then chooses which channel (<code>eventname</code>) to listen to.</p>
+<p>We have a very similar situation in the DOM, where each DOM node can transmit a range of different events.</p>
+<h3 id="the-reflux-pubsub-approach">The Reflux pubsub approach</h3>
+<p>The only thing Reflux does differently is that it does away with the different channels. Hence there is no <code>eventname</code> concept in Reflux. The above sequence in Reflux would be:</p>
+<pre><code><span class="comment">// first</span>
+subscriber<span class="class">.listenTo</span>(publisher,callback);
+<span class="comment">// later</span>
+publisher<span class="class">.trigger</span>(data1,data2);
+<span class="comment">// immediately following that</span>
+<span class="function">callback(data1,data2)</span>;</code></pre>
+
+<p>Each publisher will only ever transmit the same kind of event. Initially I thought this to be extremely limiting - and it is - but as it turns out, this makes the whole application data flow much easier to reason about.</p>
+<h3 id="reflux-stores-and-actions">Reflux Stores and Actions</h3>
+<p>The core of Reflux is the Publisher and Subscriber (here called Listener) modules, which can be mixed in to any object (here using underscore/lodash):</p>
+<pre><code>var mypublisher = _<span class="preprocessor">.extend</span>(mypublisherdef,Reflux<span class="preprocessor">.PublisherMethods</span>)<span class="comment">;</span>
+mypublisher<span class="preprocessor">.trigger</span>(<span class="string">"i can trigger!"</span>)<span class="comment">;</span>
+
+var mysubscriber = _<span class="preprocessor">.extend</span>(mysubscriberdef,Reflux<span class="preprocessor">.ListenerMethods</span>)<span class="comment">;</span>
+mysubscriber<span class="preprocessor">.listenTo</span>(mypublisher,callback)<span class="comment">;</span>
+
+var mypubsuber = _<span class="preprocessor">.extend</span>(mypubsubdef,Reflux<span class="preprocessor">.PublisherMethods</span>,Reflux<span class="preprocessor">.ListenerMethods</span>)<span class="comment">;</span>
+mypubsuber<span class="preprocessor">.trigger</span>(<span class="string">"i can trigger too!"</span>)<span class="comment">;</span>
+mypubsuber<span class="preprocessor">.listenTo</span>(mypublisher,callback)<span class="comment">;</span></code></pre>
+
+<p>What then are the Action and Store concepts in Reflux? Well: a Reflux Action is merely an object consuming the <code>PublisherMethods</code> like <code>mypublisher</code> above, but with a few conveinence extras. Foremost is the fact that the action is a function wired to the <code>trigger</code> method:</p>
+<pre><code><span class="keyword">var</span> mypublisher = Reflux.createAction();
+mypublisher(<span class="string">"i can trigger!"</span>);</code></pre>
+
+<p>A Reflux Store corresponds to <code>mypubsuber</code>, i.e. it is both a Publisher and a Subscriber:</p>
+<pre><code>var mypubsuber = Reflux<span class="preprocessor">.createStore</span>(mypubsubdef)<span class="comment">;</span>
+mypubsuber<span class="preprocessor">.trigger</span>(<span class="string">"i can trigger too!"</span>)<span class="comment">;</span>
+mypubsuber<span class="preprocessor">.listenTo</span>(mypublisher,callback)<span class="comment">;</span></code></pre>
+
+<p>What about an equivalent for <code>mysubscriber</code>? Well - as we will see, an object which does nothing but listen in your app will likely be a view. For React, Reflux therefore supplies a special mixin containing the <code>ListenerMethods</code> and which takes care of mopping up if the view goes out of existence:</p>
+<pre><code>var mysubscriber = React<span class="preprocessor">.createClass</span>({
+    mixins: [Reflux<span class="preprocessor">.ListenerMixin</span>],
+    // other stuff from mysubscriberdef
+})<span class="comment">;</span>
+mysubscriber<span class="preprocessor">.listenTo</span>(mypublisher,callback)<span class="comment">;</span></code></pre>
+
+<h3 id="communicating-between-objects">Communicating between objects</h3>
+<p>Now that we know what tools Reflux supplies, we can start to discuss how to use them! First consider the problem; Something is happening in one object (a user event caught in a view), which we want to react to somewhere else (say a localStorage module storing the setting that the user just selected). How can we set this up?</p>
+<p>For discussion&#39;s sake, let&#39;s explore a few different ways in which this could be set up in a Backbone app:</p>
+<h3 id="take-1-direct-calling">Take 1 - direct calling</h3>
+<p>The view can have a reference to the settings module and call a method on it directly:</p>
+<pre><code><span class="keyword">var</span> settings = <span class="built_in">require</span>(<span class="string">"./settings"</span>);
+
+<span class="keyword">var</span> settingview = Backbone.View.extend({
+    events: <span class="string">"click .submit"</span>:<span class="string">"toggleSetting"</span>,
+    toggleSetting: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+        settings.updateVolumeSetting(<span class="keyword">this</span>.$el.find(<span class="string">".myinput"</span>).val());
+    },
+    render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span> <span class="comment">/* stuff */</span> }
+});</code></pre>
+
+<p>Simple but a bit clunky. The view needs a reference to the settings object, and it is dependant on the exact API of the <code>settings.updateVolumeSetting</code> method. The two objects are very tightly coupled, which is a good way to ensure future headache.</p>
+<h3 id="take-2-object-triggered-event">Take 2 - object-triggered event</h3>
+<p>The settings module can listen to events from the view:</p>
+<pre><code><span class="comment">// settingsview.js</span>
+<span class="keyword">var</span> settingview = Backbone.View.extend({
+    toggleSetting: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+        <span class="keyword">this</span>.trigger(<span class="string">"changedvolume"</span>,<span class="keyword">this</span>.$el.find(<span class="string">".myinput"</span>).val())
+    },
+    <span class="comment">// rest like before</span>
+});
+
+<span class="comment">// settings.js</span>
+<span class="keyword">var</span> settingsview = <span class="built_in">require</span>(<span class="string">'./settingsview'</span>);
+
+<span class="keyword">var</span> settingsobject = Backbone.Model.extend({
+    initialize: <span class="function"><span class="keyword">function</span><span class="params">(o)</span>{</span>
+        <span class="keyword">this</span>.listenTo(settingsview,<span class="string">"changedvolume"</span>,<span class="keyword">this</span>.updateVolumeSetting);
+    },
+    updateVolumeSetting(val){ <span class="comment">/* store new volume value if it's metal enough */</span> }
+});</code></pre>
+
+<p>Now we must instead pass the view to the settings object, which isn&#39;t much better. At least we got rid of the API dependency, but the coupling is still tight.</p>
+<p>Note that this approach also requires that the <code>settingsview.js</code> returns a view instance and not a constructor.</p>
+<h3 id="take-3-using-a-global-event-bus">Take 3 - using a global event bus</h3>
+<p>We can use a global event bus to transmit the events. In Backbone, the Backbone object itself is a convenient place for this at it is already a dependency of all objects, and it contains the Events API.</p>
+<pre><code><span class="comment">// settingsview.js</span>
+<span class="keyword">var</span> settingview = Backbone.View.extend({
+    toggleSetting: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+        Backbone.trigger(<span class="string">"changedvolume"</span>,<span class="keyword">this</span>.$el.find(<span class="string">".myinput"</span>).val())
+    },
+    <span class="comment">// rest like before</span>
+});
+
+<span class="comment">// settings.js</span>
+<span class="keyword">var</span> settingsobject = Backbone.Model.extend({
+    initialize: <span class="function"><span class="keyword">function</span><span class="params">(o)</span>{</span>
+        <span class="keyword">this</span>.listenTo(Backbone,<span class="string">"changedvolume"</span>,<span class="keyword">this</span>.updateVolumeSetting);
+    },
+    <span class="comment">// rest like before</span>
+});</code></pre>
+
+<p>This looks a lot better - we no longer have to pass object references around at all! Instead of having one of the participating objects depend on the other, we make them both depend on a third party (the Backbone object) which takes care of the communication.</p>
+<p>On the other hand, communicating lots of events over a central channel like this can easily get out of hand; let your guard down for an afternoon of coding, and you&#39;ll suddenly have a real hell trying to figure out who transmitted what to make the app blow up in your face like it just did.</p>
+<h3 id="take-4-using-reflux">Take 4 - Using Reflux</h3>
+<p>Here&#39;s what a solution could look like using Reflux in our Backbone example (not an advocated match, but used here for the sake of discussion (and I&#39;m not even sure importing Reflux in this way would overwrite Backbone&#39;s Events API (probably not))):</p>
+<pre><code><span class="comment">// actions.js</span>
+<span class="keyword">var</span> actions = Reflux.createActions([<span class="string">"changevolume"</span>, <span class="comment">/* likely some other actions too */</span> ]);
+
+<span class="comment">// settingsview.js</span>
+<span class="keyword">var</span> actions = <span class="built_in">require</span>(<span class="string">"./actions"</span>);
+
+<span class="keyword">var</span> settingview = Backbone.View.extend({
+    toggleSetting: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+        actions.changevolume(<span class="keyword">this</span>.$el.find(<span class="string">".myinput"</span>).val())
+    },
+    <span class="comment">// rest like before</span>
+},Reflux.PublisherMethods);
+
+<span class="comment">// settings.js</span>
+<span class="keyword">var</span> actions = <span class="built_in">require</span>(<span class="string">"./actions"</span>);
+
+<span class="keyword">var</span> settingsobject = Backbone.Model.extend({
+    initialize: <span class="function"><span class="keyword">function</span><span class="params">(o)</span>{</span>
+        <span class="keyword">this</span>.listenTo(actions.changevolume,<span class="keyword">this</span>.changevolume);
+    },
+    <span class="comment">// rest like before</span>
+},Reflux.ListenerMethods);</code></pre>
+
+<p>As you can see, Reflux is really similar to the global event bus solution from before. The only difference is that instead of one global channel in which we specify event type, there are lots of global channels, each dedicated to a specific event.</p>
+<h3 id="global-event-busing-the-reflux-way">Global event busing the Reflux way</h3>
+<p>So, is having many global channels really any better than having just one? As it turns out, yes! There are several advantages:</p>
+<ul>
+<li>No more magic string event names like <code>changedvolume</code> just begging to be misspelled (granted we could mitigate that risk with a constants object, but that is a hassle too).</li>
+<li>Code becomes slightly shorter, less verbose and easier to read</li>
+<li>The file <code>actions.js</code> will in essence become a list of all available events in your app! This is helpful in many ways, perhaps foremost that it forces you to think about your events on a higher level.</li>
+<li>It also becomes very easy to compartmentalise the events if you want to. Instead of a single <code>actions</code> definition you can split it into thematically defined modules; <code>useractions</code>, <code>serveractions</code>, etc.</li>
+</ul>
+<h3 id="a-comparison-with-flux">A comparison with Flux</h3>
+<p>On a higher level, the structure employed by Flux and Reflux are very similar. Flux too employs a global event bus approach, with event-specific channels. However, instead of making all actions into event dispatchers like Reflux, Flux employs a single &quot;app dispatcher&quot; much like Backbone, although with mechanisms in play to enforce the event-specific channel approach.</p>
+<p>The fact that Flux has a central Dispatcher makes for lots of cruft in the code, as our <a href="react-js-architecture-flux-vs-reflux/">previous code comparison</a> between the two clearly demonstrated.</p>
+<p>If you need more convincing, compare the <a href="https://github.com/spoike/refluxjs-todo/">Reflux TodoMVC implementation</a> with the <a href="https://github.com/facebook/flux/tree/master/examples/flux-todomvc/">Flux version</a>.</p>
+<h3 id="using-reflux-in-react">Using Reflux in React</h3>
+<p>Enough Backbone babbling, what about best practices for using Reflux in React? We touched on it in the previous post, but wanted to revisit that here in the context of event flow. Here therefore is a stone tablet of divine law:</p>
+<ul>
+<li>Isolate database communication into Stores.</li>
+<li>When a Store receives new data from the server, it should trigger with the new data.</li>
+<li>React components should listen to the relevant stores.</li>
+<li>React components should call actions in response to user events.</li>
+<li>Stores should listen to actions and potentially talk to backend API:s accordingly, which might in turn cause new data to be sent back and thus an event to be triggered.</li>
+</ul>
+<p>To wit:</p>
+<ul>
+<li>A component calls Actions and listens to Stores.</li>
+<li>A store listens to Actions and triggers events.</li>
+</ul>
+<h3 id="a-chat-example">A chat example</h3>
+<p>It&#39;s been done to death, but here is the (relevant parts of a) Firebase chat setup from a recent site work of ours:</p>
+<pre><code><span class="comment">// A view displaying the list of chat messages. Listens to changes from the Chatstore</span>
+<span class="keyword">var</span> Chatlog = React.createClass({
+  mixins: [connect(chatStore,<span class="string">"messages"</span>)], <span class="comment">// will set up listenTo call and then do this.setState("messages",data)</span>
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span><span class="keyword">return</span> {messages:{}};},
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> (
+      &lt;div&gt;
+        &lt;Chatform /&gt;
+        &lt;div&gt;
+          {_.map(<span class="keyword">this</span>.state.messages,<span class="function"><span class="keyword">function</span><span class="params">(msg)</span>{</span>
+              <span class="keyword">return</span> (&lt;p&gt;&lt;small&gt;{msg.date}&lt;/small&gt;&lt;span&gt;{msg.message}&lt;/span&gt;);
+          })}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+});
+
+<span class="comment">// a view displaying the form for entering a new msg. calls addmsg action</span>
+<span class="keyword">var</span> Chatform = React.createClass({
+  onSubmit: <span class="function"><span class="keyword">function</span><span class="params">(e)</span>{</span>
+    actions.addchatmessage(<span class="keyword">this</span>.refs[<span class="string">'field'</span>].getDOMNode().value)
+    e.preventDefault();
+    <span class="keyword">return</span> <span class="literal">false</span>;
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">return</span> (
+      &lt;form onSubmit={<span class="keyword">this</span>.onSubmit}&gt;
+        &lt;input className=<span class="string">'form-control'</span> type=<span class="string">'text'</span> ref=<span class="string">'field'</span>/&gt;
+        &lt;button className=<span class="string">'btn btn-default'</span> type=<span class="string">'submit'</span>&gt;Send!&lt;/button&gt;
+      &lt;/form&gt;
+    );
+  }
+});
+
+<span class="comment">// A store listening to addmsg action. Will trigger upon receiving server data</span>
+<span class="keyword">var</span> chatRef = <span class="keyword">new</span> Firebase(<span class="string">"https://&lt;firebaseusername&gt;.firebaseio.com/web/data/chat"</span>);
+
+<span class="keyword">var</span> Chatstore = Reflux.createStore({
+  init: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    chatRef.on(<span class="string">"value"</span>,<span class="keyword">this</span>.updateChat.bind(<span class="keyword">this</span>));
+    <span class="keyword">this</span>.listenTo(actions.addchatmessage,<span class="keyword">this</span>.addChatMsg.bind(<span class="keyword">this</span>));
+  },
+  addChatMsg: <span class="function"><span class="keyword">function</span><span class="params">(msg)</span>{</span>
+    chatRef.push(msg,<span class="function"><span class="keyword">function</span><span class="params">(err)</span>{</span>
+      <span class="keyword">if</span> (err){
+        actions.error(<span class="string">"Chat send failure: "</span>+err);
+      } <span class="keyword">else</span> {
+        actions.log(<span class="string">"Message sent"</span>,msg);
+      }
+    });
+  },
+  updateChat: <span class="function"><span class="keyword">function</span><span class="params">(snapshot)</span>{</span>
+    <span class="keyword">this</span>.trigger((<span class="keyword">this</span>.last = snapshot.val()||{}));
+  },
+  getDefaultData: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> <span class="keyword">this</span>.last || {};
+  }
+});</code></pre>
+
+<p>Here&#39;s what will happen when a user enters a new chat message:</p>
+<ol>
+<li>The Chatform React component will call the <code>addchatmessage</code> Reflux action</li>
+<li>Chatstore is listening to that action, and will make an API call to Firebase in the <code>addChatMsg</code> method</li>
+<li>Firebase will update its data</li>
+<li>Chatstore receives the new data from Firebase in the <code>updateChat</code> method, which makes the store trigger an event with the new data</li>
+<li>Chatlog is listening to the store and so receives the new data, which updates its state and causes a render</li>
+</ol>
+<p>If we anonymize the components to get back to the stone tablet laws, here&#39;s what&#39;s going on:</p>
+<p><img src="../../img/refluxflow2.jpeg" alt="Reflux flow"></p>
+<p>Each &quot;published to&quot;-arrow of course corresponds to a reversed &quot;listens to&quot;-arrow.</p>
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>This post aimed at...</p>
+<ul>
+<li>explaining how Reflux is merely a pubsub solution minus the event names,</li>
+<li>advocating why this is a good idea,</li>
+<li>...and show how to utilize this flow in React.</li>
+</ul>
+<p>If any of these three points missed their mark, scroll back to the top and read again, or make an angry comment below!</p>
+
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>

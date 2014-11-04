@@ -11,7 +11,7 @@ body {
   padding: 0px;
   margin: 0px;
   height: 100%;
-  font-family: "Futura", "Avenir", "Helvetica Neue", Helvetica, sans-serif; }
+  font-family: "Avenir", "Helvetica Neue", Helvetica, sans-serif; }
   body a {
     color: #2b303b; }
     body a:hover {
@@ -24,7 +24,7 @@ h1, h2, h3, h4, h5, h6 {
   margin: 0px; }
 
 .container {
-  max-width: 575px;
+  max-width: 650px;
   width: 100%;
   margin: auto; }
 
@@ -73,7 +73,7 @@ ul.social-nav {
 
 .blog-title a {
   text-align: center;
-  font-family: "Futura", "Avenir", "Helvetica Neue", Helvetica, sans-serif;
+  font-family: "Avenir", "Helvetica Neue", Helvetica, sans-serif;
   text-transform: uppercase;
   color: #fff;
   font-size: 45pt;
