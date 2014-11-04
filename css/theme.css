@@ -134,6 +134,9 @@ ul.social-nav {
     display: inline-block;
     padding: 0px 0px 0px 5px; }
 
+.tags a {
+  text-decoration: none; }
+
 .post-excerpt {
   line-height: 2;
   font-family: "Droid Serif", "Adobe Garamond Pro", sans-serif;
