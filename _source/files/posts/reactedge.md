@@ -16,7 +16,7 @@ Opening the book I had rather low expectations - a previous effort in the same s
 
 But, I'm happy to report that I was wrong! Both regarding the book and my own React Fu...
 
-Although the book is still in early release and as such isn't finished, I still wanted to share some thoughts on it as I'm already seriously impressed.
+Although the book is still in early release and as such isn't finished (nor is the [accompanied example app](https://github.com/rtfeldman/bleeding-edge-sample-app)), I still wanted to share some thoughts on it as I'm already seriously impressed.
 
 
 ###Nose to ground ratio
