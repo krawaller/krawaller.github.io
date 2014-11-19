@@ -122,7 +122,7 @@ Looking at some improvements in newer Reflux versions
 <p>Note the cleverness of the Reflux listenables - a call to their <code>listen</code> method returns an <code>unsubscribe</code> function, which takes care of all the cleanup for you when called.</p>
 <h3 id="using-a-factory-call-as-a-mixin">Using a factory call as a mixin</h3>
 <p>Looking at the source code got me thinking - why couldn&#39;t the mixin provide the <code>componentDidMount</code> call too? Well, that&#39;s where the call to <code>listenTo</code> happens, which needs a reference to the listenable and some callbacks.</p>
-<p>So how about we give those to a factory instead, which then bakes out a mixin for us? After several iterations and thoughtful input from Reflux creator Michael, we now have a mixin factory which imports the listening functionality and sets up the listener to the given listenable. </p>
+<p>So how about we give those to a factory instead, which then bakes out a mixin for us? After several iterations and thoughtful input from Reflux creator Mikael, we now have a mixin factory which imports the listening functionality and sets up the listener to the given listenable. </p>
 <p>This means that this verbose Reflux version that lost to Flux...</p>
 <pre><code><span class="keyword">var</span> Cart = React.createClass({
   mixins: [Reflux.ListenerMixin],
@@ -192,7 +192,7 @@ Somewhat elegant, but still very noisy. However, if we change the callback names
 
 <h3 id="wrapping-up">Wrapping up</h3>
 <p>What I&#39;m really trying to say is this; Reflux has grown by leaps and bounds, meaning your code will shrink proportionally! Old API:s have gotten more powerful, and new functionality has been added.</p>
-<p>I&#39;m still amazed at the power of Michael&#39;s simpler Flux model, and if you haven&#39;t tried Reflux out yet I strongly encourage you to do so!</p>
+<p>I&#39;m still amazed at the power of Mikael&#39;s simpler Flux model, and if you haven&#39;t tried Reflux out yet I strongly encourage you to do so!</p>
 
   </section>
 

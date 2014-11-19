@@ -65,7 +65,7 @@ Note the cleverness of the Reflux listenables - a call to their `listen` method 
 
 Looking at the source code got me thinking - why couldn't the mixin provide the `componentDidMount` call too? Well, that's where the call to `listenTo` happens, which needs a reference to the listenable and some callbacks.
 
-So how about we give those to a factory instead, which then bakes out a mixin for us? After several iterations and thoughtful input from Reflux creator Michael, we now have a mixin factory which imports the listening functionality and sets up the listener to the given listenable. 
+So how about we give those to a factory instead, which then bakes out a mixin for us? After several iterations and thoughtful input from Reflux creator Mikael, we now have a mixin factory which imports the listening functionality and sets up the listener to the given listenable. 
 
 This means that this verbose Reflux version that lost to Flux...
 
@@ -166,4 +166,4 @@ Reflux.createStore({
 
 What I'm really trying to say is this; Reflux has grown by leaps and bounds, meaning your code will shrink proportionally! Old API:s have gotten more powerful, and new functionality has been added.
 
-I'm still amazed at the power of Michael's simpler Flux model, and if you haven't tried Reflux out yet I strongly encourage you to do so!
+I'm still amazed at the power of Mikael's simpler Flux model, and if you haven't tried Reflux out yet I strongly encourage you to do so!
