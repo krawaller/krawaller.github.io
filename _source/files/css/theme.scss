@@ -66,7 +66,10 @@ h1, h2, h3, h4, h5, h6{
 			content: url(https://www.fingbox.com/images/register-mail.png);
 			padding: 0px 5px 0px 0px;
 		}
-
+		li.rss:before{
+			content: url(http://blog.krawaller.se/img/rss-small.png);
+			padding: 0px 5px 0px 0px;
+		}
 		li{
 			display: inline-block;
 			margin: 0px 20px 0px 0px;

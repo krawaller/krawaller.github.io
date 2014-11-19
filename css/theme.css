@@ -45,6 +45,9 @@ ul.social-nav {
   ul.social-nav li.mail:before {
     content: url(https://www.fingbox.com/images/register-mail.png);
     padding: 0px 5px 0px 0px; }
+  ul.social-nav li.rss:before {
+    content: url(http://blog.krawaller.se/img/rss-small.png);
+    padding: 0px 5px 0px 0px; }
   ul.social-nav li {
     display: inline-block;
     margin: 0px 20px 0px 0px;
