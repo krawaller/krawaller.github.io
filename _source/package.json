@@ -9,6 +9,7 @@
     "metalsmith-metallic": "^0.1.1",
     "metalsmith-sass": "^0.1.1",
     "metalsmith-drafts": "^0.0.1",
+    "metalsmith-feed": "^0.0.6",
     "metalsmith": "^0.2.3",
     "handlebars": "^2.0.0-alpha.2",
     "lodash": "^2.4.1",

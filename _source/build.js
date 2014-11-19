@@ -5,6 +5,7 @@ var Metalsmith = require('metalsmith'),
 	metallic = require('metalsmith-metallic'),
   collections = require('metalsmith-collections'),
   sass = require('metalsmith-sass'),
+  feed = require('metalsmith-feed'),
   drafts = require('metalsmith-drafts'),
   Handlebars = require('handlebars'),
   path = require('path'),
@@ -37,7 +38,7 @@ _.each(fs.readdirSync('templates/partials'),function(file){
   Handlebars.registerPartial(file.split(".")[0],fs.readFileSync(__dirname+"/templates/partials/"+file).toString());
 });
 
-tags= function(opts){
+tags = function(opts){
   opts = _.defaults(opts||{},{path:"tags/",yaml:{type:"tag"}});
   return function(files, metalsmith, done){
     meta = metalsmith.metadata();
@@ -63,12 +64,19 @@ tags= function(opts){
 };
 
 Metalsmith(__dirname)
+  .metadata({
+    site: {
+      title: 'Krawaller weblog',
+      url: 'http://blog.krawaller.se',
+      author: 'The Krawaller brothers'
+    }
+  })
   .use(drafts())
   .use(collections({posts: {pattern:'posts/*.md',sortBy:"date",reverse:true}}))
   .use(tags({path:"tags/"}))
   .use(function(files,metalsmith,done){
     _.map(files,function(file){
-      return file.type ? _.extend(file,{template:file.type+".hbt"},_.object(["is"+file.type],[true])) : file;
+      return file.type ? _.extend(file,{categories:file.tags,template:file.type+".hbt"},_.object(["is"+file.type],[true])) : file;
     });
     done();
   })
@@ -77,6 +85,7 @@ Metalsmith(__dirname)
   .use(sass({outputStyle:"expanded"}))
   .use(permalinks({pattern: ':collection/:title'}))
   .use(templates({engine: 'handlebars',directory: './templates', master:'master.hbt', pattern: ["*/*/*html","*html"]}))
+  .use(feed({collection:"posts",limit:false,destination:'./rss.xml'}))
   .source('./files')
   .destination('../.')
   .build(function(e,h){if (e){throw e;}});
