@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A Reflux TodoMVC codebase walkthrough</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/specials.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+            <li class="rss"><a href="../../rss.xml">RSS</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+A closer look at the code and data flow in the Reflux TodoMVC implementation
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/a-reflux-todomvc-codebase-walkthrough">A Reflux TodoMVC codebase walkthrough</a>
+    <span class="post-meta">
+      <time datetime="Wed Nov 19 2014 01:00:00 GMT+0100 (CET)">Nov 19th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/react/'>react</a></span>
+      
+        <span><a href='../../tags/reflux/'>reflux</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="the-todomvc-project">The TodoMVC project</h3>
+<p>Very likely you&#39;re already familiar with <a href="http://todomvc.com/">TodoMVC</a>, <a href="http://addyosmani.com/">Addy Osmani</a>&#39;s project to help comparing JavaScript frameworks. The idea is to code the exact same app in the different frameworks, and since we know the app, it&#39;s easier to get an understanding for the framework that was used in the particular code version you&#39;re looking at.</p>
+<p>For this to work the app itself has to be very simple, and it is:</p>
+<p><img src="../../img/refluxtodoapp.png" alt="Reflux TodoMVC app"></p>
+<p>There is full CRUD for todo items, and some aggregation such as toggling all, clearing all finished items and filtering.</p>
+<p>In spite of being simple, however, it turns out that it is still complex enough to enable building an understanding for what the framework in question takes like. Addy made an excellent job to hit that sweet spot, which is most likely the secret behind the popularity of the project.</p>
+<h3 id="the-reflux-version">The Reflux version</h3>
+<p>To help curious window shoppers check out <a href="https://github.com/spoike/refluxjs">Reflux</a>, creator <a href="http://spoike.ghost.io/">Mikael Brassman</a> made a <a href="https://github.com/spoike/refluxjs-todo">TodoMVC version</a> using Reflux, <a href="http://facebook.github.io/react/">React</a> and <a href="https://github.com/rackt/react-router">react-router</a>.</p>
+<p>This post will walk through the code, although I&#39;ll use <a href="https://github.com/krawaller/refluxjs-todo">my own fork</a> which has some modifications which at the time of writing haven&#39;t been merged into the official repo.</p>
+<h3 id="the-reflux-data-flow-model">The Reflux data flow model</h3>
+<p>As detailed in our <a href="http://localhost:8000/newkrablog/posts/the-reflux-data-flow-model/">post on the Reflux data flow model</a>, Reflux takes a global pubsub approach but negates the bad parts of that by having lots of parallell channel who all transmit just one kind of event.</p>
+<p>We used this pucture to illustrate the model:</p>
+<p><img src="../../img/refluxflow2.jpeg" alt="Reflux data flow"></p>
+<p>As we will find, this model holds true for the TodoMVC app as well (apart from it not having a separate database).</p>
+<h3 id="ready-set-">Ready, set...</h3>
+<p>First off - the actions. Since they are in essence a list of all available events in the app, and also serve as the glue between the Store and the components, the action definition is very central to the app. For the TodoMVC app they are located in <code>src/actions.js</code> and look like this:</p>
+<pre><code><span class="keyword">var</span> TodoActions = Reflux.createActions([
+    <span class="string">"toggleItem"</span>,
+    <span class="string">"toggleAllItems"</span>,
+    <span class="string">"addItem"</span>,
+    <span class="string">"removeItem"</span>,
+    <span class="string">"clearCompleted"</span>,
+    <span class="string">"editItem"</span>
+]);</code></pre>
+
+<h3 id="the-store-story">The Store story</h3>
+<p>A central Store is listening to the actions and will update the todo data. Often by communicating with some kind of database API, as shown in the picture above, but in the Reflux TodoMVC app the Store merely uses localStorage.</p>
+<p>Each store should just be concerned with one kind of data, so a larger app commonly consists of many stores. TodoMVC however only deals with todo items, and thus it only contains the one store. Here&#39;s the code for that store, located in <code>src/store.js</code>:</p>
+<pre><code><span class="comment">// some variables and helpers for our fake database stuff</span>
+<span class="keyword">var</span> todoCounter = <span class="number">0</span>,
+    localStorageKey = <span class="string">"todos"</span>;
+
+<span class="function"><span class="keyword">function</span> <span class="title">getItemByKey</span><span class="params">(list,itemKey)</span>{</span>
+    <span class="keyword">return</span> _.find(list, <span class="function"><span class="keyword">function</span><span class="params">(item)</span> {</span>
+        <span class="keyword">return</span> item.key === itemKey;
+    });
+}
+
+<span class="keyword">var</span> todoListStore = Reflux.createStore({
+    <span class="comment">// this will set up listeners to all publishers in TodoActions, using onKeyname (or keyname) as callbacks</span>
+    listenables: [TodoActions],
+    onEditItem: <span class="function"><span class="keyword">function</span><span class="params">(itemKey, newLabel)</span> {</span>
+        <span class="keyword">var</span> foundItem = getItemByKey(<span class="keyword">this</span>.list,itemKey);
+        <span class="keyword">if</span> (!foundItem) {
+            <span class="keyword">return</span>;
+        }
+        foundItem.label = newLabel;
+        <span class="keyword">this</span>.updateList(<span class="keyword">this</span>.list);
+    },
+    onAddItem: <span class="function"><span class="keyword">function</span><span class="params">(label)</span> {</span>
+        <span class="keyword">this</span>.updateList([{
+            key: todoCounter++,
+            created: <span class="keyword">new</span> <span class="built_in">Date</span>(),
+            isComplete: <span class="literal">false</span>,
+            label: label
+        }].concat(<span class="keyword">this</span>.list));
+    },
+    onRemoveItem: <span class="function"><span class="keyword">function</span><span class="params">(itemKey)</span> {</span>
+        <span class="keyword">this</span>.updateList(_.filter(<span class="keyword">this</span>.list,<span class="function"><span class="keyword">function</span><span class="params">(item)</span>{</span>
+            <span class="keyword">return</span> item.key!==itemKey;
+        }));
+    },
+    onToggleItem: <span class="function"><span class="keyword">function</span><span class="params">(itemKey)</span> {</span>
+        <span class="keyword">var</span> foundItem = getItemByKey(<span class="keyword">this</span>.list,itemKey);
+        <span class="keyword">if</span> (foundItem) {
+            foundItem.isComplete = !foundItem.isComplete;
+            <span class="keyword">this</span>.updateList(<span class="keyword">this</span>.list);
+        }
+    },
+    onToggleAllItems: <span class="function"><span class="keyword">function</span><span class="params">(checked)</span> {</span>
+        <span class="keyword">this</span>.updateList(_.map(<span class="keyword">this</span>.list, <span class="function"><span class="keyword">function</span><span class="params">(item)</span> {</span>
+            item.isComplete = checked;
+            <span class="keyword">return</span> item;
+        }));
+    },
+    onClearCompleted: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">this</span>.updateList(_.filter(<span class="keyword">this</span>.list, <span class="function"><span class="keyword">function</span><span class="params">(item)</span> {</span>
+            <span class="keyword">return</span> !item.isComplete;
+        }));
+    },
+    <span class="comment">// called whenever we change a list. normally this would mean a database API call</span>
+    updateList: <span class="function"><span class="keyword">function</span><span class="params">(list)</span>{</span>
+        localStorage.setItem(localStorageKey, <span class="built_in">JSON</span>.stringify(list));
+        <span class="comment">// if we used a real database, we would likely do the below in a callback</span>
+        <span class="keyword">this</span>.list = list;
+        <span class="keyword">this</span>.trigger(list); <span class="comment">// sends the updated list to all listening components (TodoApp)</span>
+    },
+    <span class="comment">// this will be called by all listening components as they register their listeners</span>
+    getDefaultData: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">var</span> loadedList = localStorage.getItem(localStorageKey);
+        <span class="keyword">if</span> (!loadedList) {
+            <span class="comment">// If no list is in localstorage, start out with a default one</span>
+            <span class="keyword">this</span>.list = [{
+                key: todoCounter++,
+                created: <span class="keyword">new</span> <span class="built_in">Date</span>(),
+                isComplete: <span class="literal">false</span>,
+                label: <span class="string">'Rule the web'</span>
+            }];
+        } <span class="keyword">else</span> {
+            <span class="keyword">this</span>.list = _.map(<span class="built_in">JSON</span>.parse(loadedList), <span class="function"><span class="keyword">function</span><span class="params">(item)</span> {</span>
+                <span class="comment">// just resetting the key property for each todo item</span>
+                item.key = todoCounter++;
+                <span class="keyword">return</span> item;
+            });
+        }
+        <span class="keyword">return</span> <span class="keyword">this</span>.list;
+    }
+});</code></pre>
+
+<p>Quite a mouthful, but if you bear with it the structure is rather clear! Each action is caught in a callback which changes the data and calls <code>updateList</code>, which in turn stores the new data and <code>triggers</code> it to all listeners.</p>
+<p>The initial load from localStorage is done in <code>getDefaultData</code>, which is what all listeners is initially seeded with when they first register their interest.</p>
+<h3 id="a-component-overview">A component overview</h3>
+<p>Before we dive into the individual components, here&#39;s a high-level look at how they are related, and where the various action calls are located:</p>
+<p><img src="../../img/refluxtodocomps.png" alt="Reflux TodoMVC components"></p>
+<p>As you can see the app is made up from 5 different components, all defined in <code>src/components.jsx.js</code>.</p>
+<h3 id="the-react-router-root">The React router root</h3>
+<p>However, the app doesn&#39;t start with <code>TodoApp</code>, but with a router definition using <code>ReactRouter</code>! This is used to handle the different routes that the app is supposed to contain; the root (showing all todos), <code>completed</code> showing only completed todos, and <code>active</code> showing only those who haven&#39;t been completed.</p>
+<p>Here&#39;s the code, located at the bottom of <code>src/components.jsx.js</code>:</p>
+<pre><code><span class="keyword">var</span> routes = (
+    <span class="xml"><span class="tag">&lt;<span class="title">ReactRouter.Routes</span> <span class="attribute">location</span>=<span class="value">"hash"</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">handler</span>=<span class="value">{TodoApp}</span>&gt;</span>
+            <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"All"</span> <span class="attribute">path</span>=<span class="value">"/"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> <span class="attribute">showing</span>=<span class="value">"all"</span> /&gt;</span>
+            <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"Completed"</span> <span class="attribute">path</span>=<span class="value">"/completed"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> <span class="attribute">showing</span>=<span class="value">"completed"</span> /&gt;</span>
+            <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"Active"</span> <span class="attribute">path</span>=<span class="value">"/active"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> <span class="attribute">showing</span>=<span class="value">"active"</span> /&gt;</span>
+        <span class="tag">&lt;/<span class="title">ReactRouter.Route</span>&gt;</span>
+    <span class="tag">&lt;/<span class="title">ReactRouter.Routes</span>&gt;</span>
+);
+
+React.renderComponent(routes, document.getElementById('todoapp'));</span></code></pre>
+
+<p>All three routes actually render the same component (<code>TodoMain</code> inside <code>TodoApp</code>), but seeds it with a different <code>showing</code> property.</p>
+<h3 id="the-todoapp-component">The TodoApp component</h3>
+<p>Finally we get to the actual React components! First off <code>TodoApp</code>, which is used as a wrapper for all routes:</p>
+<pre><code><span class="comment">// Renders the full application</span>
+<span class="comment">// activeRouteHandler will always be TodoMain, but with different 'showing' prop (all/completed/active)</span>
+<span class="keyword">var</span> TodoApp = React.createClass({
+    <span class="comment">// this will cause setState({list:updatedlist}) whenever the store does trigger(updatedlist)</span>
+    mixins: [Reflux.connect(todoListStore,<span class="string">"list"</span>)],
+    getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">return</span> {
+            list: []
+        };
+    },
+    render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">return</span> (
+            <span class="xml"><span class="tag">&lt;<span class="title">div</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">TodoHeader</span> /&gt;</span>
+                <span class="tag">&lt;<span class="title">this.props.activeRouteHandler</span> <span class="attribute">list</span>=<span class="value">{this.state.list}</span> /&gt;</span>
+                <span class="tag">&lt;<span class="title">TodoFooter</span> <span class="attribute">list</span>=<span class="value">{this.state.list}</span> /&gt;</span>
+            <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+        );
+    }
+});</span></code></pre>
+
+<p>Note that <code>TodoApp</code> is listening to <code>todoListStore</code>. That means it will update its state with whatever <code>todoListStore</code> triggers, which will cause a rerender.</p>
+<p>Apart from that there isn&#39;t much going on - <code>TodoApp</code> has no user interaction, but merely renders <code>TodoHeader</code>, <code>TodoMain</code> and <code>TodoFooter</code>, passing <code>this.state.list</code> along as a property.</p>
+<h3 id="the-todoheader-component">The TodoHeader component</h3>
+<p>This component renders the top part of the app, including the form which creates new todo items by calling the <code>addItem</code> action.</p>
+<pre><code><span class="comment">// Renders the headline and the form for creating new todos.</span>
+<span class="comment">// Used in TodoApp</span>
+<span class="comment">// Observe that the toogleall button is NOT rendered here, but in TodoMain (it is then moved up to the header with CSS)</span>
+<span class="keyword">var</span> TodoHeader = React.createClass({
+    handleValueChange: <span class="function"><span class="keyword">function</span><span class="params">(evt)</span> {</span>
+        <span class="keyword">var</span> text = evt.target.value;
+        <span class="keyword">if</span> (evt.which === <span class="number">13</span> &amp;&amp; text) { <span class="comment">// hit enter, create new item if field isn't empty</span>
+            TodoActions.addItem(text);
+            evt.target.value = <span class="string">''</span>;
+        } <span class="keyword">else</span> <span class="keyword">if</span> (evt.which === <span class="number">27</span>) { <span class="comment">// hit escape, clear without creating</span>
+            evt.target.value = <span class="string">''</span>;
+        }
+    },
+    render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">return</span> (
+            <span class="xml"><span class="tag">&lt;<span class="title">header</span> <span class="attribute">id</span>=<span class="value">"header"</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">h1</span>&gt;</span>todos<span class="tag">&lt;/<span class="title">h1</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">input</span> <span class="attribute">id</span>=<span class="value">"new-todo"</span> <span class="attribute">placeholder</span>=<span class="value">"What needs to be done?"</span> <span class="attribute">autoFocus</span> <span class="attribute">onKeyUp</span>=<span class="value">{this.handleValueChange}</span>/&gt;</span>
+            <span class="tag">&lt;/<span class="title">header</span>&gt;</span>
+        );
+    }
+});</span></code></pre>
+
+<p>Note that the toggleall button, although physically located in the header, is actually defined in <code>TodoMain</code>, and then moved through CSS.</p>
+<p>The reason I suspect is that this way <code>TodoHeader</code> doesn&#39;t need the todo data at all. Also, if we have no todos at all <code>TodoMain</code> should be hidden as well as the toggleall button, so by making the toggleall button part of <code>TodoMain</code> we don&#39;t have to duplicate any hiding logic here.</p>
+<h3 id="the-todofooter-component">The TodoFooter component</h3>
+<p>The <code>TodoFooter</code> component shows aggregation information and controls, as well as the navigation bar.</p>
+<pre><code><span class="comment">// Renders the bottom item count, navigation bar and clearallcompleted button</span>
+<span class="comment">// Used in TodoApp</span>
+<span class="keyword">var</span> TodoFooter = React.createClass({
+    propTypes: {
+        list: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    },
+    getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">return</span> {
+            completedCount: <span class="number">0</span>,
+            hideClearButton: <span class="literal">false</span>,
+            hideFooter: <span class="literal">true</span>
+        };
+    },
+    componentWillReceiveProps: <span class="function"><span class="keyword">function</span><span class="params">(nextProps)</span> {</span>
+        <span class="keyword">var</span> all = nextProps.list.length;
+        <span class="keyword">var</span> complete = _.filter(nextProps.list, <span class="string">"isComplete"</span>).length;
+        <span class="keyword">var</span> incomplete = all - complete;
+        <span class="keyword">this</span>.setState({
+            completedCount: complete,
+            hideClearButton: complete &lt; <span class="number">1</span>,
+            count: incomplete,
+            hideFooter: all &lt; <span class="number">1</span>
+        });
+    },
+    render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">var</span> completedLabel = <span class="string">"Clear completed ("</span> + <span class="keyword">this</span>.state.completedCount + <span class="string">")"</span>,
+            clearButtonClass = React.addons.classSet({hidden: <span class="keyword">this</span>.state.hideClearButton}),
+            footerClass = React.addons.classSet({hidden: <span class="keyword">this</span>.state.hideFooter});
+
+        <span class="keyword">var</span> itemsLeft = <span class="keyword">this</span>.state.count &gt; <span class="number">1</span> ? <span class="string">" items left"</span> : <span class="string">" item left"</span>;
+
+        <span class="keyword">return</span> (
+            <span class="xml"><span class="tag">&lt;<span class="title">footer</span> <span class="attribute">id</span>=<span class="value">"footer"</span> <span class="attribute">className</span>=<span class="value">{footerClass}</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">span</span> <span class="attribute">id</span>=<span class="value">"todo-count"</span>&gt;</span><span class="tag">&lt;<span class="title">strong</span>&gt;</span>{this.state.count}<span class="tag">&lt;/<span class="title">strong</span>&gt;</span>{itemsLeft}<span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">ul</span> <span class="attribute">id</span>=<span class="value">"filters"</span>&gt;</span>
+                    <span class="tag">&lt;<span class="title">li</span>&gt;</span>
+                        <span class="tag">&lt;<span class="title">ReactRouter.Link</span> <span class="attribute">activeClassName</span>=<span class="value">"selected"</span> <span class="attribute">to</span>=<span class="value">"All"</span>&gt;</span>All<span class="tag">&lt;/<span class="title">ReactRouter.Link</span>&gt;</span>
+                    <span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+                    <span class="tag">&lt;<span class="title">li</span>&gt;</span>
+                        <span class="tag">&lt;<span class="title">ReactRouter.Link</span> <span class="attribute">activeClassName</span>=<span class="value">"selected"</span> <span class="attribute">to</span>=<span class="value">"Active"</span>&gt;</span>Active<span class="tag">&lt;/<span class="title">ReactRouter.Link</span>&gt;</span>
+                    <span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+                    <span class="tag">&lt;<span class="title">li</span>&gt;</span>
+                        <span class="tag">&lt;<span class="title">ReactRouter.Link</span> <span class="attribute">activeClassName</span>=<span class="value">"selected"</span> <span class="attribute">to</span>=<span class="value">"Completed"</span>&gt;</span>Completed<span class="tag">&lt;/<span class="title">ReactRouter.Link</span>&gt;</span>
+                    <span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+                <span class="tag">&lt;/<span class="title">ul</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">button</span> <span class="attribute">id</span>=<span class="value">"clear-completed"</span> <span class="attribute">className</span>=<span class="value">{clearButtonClass}</span> <span class="attribute">onClick</span>=<span class="value">{TodoActions.clearCompleted}</span>&gt;</span>{completedLabel}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+            <span class="tag">&lt;/<span class="title">footer</span>&gt;</span>
+        );
+    }
+});</span></code></pre>
+
+<p>Inside <code>componentWillReceiveProps</code> we calculate some aggregation data that we later use in <code>render</code>. We could do that directly in <code>render</code> too, but there is some merit to separate this.</p>
+<h3 id="the-todomain-component">The TodoMain component</h3>
+<p>Now finally for the <code>TodoMain</code> component. It renders the previously mentioned toggleall button which is moved through CSS to the header, and also the list of todo items. </p>
+<pre><code>// Renders the todo list as well as the toggle all button
+// Used in TodoApp
+var TodoMain = React.createClass({
+    propTypes: {
+        list: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
+    },
+    toggleAll: function(evt) {
+        TodoActions.toggleAllItems(evt.target.checked);
+    },
+    render: function() {
+        var filteredList, classes = React.addons.classSet({
+            "hidden": this.props.list.length &lt; 1
+        });
+        switch(this.props.showing){
+            case 'all':
+                filteredList = this.props.list;
+                break;
+            case 'completed':
+                filteredList = _.filter(this.props.list,function(item){ return item.isComplete; });
+                break;
+            case 'active':
+                filteredList = _.filter(this.props.list,function(item){ return !item.isComplete; });
+        }
+        return (
+            &lt;section id="main" className={classes}&gt;
+                &lt;input id="toggle-all" type="checkbox" onChange={this.toggleAll} /&gt;
+                &lt;label htmlFor="toggle-all"&gt;Mark all as complete&lt;/label&gt;
+                &lt;ul id="todo-list"&gt;
+                    { filteredList.map(function(item){return &lt;TodoItem label={item.label} isComplete={item.isComplete} key={item.key}/&gt;; }) }
+                &lt;/ul&gt;
+            &lt;/section&gt;
+        );
+    }
+});</code></pre>
+
+<p>Clicking the toggleall button will cause a call to the <code>toggleAllItems</code> action.</p>
+<h3 id="the-todoitem-component">The TodoItem component</h3>
+<p>The final piece of the puzzle is <code>TodoItem</code>, responsible for displaying a single item in the list. It contains lots of user interactions; <code>toggleItem</code>, <code>editItem</code> and <code>removeItem</code>:</p>
+<pre><code><span class="comment">// Renders a single Todo item in the list</span>
+<span class="comment">// Used in TodoList</span>
+<span class="keyword">var</span> TodoItem = React.createClass({
+    propTypes: {
+        label: React.PropTypes.string.isRequired,
+        isComplete: React.PropTypes.bool.isRequired,
+        key: React.PropTypes.number
+    },
+    mixins: [React.addons.LinkedStateMixin], <span class="comment">// exposes this.linkState used in render</span>
+    getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">return</span> {};
+    },
+    handleToggle: <span class="function"><span class="keyword">function</span><span class="params">(evt)</span> {</span>
+        TodoActions.toggleItem(<span class="keyword">this</span>.props.key);
+    },
+    handleEditStart: <span class="function"><span class="keyword">function</span><span class="params">(evt)</span> {</span>
+        evt.preventDefault();
+        <span class="comment">// because of linkState call in render, field will get value from this.state.editValue</span>
+        <span class="keyword">this</span>.setState({
+            isEditing: <span class="literal">true</span>,
+            editValue: <span class="keyword">this</span>.props.label
+        }, <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+            <span class="keyword">this</span>.refs.editInput.getDOMNode().focus();
+        });
+    },
+    handleValueChange: <span class="function"><span class="keyword">function</span><span class="params">(evt)</span> {</span>
+        <span class="keyword">var</span> text = <span class="keyword">this</span>.state.editValue; <span class="comment">// because of the linkState call in render, this is the contents of the field</span>
+        <span class="comment">// we pressed enter, if text isn't empty we blur the field which will cause a save</span>
+        <span class="keyword">if</span> (evt.which === <span class="number">13</span> &amp;&amp; text) {
+            <span class="keyword">this</span>.refs.editInput.getDOMNode().blur();
+        }
+        <span class="comment">// pressed escape. set editing to false before blurring so we won't save</span>
+        <span class="keyword">else</span> <span class="keyword">if</span> (evt.which === <span class="number">27</span>) {
+            <span class="keyword">this</span>.setState({ isEditing: <span class="literal">false</span> },<span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+                <span class="keyword">this</span>.refs.editInput.getDOMNode().blur();
+            });
+        }
+    },
+    handleBlur: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">var</span> text = <span class="keyword">this</span>.state.editValue; <span class="comment">// because of the linkState call in render, this is the contents of the field</span>
+        <span class="comment">// unless we're not editing (escape was pressed) or text is empty, save!</span>
+        <span class="keyword">if</span> (<span class="keyword">this</span>.state.isEditing &amp;&amp; text) {
+            TodoActions.editItem(<span class="keyword">this</span>.props.key, text);
+        }
+        <span class="comment">// whatever the outcome, if we left the field we're not editing anymore</span>
+        <span class="keyword">this</span>.setState({isEditing:<span class="literal">false</span>});
+    },
+    handleDestroy: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        TodoActions.removeItem(<span class="keyword">this</span>.props.key);
+    },
+    render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+        <span class="keyword">var</span> classes = React.addons.classSet({
+            <span class="string">'completed'</span>: <span class="keyword">this</span>.props.isComplete,
+            <span class="string">'editing'</span>: <span class="keyword">this</span>.state.isEditing
+        });
+        <span class="keyword">return</span> (
+            <span class="xml"><span class="tag">&lt;<span class="title">li</span> <span class="attribute">className</span>=<span class="value">{classes}</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"view"</span>&gt;</span>
+                    <span class="tag">&lt;<span class="title">input</span> <span class="attribute">className</span>=<span class="value">"toggle"</span> <span class="attribute">type</span>=<span class="value">"checkbox"</span> <span class="attribute">checked</span>=<span class="value">{!!this.props.isComplete}</span> <span class="attribute">onChange</span>=<span class="value">{this.handleToggle}</span> /&gt;</span>
+                    <span class="tag">&lt;<span class="title">label</span> <span class="attribute">onDoubleClick</span>=<span class="value">{this.handleEditStart}</span>&gt;</span>{this.props.label}<span class="tag">&lt;/<span class="title">label</span>&gt;</span>
+                    <span class="tag">&lt;<span class="title">button</span> <span class="attribute">className</span>=<span class="value">"destroy"</span> <span class="attribute">onClick</span>=<span class="value">{this.handleDestroy}</span>&gt;</span><span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+                <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">input</span> <span class="attribute">ref</span>=<span class="value">"editInput"</span> <span class="attribute">className</span>=<span class="value">"edit"</span> <span class="attribute">valueLink</span>=<span class="value">{this.linkState('editValue')}</span> <span class="attribute">onKeyUp</span>=<span class="value">{this.handleValueChange}</span> <span class="attribute">onBlur</span>=<span class="value">{this.handleBlur}</span> /&gt;</span>
+            <span class="tag">&lt;/<span class="title">li</span>&gt;</span>
+        );
+    }
+});</span></code></pre>
+
+<p>Note how Mikael cleverly keeps the value of the input field as state, and then acts with that state when the field is blurred. If the user pressed escape or the input is empty then nothing happens, otherwise a call to <code>editItem</code> is made.</p>
+<h3 id="comparing-to-flux">Comparing to Flux</h3>
+<p>Now that you&#39;ve come to know what the Reflux solution to the TodoMVC problem looks like, take a look at the <a href="http://facebook.github.io/flux/docs/todo-list.html">Flux version</a>. You&#39;ll find that even though it has the same React advantage, the code base is much more opaque.</p>
+<p>We&#39;ve also done a more direct <a href="../react-js-architecture-flux-vs-reflux/">comparison between Flux and Reflux</a> here on this blog, should you need more convincing.</p>
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>I hope the Reflux TodoMVC app and this walkthrough showcased the strengths of the Reflux approach. I&#39;ve really come to love React, but it was only when I paired it with Reflux - and ReactRouter and Firebase - that things took off for real.</p>
+<p>Intellectually I realise that I&#39;m probably just infatuated as usual by the latest shiny toy, but I&#39;ll say it anyway: I can see myself working on this stack for a long time to come!</p>
+
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>
