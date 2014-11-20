@@ -248,7 +248,7 @@ mysubscriber<span class="preprocessor">.listenTo</span>(mypublisher,callback)<sp
 <p>It&#39;s been done to death, but here is the (relevant parts of a) Firebase chat setup from a recent site work of ours:</p>
 <pre><code><span class="comment">// A view displaying the list of chat messages. Listens to changes from the Chatstore</span>
 <span class="keyword">var</span> Chatlog = React.createClass({
-  mixins: [connect(chatStore,<span class="string">"messages"</span>)], <span class="comment">// will set up listenTo call and then do this.setState("messages",data)</span>
+  mixins: [Reflux.connect(Chatstore,<span class="string">"messages"</span>)], <span class="comment">// will set up listenTo call and then do this.setState("messages",data)</span>
   getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span><span class="keyword">return</span> {messages:{}};},
   render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
     <span class="keyword">return</span> (

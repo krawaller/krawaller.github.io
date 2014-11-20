@@ -249,7 +249,7 @@ It's been done to death, but here is the (relevant parts of a) Firebase chat set
 ```
 // A view displaying the list of chat messages. Listens to changes from the Chatstore
 var Chatlog = React.createClass({
-  mixins: [connect(chatStore,"messages")], // will set up listenTo call and then do this.setState("messages",data)
+  mixins: [Reflux.connect(Chatstore,"messages")], // will set up listenTo call and then do this.setState("messages",data)
   getInitialState: function(){return {messages:{}};},
   render: function(){
     return (
