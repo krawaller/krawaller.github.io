@@ -269,34 +269,17 @@ React.renderComponent(routes, document.getElementById('todoapp'));</span></code>
     propTypes: {
         list: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     },
-    getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-        <span class="keyword">return</span> {
-            completedCount: <span class="number">0</span>,
-            hideClearButton: <span class="literal">false</span>,
-            hideFooter: <span class="literal">true</span>
-        };
-    },
-    componentWillReceiveProps: <span class="function"><span class="keyword">function</span><span class="params">(nextProps)</span> {</span>
-        <span class="keyword">var</span> all = nextProps.list.length;
-        <span class="keyword">var</span> complete = _.filter(nextProps.list, <span class="string">"isComplete"</span>).length;
-        <span class="keyword">var</span> incomplete = all - complete;
-        <span class="keyword">this</span>.setState({
-            completedCount: complete,
-            hideClearButton: complete &lt; <span class="number">1</span>,
-            count: incomplete,
-            hideFooter: all &lt; <span class="number">1</span>
-        });
-    },
     render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-        <span class="keyword">var</span> completedLabel = <span class="string">"Clear completed ("</span> + <span class="keyword">this</span>.state.completedCount + <span class="string">")"</span>,
-            clearButtonClass = React.addons.classSet({hidden: <span class="keyword">this</span>.state.hideClearButton}),
-            footerClass = React.addons.classSet({hidden: <span class="keyword">this</span>.state.hideFooter});
-
-        <span class="keyword">var</span> itemsLeft = <span class="keyword">this</span>.state.count &gt; <span class="number">1</span> ? <span class="string">" items left"</span> : <span class="string">" item left"</span>;
-
+        <span class="keyword">var</span> nbrcompleted = _.filter(<span class="keyword">this</span>.props.list, <span class="string">"isComplete"</span>).length,
+            nbrtotal = <span class="keyword">this</span>.props.list.length,
+            nbrincomplete = nbrtotal-nbrcompleted,
+            clearButtonClass = React.addons.classSet({hidden: nbrcompleted &lt; <span class="number">1</span>}),
+            footerClass = React.addons.classSet({hidden: !nbrtotal }),
+            completedLabel = <span class="string">"Clear completed ("</span> + nbrcompleted + <span class="string">")"</span>,
+            itemsLeftLabel = nbrincomplete === <span class="number">1</span> ? <span class="string">" item left"</span> : <span class="string">" items left"</span>;
         <span class="keyword">return</span> (
             <span class="xml"><span class="tag">&lt;<span class="title">footer</span> <span class="attribute">id</span>=<span class="value">"footer"</span> <span class="attribute">className</span>=<span class="value">{footerClass}</span>&gt;</span>
-                <span class="tag">&lt;<span class="title">span</span> <span class="attribute">id</span>=<span class="value">"todo-count"</span>&gt;</span><span class="tag">&lt;<span class="title">strong</span>&gt;</span>{this.state.count}<span class="tag">&lt;/<span class="title">strong</span>&gt;</span>{itemsLeft}<span class="tag">&lt;/<span class="title">span</span>&gt;</span>
+                <span class="tag">&lt;<span class="title">span</span> <span class="attribute">id</span>=<span class="value">"todo-count"</span>&gt;</span><span class="tag">&lt;<span class="title">strong</span>&gt;</span>{nbrincomplete}<span class="tag">&lt;/<span class="title">strong</span>&gt;</span>{itemsLeftLabel}<span class="tag">&lt;/<span class="title">span</span>&gt;</span>
                 <span class="tag">&lt;<span class="title">ul</span> <span class="attribute">id</span>=<span class="value">"filters"</span>&gt;</span>
                     <span class="tag">&lt;<span class="title">li</span>&gt;</span>
                         <span class="tag">&lt;<span class="title">ReactRouter.Link</span> <span class="attribute">activeClassName</span>=<span class="value">"selected"</span> <span class="attribute">to</span>=<span class="value">"All"</span>&gt;</span>All<span class="tag">&lt;/<span class="title">ReactRouter.Link</span>&gt;</span>
@@ -314,7 +297,6 @@ React.renderComponent(routes, document.getElementById('todoapp'));</span></code>
     }
 });</span></code></pre>
 
-<p>Inside <code>componentWillReceiveProps</code> we calculate some aggregation data that we later use in <code>render</code>. We could do that directly in <code>render</code> too, but there is some merit to separate this.</p>
 <h3 id="the-todomain-component">The TodoMain component</h3>
 <p>Now finally for the <code>TodoMain</code> component. It renders the previously mentioned toggleall button which is moved through CSS to the header, and also the list of todo items. </p>
 <pre><code>// Renders the todo list as well as the toggle all button
