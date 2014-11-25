@@ -197,22 +197,22 @@ A closer look at the code and data flow in the Reflux TodoMVC implementation
 <p>However, the app doesn&#39;t start with <code>TodoApp</code>, but with a router definition using <code>ReactRouter</code>! This is used to handle the different routes that the app is supposed to contain; the root (showing all todos), <code>completed</code> showing only completed todos, and <code>active</code> showing only those who haven&#39;t been completed.</p>
 <p>Here&#39;s the code, located at the bottom of <code>src/components.jsx.js</code>:</p>
 <pre><code><span class="keyword">var</span> routes = (
-    <span class="xml"><span class="tag">&lt;<span class="title">ReactRouter.Routes</span> <span class="attribute">location</span>=<span class="value">"hash"</span>&gt;</span>
-        <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">handler</span>=<span class="value">{TodoApp}</span>&gt;</span>
-            <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"All"</span> <span class="attribute">path</span>=<span class="value">"/"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> <span class="attribute">showing</span>=<span class="value">"all"</span> /&gt;</span>
-            <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"Completed"</span> <span class="attribute">path</span>=<span class="value">"/completed"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> <span class="attribute">showing</span>=<span class="value">"completed"</span> /&gt;</span>
-            <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"Active"</span> <span class="attribute">path</span>=<span class="value">"/active"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> <span class="attribute">showing</span>=<span class="value">"active"</span> /&gt;</span>
-        <span class="tag">&lt;/<span class="title">ReactRouter.Route</span>&gt;</span>
-    <span class="tag">&lt;/<span class="title">ReactRouter.Routes</span>&gt;</span>
+    <span class="xml"><span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">handler</span>=<span class="value">{TodoApp}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"All"</span> <span class="attribute">path</span>=<span class="value">"/"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> /&gt;</span>
+        <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"Completed"</span> <span class="attribute">path</span>=<span class="value">"/completed"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> /&gt;</span>
+        <span class="tag">&lt;<span class="title">ReactRouter.Route</span> <span class="attribute">name</span>=<span class="value">"Active"</span> <span class="attribute">path</span>=<span class="value">"/active"</span> <span class="attribute">handler</span>=<span class="value">{TodoMain}</span> /&gt;</span>
+    <span class="tag">&lt;/<span class="title">ReactRouter.Route</span>&gt;</span>
 );
 
-React.renderComponent(routes, document.getElementById('todoapp'));</span></code></pre>
+ReactRouter.run(routes, function(Handler) {
+    React.render(<span class="tag">&lt;<span class="title">Handler</span>/&gt;</span>, document.getElementById('todoapp'));
+});</span></code></pre>
 
-<p>All three routes actually render the same component (<code>TodoMain</code> inside <code>TodoApp</code>), but seeds it with a different <code>showing</code> property.</p>
+<p>All three routes actually render the same component (<code>TodoMain</code> inside <code>TodoApp</code>), but it will act differently depending on the path.</p>
 <h3 id="the-todoapp-component">The TodoApp component</h3>
 <p>Finally we get to the actual React components! First off <code>TodoApp</code>, which is used as a wrapper for all routes:</p>
 <pre><code><span class="comment">// Renders the full application</span>
-<span class="comment">// activeRouteHandler will always be TodoMain, but with different 'showing' prop (all/completed/active)</span>
+<span class="comment">// RouteHandler will always be TodoMain, but with different 'showing' prop (all/completed/active)</span>
 <span class="keyword">var</span> TodoApp = React.createClass({
     <span class="comment">// this will cause setState({list:updatedlist}) whenever the store does trigger(updatedlist)</span>
     mixins: [Reflux.connect(todoListStore,<span class="string">"list"</span>)],
@@ -225,7 +225,7 @@ React.renderComponent(routes, document.getElementById('todoapp'));</span></code>
         <span class="keyword">return</span> (
             <span class="xml"><span class="tag">&lt;<span class="title">div</span>&gt;</span>
                 <span class="tag">&lt;<span class="title">TodoHeader</span> /&gt;</span>
-                <span class="tag">&lt;<span class="title">this.props.activeRouteHandler</span> <span class="attribute">list</span>=<span class="value">{this.state.list}</span> /&gt;</span>
+                <span class="tag">&lt;<span class="title">ReactRouter.RouteHandler</span> <span class="attribute">list</span>=<span class="value">{this.state.list}</span> /&gt;</span>
                 <span class="tag">&lt;<span class="title">TodoFooter</span> <span class="attribute">list</span>=<span class="value">{this.state.list}</span> /&gt;</span>
             <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
         );
@@ -302,6 +302,7 @@ React.renderComponent(routes, document.getElementById('todoapp'));</span></code>
 <pre><code>// Renders the todo list as well as the toggle all button
 // Used in TodoApp
 var TodoMain = React.createClass({
+    mixins: [ ReactRouter.State ],
     propTypes: {
         list: React.PropTypes.arrayOf(React.PropTypes.object).isRequired,
     },
@@ -309,25 +310,28 @@ var TodoMain = React.createClass({
         TodoActions.toggleAllItems(evt.target.checked);
     },
     render: function() {
-        var filteredList, classes = React.addons.classSet({
-            "hidden": this.props.list.length &lt; 1
-        });
-        switch(this.props.showing){
-            case 'all':
-                filteredList = this.props.list;
-                break;
-            case 'completed':
+        var filteredList;
+        switch(this.getPath()){
+            case '/completed':
                 filteredList = _.filter(this.props.list,function(item){ return item.isComplete; });
                 break;
-            case 'active':
+            case '/active':
                 filteredList = _.filter(this.props.list,function(item){ return !item.isComplete; });
+                break;
+            default:
+                filteredList = this.props.list;
         }
+        var classes = React.addons.classSet({
+            "hidden": this.props.list.length &lt; 1
+        });
         return (
             &lt;section id="main" className={classes}&gt;
                 &lt;input id="toggle-all" type="checkbox" onChange={this.toggleAll} /&gt;
                 &lt;label htmlFor="toggle-all"&gt;Mark all as complete&lt;/label&gt;
                 &lt;ul id="todo-list"&gt;
-                    { filteredList.map(function(item){return &lt;TodoItem label={item.label} isComplete={item.isComplete} key={item.key}/&gt;; }) }
+                    { filteredList.map(function(item){
+                        return &lt;TodoItem label={item.label} isComplete={item.isComplete} id={item.key} key={item.key}/&gt;;
+                    })}
                 &lt;/ul&gt;
             &lt;/section&gt;
         );
@@ -338,19 +342,19 @@ var TodoMain = React.createClass({
 <h3 id="the-todoitem-component">The TodoItem component</h3>
 <p>The final piece of the puzzle is <code>TodoItem</code>, responsible for displaying a single item in the list. It contains lots of user interactions; <code>toggleItem</code>, <code>editItem</code> and <code>removeItem</code>:</p>
 <pre><code><span class="comment">// Renders a single Todo item in the list</span>
-<span class="comment">// Used in TodoList</span>
+<span class="comment">// Used in TodoMain</span>
 <span class="keyword">var</span> TodoItem = React.createClass({
     propTypes: {
         label: React.PropTypes.string.isRequired,
         isComplete: React.PropTypes.bool.isRequired,
-        key: React.PropTypes.number
+        id: React.PropTypes.number
     },
     mixins: [React.addons.LinkedStateMixin], <span class="comment">// exposes this.linkState used in render</span>
     getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
         <span class="keyword">return</span> {};
     },
     handleToggle: <span class="function"><span class="keyword">function</span><span class="params">(evt)</span> {</span>
-        TodoActions.toggleItem(<span class="keyword">this</span>.props.key);
+        TodoActions.toggleItem(<span class="keyword">this</span>.props.id);
     },
     handleEditStart: <span class="function"><span class="keyword">function</span><span class="params">(evt)</span> {</span>
         evt.preventDefault();
@@ -379,13 +383,13 @@ var TodoMain = React.createClass({
         <span class="keyword">var</span> text = <span class="keyword">this</span>.state.editValue; <span class="comment">// because of the linkState call in render, this is the contents of the field</span>
         <span class="comment">// unless we're not editing (escape was pressed) or text is empty, save!</span>
         <span class="keyword">if</span> (<span class="keyword">this</span>.state.isEditing &amp;&amp; text) {
-            TodoActions.editItem(<span class="keyword">this</span>.props.key, text);
+            TodoActions.editItem(<span class="keyword">this</span>.props.id, text);
         }
         <span class="comment">// whatever the outcome, if we left the field we're not editing anymore</span>
         <span class="keyword">this</span>.setState({isEditing:<span class="literal">false</span>});
     },
     handleDestroy: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
-        TodoActions.removeItem(<span class="keyword">this</span>.props.key);
+        TodoActions.removeItem(<span class="keyword">this</span>.props.id);
     },
     render: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
         <span class="keyword">var</span> classes = React.addons.classSet({
