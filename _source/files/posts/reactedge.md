@@ -3,7 +3,7 @@ title: Book (p)review - Developing a React.JS Edge
 author: David
 tags: [react,review]
 date: 2014-11-07
-excerpt: "Reviewing an early release version of the book 'Developing a React.JS Edge'"
+excerpt: Reviewing an early release version of the book 'Developing a React.JS Edge'
 type: post
 ---
 

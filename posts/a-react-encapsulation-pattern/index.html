@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>A React encapsulation pattern</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/specials.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+            <li class="rss"><a href="../../rss.xml">RSS</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+Exploring how we can encapsulate concerns in React by using mixin factories
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/a-react-encapsulation-pattern">A React encapsulation pattern</a>
+    <span class="post-meta">
+      <time datetime="Wed Dec 10 2014 01:00:00 GMT+0100 (CET)">Dec 10th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/react/'>react</a></span>
+      
+        <span><a href='../../tags/underscore/'>underscore</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="fruits-">Fruits!</h3>
+<p>As a first step towards a discussion on an encapsulation pattern using mixin factories, please consider this little object of intellectual fruit opinions:</p>
+<pre><code><span class="keyword">var</span> fruits = {
+  apples: <span class="string">"nice"</span>,
+  oranges: <span class="string">"a hassle to peel"</span>,
+  bananas: <span class="string">"funny"</span>
+};</code></pre>
+
+<p>I now want the user to be able to select one a time, something like this:</p>
+<iframe src='../../applets/select01.html' style="height:70px;width:100%"></iframe>
+
+<p>What parts are involved in the select bar? Well, we need to:</p>
+<ol>
+<li>have an initially selected option</li>
+<li>render the bar, highlighting the currently selected option</li>
+<li>update state whenever another option is selected</li>
+</ol>
+<p>Here&#39;s a na&iuml;ve implementation of this component:</p>
+<pre><code><span class="keyword">var</span> Opinion = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> {fruit:<span class="string">"apples"</span>};
+  },
+  chooseFruit: <span class="function"><span class="keyword">function</span><span class="params">(c)</span>{</span>
+    <span class="keyword">this</span>.setState({fruit:c});
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">var</span> selector = (
+      &lt;div className=<span class="string">"btn-group clearfix"</span>&gt;
+        {_.map(_.keys(fruits),<span class="function"><span class="keyword">function</span><span class="params">(c)</span>{</span>
+          <span class="keyword">return</span> &lt;button onClick={_.partial(<span class="keyword">this</span>.chooseFruit,c)} className={<span class="string">'btn btn-default'</span>+(c===<span class="keyword">this</span>.state.fruit?<span class="string">' active'</span>:<span class="string">''</span>)}&gt;{c}&lt;/button&gt;
+        },<span class="keyword">this</span>)}
+      &lt;/div&gt;
+    );
+    <span class="keyword">return</span> (
+      &lt;div className=<span class="string">"center-block"</span> style={{maxWidth:<span class="string">"800px;"</span>,padding:<span class="string">"1em;"</span>}}&gt;
+        I posit that {selector} are {fruits[<span class="keyword">this</span>.state.fruit]}!
+      &lt;/div&gt;
+    )
+  }
+});</code></pre>
+
+<p>We provide an initial value through the <code>getInitialState</code> method, and have a click handler that updates our state with the clicked option. </p>
+<h3 id="vegetables-">Vegetables!</h3>
+<p>Seems clean enough! So, what&#39;s wrong with this? Well, not much (and we&#39;ll get to that later). But when the vegetables arrive...</p>
+<pre><code><span class="keyword">var</span> vegetables = {
+  carrots: <span class="string">"are for bunnies"</span>,
+  peas: <span class="string">"are perfect for flicking at your mum"</span>,
+  eggplants: <span class="string">"are just weird"</span>
+};</code></pre>
+
+<p>...and we now want this...</p>
+<iframe src='../../applets/select01v.html' style="height:140px;width:100%"></iframe>
+
+<p>...things get rather messy! Extending <code>Opinion</code> using the same approach as before we end up with something like this:</p>
+<pre><code><span class="keyword">var</span> List = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> {fruit:<span class="string">"apples"</span>,vegetable:<span class="string">"carrots"</span>};
+  },
+  chooseFruit: <span class="function"><span class="keyword">function</span><span class="params">(c)</span>{</span>
+    <span class="keyword">this</span>.setState({fruit:c});
+  },
+  chooseVegetable: <span class="function"><span class="keyword">function</span><span class="params">(c)</span>{</span>
+    <span class="keyword">this</span>.setState({vegetable:c});
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">var</span> fruitSelector = (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+        {_.map(_.keys(fruits),function(c){
+          return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{_.partial(this.chooseFruit,c)}</span> <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">c</span>=<span class="value">==this.state.fruit?'</span> <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{c}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        },this)}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+    var veggySelector = (
+      <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+        {_.map(_.keys(vegetables),function(c){
+          return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{_.partial(this.chooseVegetable,c)}</span> <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">c</span>=<span class="value">==this.state.vegetable?'</span> <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{c}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        },this)}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+    return (
+      <span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"center-block"</span> <span class="attribute">style</span>=<span class="value">{{maxWidth:"800px;",padding:"1em;"}}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>I posit that {fruitSelector} are {fruits[this.state.fruit]}!<span class="tag">&lt;/<span class="title">div</span>&gt;</span><span class="tag">&lt;<span class="title">br</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>Also {veggySelector} are {vegetables[this.state.vegetable]}.<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    )
+  }
+});</span></code></pre>
+
+<p>This is starting to look decidedly non-dry.</p>
+<h3 id="componentifying">Componentifying</h3>
+<p>What springs immediately to mind is of course that we could encapsulate the rendering of the bar into a component! Let&#39;s call it <code>Select</code>:</p>
+<pre><code><span class="keyword">var</span> Select = React.createClass({
+  propTypes: {
+    options: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+    makeSelection: React.PropTypes.func.isRequired,
+    current: React.PropTypes.string.isRequired
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+        {_.map(this.props.options,function(c){
+          var handler = _.partial(this.props.makeSelection,c);
+          var active = c===this.props.current;
+          return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{handler}</span> <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">active</span>?' <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{c}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        },this)}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  }
+});</span></code></pre>
+
+<p>The component expects an <strong>array of options</strong>, a <strong>clickhandler</strong> and the <strong>currenly selected value</strong>. Note how we&#39;re using the <code>_.partial</code> currying function to call the click handler with the clicked value.</p>
+<p>Using this component, <code>Opinion</code> can now be reduced to this:</p>
+<pre><code><span class="keyword">var</span> Opinion = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> {fruit:<span class="string">"apples"</span>,vegetable:<span class="string">"carrots"</span>};
+  },
+  chooseFruit: <span class="function"><span class="keyword">function</span><span class="params">(c)</span>{</span>
+    <span class="keyword">this</span>.setState({fruit:c});
+  },
+  chooseVegetable: <span class="function"><span class="keyword">function</span><span class="params">(c)</span>{</span>
+    <span class="keyword">this</span>.setState({vegetable:c});
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">var</span> s = <span class="keyword">this</span>.state;
+    <span class="keyword">var</span> fruitSelector = <span class="xml"><span class="tag">&lt;<span class="title">Select</span> <span class="attribute">options</span>=<span class="value">{_.keys(fruits)}</span> <span class="attribute">current</span>=<span class="value">{s.fruit}</span> <span class="attribute">makeSelection</span>=<span class="value">{this.chooseFruit}</span>/&gt;</span>;</span>
+    <span class="keyword">var</span> veggySelector = <span class="xml"><span class="tag">&lt;<span class="title">Select</span> <span class="attribute">options</span>=<span class="value">{_.keys(vegetables)}</span> <span class="attribute">current</span>=<span class="value">{s.vegetable}</span> <span class="attribute">makeSelection</span>=<span class="value">{this.chooseVegetable}</span>/&gt;</span>;</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"center-block"</span> <span class="attribute">style</span>=<span class="value">{{maxWidth:"800px;",padding:"1em;"}}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>I posit that {fruitSelector} are {fruits[s.fruit]}!<span class="tag">&lt;/<span class="title">div</span>&gt;</span><span class="tag">&lt;<span class="title">br</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>Also {veggySelector} are {vegetables[s.vegetable]}.<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    )
+  }
+});</span></code></pre>
+
+<p>That is indeed much better! We still have lots of methods in our class, but the <code>render</code> method is far less messy than before.</p>
+<h3 id="underscore-intermission">Underscore intermission</h3>
+<p>Before we move on with the React ponderings, let&#39;s take an Underscore detour. Since we&#39;re already using the <code>_.partial</code> curry function inside <code>Select</code>, we could do it in <code>Opinion</code> too to merge <code>chooseVegetable(opt)</code> and <code>chooseFruit(opt)</code> into a <code>choose(prop,opt)</code> method:</p>
+<pre><code><span class="keyword">var</span> Opinion = React.createClass({
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> {fruit:<span class="string">"apples"</span>,vegetable:<span class="string">"carrots"</span>};
+  },
+  choose: <span class="function"><span class="keyword">function</span><span class="params">(prop,c)</span>{</span>
+    <span class="keyword">this</span>.setState(_.object([prop],[c]));
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">var</span> cb = <span class="keyword">this</span>.choose, s = <span class="keyword">this</span>.state;
+    <span class="keyword">var</span> fruitSelector = <span class="xml"><span class="tag">&lt;<span class="title">Select</span> <span class="attribute">options</span>=<span class="value">{_.keys(fruits)}</span> <span class="attribute">current</span>=<span class="value">{s.fruit}</span> <span class="attribute">makeSelection</span>=<span class="value">{_.partial(cb,"fruit")}</span>/&gt;</span>;</span>
+    <span class="keyword">var</span> veggySelector = <span class="xml"><span class="tag">&lt;<span class="title">Select</span> <span class="attribute">options</span>=<span class="value">{_.keys(vegetables)}</span> <span class="attribute">current</span>=<span class="value">{s.vegetable}</span> <span class="attribute">makeSelection</span>=<span class="value">{_.partial(cb,"vegetable")}</span>/&gt;</span>;</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"center-block"</span> <span class="attribute">style</span>=<span class="value">{{maxWidth:"800px;",padding:"1em;"}}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>I posit that {fruitSelector} are {fruits[s.fruit]}!<span class="tag">&lt;/<span class="title">div</span>&gt;</span><span class="tag">&lt;<span class="title">br</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>Also {veggySelector} are {vegetables[s.vegetable]}.<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    )
+  }
+});</span></code></pre>
+
+<p>Note the calls to <code>partial</code> towards the end of the <code>fruitSelector</code> and <code>veggySelector</code> definitions.</p>
+<p>Inside <code>choose</code> we use the <code>_.object</code> method to create the argument to <code>setState</code>. It takes two arrays, one of keys and one of values, and bakes these into an object. Thus calling it with <code>choose(&quot;fruit&quot;,&quot;apples&quot;)</code> would cause <code>setState({fruit:&quot;apples&quot;})</code>. This way we can create objects with a single line of code even when the key is dynamic.</p>
+<h3 id="the-actual-problem">The actual problem</h3>
+<p>Now back to React. What was my problem with the code for <code>Opinion</code>? Especially the last version looks pretty sleek!</p>
+<p>Here&#39;s my problem; The seeding of inital values (<code>getInitialState</code>) and the click handler (<code>choose</code>) are intimately connected to <code>Select</code>. None is usable without the other two. This makes me want to package them all together! And since <code>Select</code> is a component, it seems logical to somehow shove <code>choose</code> and <code>getInitialState</code> inside that component definition!</p>
+<p>Why is that not easy? Well, because we need to deal with the state of the outer component. Then I remembered - I&#39;ve been there before! As told in the <a href="../reflux-refinement">Reflux refinement</a> post, I made a syntax that reduced this:</p>
+<pre><code><span class="keyword">var</span> Cart = React.createClass({
+  mixins: [Reflux.ListenerMixin],
+  componentDidMount: <span class="function"><span class="keyword">function</span><span class="params">()</span> {</span>
+    <span class="keyword">this</span>.listenTo(appStore, <span class="keyword">this</span>._onStuffChange);
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>...to this:</p>
+<pre><code><span class="keyword">var</span> Cart = React.createClass({
+  mixins: [Reflux.listenTo(appStore,<span class="string">'_onStuffChange'</span>)],
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>Instead of a mixin I made a mixin factory. We pass the factory the data it needs to generate the <code>componentDidMount</code> call for you, making the code far less boilerplaty. </p>
+<h3 id="tried-and-trusted">Tried and trusted</h3>
+<p>Perchance we could use that same teqnique here? If we try to turn the <code>Select</code> component into a mixin factory - what would the resulting mixin need to contain?</p>
+<ul>
+<li>We need to set the initial value (as currently done in <code>getInitialState</code>)</li>
+<li>We need a clickHandler that updates state (as currently done in <code>choose</code>)</li>
+<li>We need a way to render the select bar (as currently done in the <code>Select</code> component)</li>
+</ul>
+<p>To provide this, what does the mixin factory need to know?</p>
+<ul>
+<li>The name of the state property to use</li>
+<li>The available options</li>
+<li>What option is initially selected - unless we always start with the first, which I opted for here</li>
+</ul>
+<p>Ok, so we&#39;ll have a signature like this: <code>Select(propname,options)</code></p>
+<p>And the provided mixin object will look like this:</p>
+<pre><code>{
+  getInitialState: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> {propname:options[<span class="number">0</span>]}
+  },
+  choose: <span class="function"><span class="keyword">function</span><span class="params">(opt)</span>{</span>
+    <span class="keyword">this</span>.setState({propname:opt})
+  },
+  renderbar: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+        // maploop blah blah
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  }
+}</span></code></pre>
+
+<h3 id="the-solution">The solution</h3>
+<p>Here&#39;s my Underscore-heavy solution for the factory mixin:</p>
+<pre><code><span class="keyword">var</span> Select = <span class="function"><span class="keyword">function</span><span class="params">(name,opts)</span>{</span>
+  <span class="keyword">return</span> _.object([<span class="string">"getInitialState"</span>,<span class="string">"Select"</span>+name.charAt(<span class="number">0</span>).toUpperCase() + name.slice(<span class="number">1</span>)],[
+    <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span> <span class="keyword">return</span> _.object([name],[opts[<span class="number">0</span>]]); },
+    <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+      <span class="keyword">var</span> me=<span class="keyword">this</span>;
+      <span class="keyword">return</span> (
+        <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">style</span>=<span class="value">{{display:"inline-block"}}</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+          {_.map(opts,function(g){
+            return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{function(){</span>
+              <span class="attribute">me.setState</span>(<span class="attribute">_.object</span>([<span class="attribute">name</span>],[<span class="attribute">g</span>]));
+            }} <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">g</span>=<span class="value">==me.state[name]?'</span> <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{g}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+          })}
+        <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      );
+    }
+  ]);
+};</span></code></pre>
+
+<p>The string dancing up top is to make a better name than <code>renderbar</code> - if the propname is <code>flower</code>, the bar renderer will be <code>SelectFlower</code>.</p>
+<p>Here&#39;s what <code>Opinion</code> looks like when using this mixin factory:</p>
+<pre><code><span class="keyword">var</span> Opinion = React.createClass({
+  mixins: [Select(<span class="string">"fruit"</span>,_.keys(fruits)),Select(<span class="string">"vegetable"</span>,_.keys(vegetables))],
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"center-block"</span> <span class="attribute">style</span>=<span class="value">{{maxWidth:"800px;",padding:"1em;"}}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>I posit that {this.SelectFruit()} are {fruits[this.state.fruit]}!<span class="tag">&lt;/<span class="title">div</span>&gt;</span><span class="tag">&lt;<span class="title">br</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>Also {this.SelectVegetable()} are {vegetables[this.state.vegetable]}.<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    )
+  }
+});</span></code></pre>
+
+<p>And voil&agrave; - nothing is hanging out of the pants anymore, everything is isolated inside <code>Select</code>. Our goal is achieved! </p>
+<h3 id="final-scare">Final scare</h3>
+<p>But as is always the case, the bad guy suddenly rises again! Happily cleaning up my code with the new mixin factory, my crusade suddenly ground to a halt when I arrived at a case where the options depended on the component properties. Translated to our example it would mean that <code>Opinion</code> was rendered like this:</p>
+<pre><code>&lt;Opinion vegetables={vegetables} fruits={fruits}/&gt;</code></pre>
+
+<p>The <code>vegetables</code> and <code>fruits</code> objects are passed as props to <code>Opinion</code> by its parent. Thus inside the <code>Opinion</code> definition we have no idea what the options are, and we can&#39;t make the call to the mixin factory! </p>
+<h3 id="passing-the-instance">Passing the instance</h3>
+<p>Since we depend on the properties, we can&#39;t make any call until we have access to them. That smells like we should be doing our thing inside the <code>componentWillMount</code> method - at that point we can access <code>this.props</code>, and the component isn&#39;t yet rendered. So we should be able to do something like this:</p>
+<pre><code><span class="keyword">var</span> Opinion = React.createClass({
+  componentWillMount: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    SelectSyntax2(<span class="string">"fruit"</span>,<span class="keyword">this</span>.props.fruits);
+    SelectSyntax2(<span class="string">"vegetables"</span>,<span class="keyword">this</span>.props.vegetables);
+  },
+  <span class="comment">// rest redacted</span>
+});</code></pre>
+
+<p>Inside <code>SelectSyntax2</code> we must update state to the initial value, and give access to the bar renderer. But hang on, to do that we must access the component instance! Previously we did that through using <code>this</code> inside the various methods, since they became methods on the instance. But that&#39;s not the case now, and <code>this</code> inside <code>SelectSyntax2</code> points to god knows what!</p>
+<p>Clearly we need to pass the instance into <code>SelectSyntax2</code>, giving us the signature <code>SelectSyntax2(propname,opts,instance)</code>. That would let us do what we need:</p>
+<pre><code><span class="function"><span class="keyword">function</span> <span class="title">SelectSyntax2</span><span class="params">(propname,opts,instance)</span>{</span>
+  instance.setState(_.object([propname],[opts[<span class="number">0</span>]]));
+  instance.renderbar = <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">style</span>=<span class="value">{{display:"inline-block"}}</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+        {_.map(opts,function(g){
+          var handler = function(){instance.setState(_.object([name],[g]));};
+          var active = g===instance.state[name];
+          return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{handler}</span> <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">active</span>?' <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{g}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+        })}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  }
+}</span></code></pre>
+
+<h3 id="2-in-1">2 in 1</h3>
+<p>Since the two use cases have different signatures, I opted to only have the one method and make it behave differently depending on whether or not the third argument (the instance) was provided. Here&#39;s my code:</p>
+<pre><code><span class="function"><span class="keyword">function</span><span class="params">(name,opts,instance)</span>{</span>
+  <span class="keyword">var</span> constructorname = <span class="string">"Select"</span>+name.charAt(<span class="number">0</span>).toUpperCase() + name.slice(<span class="number">1</span>)
+  <span class="keyword">var</span> constructor = <span class="function"><span class="keyword">function</span><span class="params">(skip)</span>{</span>
+    <span class="keyword">var</span> me=<span class="keyword">this</span>;
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">style</span>=<span class="value">{{display:"inline-block"}}</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
+          {_.map(_.without(opts,skip),function(g){
+            return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{function(){</span>
+              <span class="attribute">me.setState</span>(<span class="attribute">_.object</span>([<span class="attribute">name</span>],[<span class="attribute">g</span>]));
+            }} <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">g</span>=<span class="value">==me.state[name]?'</span> <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{g}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
+          })}
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    );
+  }
+  if (instance){
+    instance[constructorname] = constructor;
+    instance.setState(_.object([name],[opts[0]]));
+  } else {
+    return _.object(
+      ["getInitialState", constructorname],
+      [function(){return _.object([name],[opts[0]])}, constructor]
+    );
+  }
+};</span></code></pre>
+
+<p>It is actually safe to use <code>this</code> to access the component even in the second syntax, since the constructor will be called as a method on the instance.</p>
+<p>Here&#39;s the full code for <code>Opinion</code> using the second syntax:</p>
+<pre><code><span class="keyword">var</span> List = React.createClass({
+  componentWillMount: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    Select(<span class="string">"fruit"</span>,_.keys(<span class="keyword">this</span>.props.fruits),<span class="keyword">this</span>);
+    Select(<span class="string">"vegetable"</span>,_.keys(<span class="keyword">this</span>.props.vegetables),<span class="keyword">this</span>);
+  },
+  render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
+    <span class="keyword">return</span> (
+      <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">className</span>=<span class="value">"center-block"</span> <span class="attribute">style</span>=<span class="value">{{maxWidth:"800px;",padding:"1em;"}}</span>&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>I posit that {this.SelectFruit()} are {fruits[this.state.fruit]}!<span class="tag">&lt;/<span class="title">div</span>&gt;</span><span class="tag">&lt;<span class="title">br</span>/&gt;</span>
+        <span class="tag">&lt;<span class="title">div</span>&gt;</span>Also {this.SelectVegetable()} are {vegetables[this.state.vegetable]}.<span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+      <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
+    )
+  }
+});</span></code></pre>
+
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>As is my habit I took so long detailing the journey that the point risk being lost. The point is this: <strong>Using mixin factories can often be a very powerful way to package concerns together</strong>, especially when you find that using a component forces you to implement cruft methods in the parent.</p>
+<p>Since discovering the pattern I&#39;ve used it in many different places, and it&#39;s a tool I&#39;m particularly happy to have in my belt. I hope you find use for it too!</p>
+
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>
