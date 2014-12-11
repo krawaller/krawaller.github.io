@@ -367,11 +367,11 @@ function(name,opts,instance){
   // build good renderer name
   var rendername = "Select"+name.charAt(0).toUpperCase() + name.slice(1)
   // create the renderer function
-  var renderer = function(skip){
+  var renderer = function(){
     var me=this;
     return (
       <div style={{display:"inline-block"}} className="btn-group clearfix">
-          {_.map(_.without(opts,skip),function(g){
+          {_.map(opts,function(g){
             return <button onClick={function(){
               me.setState(_.object([name],[g]));
             }} className={'btn btn-default'+(g===me.state[name]?' active':'')}>{g}</button>

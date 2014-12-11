@@ -363,11 +363,11 @@ Exploring how we can encapsulate concerns in React by using mixin factories
   <span class="comment">// build good renderer name</span>
   <span class="keyword">var</span> rendername = <span class="string">"Select"</span>+name.charAt(<span class="number">0</span>).toUpperCase() + name.slice(<span class="number">1</span>)
   <span class="comment">// create the renderer function</span>
-  <span class="keyword">var</span> renderer = <span class="function"><span class="keyword">function</span><span class="params">(skip)</span>{</span>
+  <span class="keyword">var</span> renderer = <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
     <span class="keyword">var</span> me=<span class="keyword">this</span>;
     <span class="keyword">return</span> (
       <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">style</span>=<span class="value">{{display:"inline-block"}}</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
-          {_.map(_.without(opts,skip),function(g){
+          {_.map(opts,function(g){
             return <span class="tag">&lt;<span class="title">button</span> <span class="attribute">onClick</span>=<span class="value">{function(){</span>
               <span class="attribute">me.setState</span>(<span class="attribute">_.object</span>([<span class="attribute">name</span>],[<span class="attribute">g</span>]));
             }} <span class="attribute">className</span>=<span class="value">{'btn</span> <span class="attribute">btn-default</span>'+(<span class="attribute">g</span>=<span class="value">==me.state[name]?'</span> <span class="attribute">active</span>'<span class="attribute">:</span>'')}&gt;</span>{g}<span class="tag">&lt;/<span class="title">button</span>&gt;</span>
