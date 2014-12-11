@@ -378,7 +378,7 @@ function(name,opts,instance){
           })}
       </div>
     );
-  }
+  };
   // second style syntax, attach renderer and set initial value
   if (instance){
     instance[rendername] = renderer;
