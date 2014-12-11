@@ -332,8 +332,8 @@ Exploring how we can encapsulate concerns in React by using mixin factories
 <p>Since we depend on the properties, we can&#39;t make any call until we have access to them. That smells like we should be doing our thing inside the <code>componentWillMount</code> method - at that point we can access <code>this.props</code>, and the component isn&#39;t yet rendered. So we should be able to do something like this:</p>
 <pre><code><span class="keyword">var</span> Opinion = React.createClass({
   componentWillMount: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
-    SelectSyntax2(<span class="string">"fruit"</span>,<span class="keyword">this</span>.props.fruits);
-    SelectSyntax2(<span class="string">"vegetables"</span>,<span class="keyword">this</span>.props.vegetables);
+    SelectSyntax2(<span class="string">"fruit"</span>,_.keys(<span class="keyword">this</span>.props.fruits));
+    SelectSyntax2(<span class="string">"vegetables"</span>,_.keys(<span class="keyword">this</span>.props.vegetables));
   },
   <span class="comment">// rest redacted</span>
 });</code></pre>
@@ -358,8 +358,12 @@ Exploring how we can encapsulate concerns in React by using mixin factories
 <h3 id="2-in-1">2 in 1</h3>
 <p>Since the two use cases have different signatures, I opted to only have the one method and make it behave differently depending on whether or not the third argument (the instance) was provided. Here&#39;s my code:</p>
 <pre><code><span class="function"><span class="keyword">function</span><span class="params">(name,opts,instance)</span>{</span>
-  <span class="keyword">var</span> constructorname = <span class="string">"Select"</span>+name.charAt(<span class="number">0</span>).toUpperCase() + name.slice(<span class="number">1</span>)
-  <span class="keyword">var</span> constructor = <span class="function"><span class="keyword">function</span><span class="params">(skip)</span>{</span>
+  <span class="comment">// allow passing opts as an object, if so make the _.keys call here</span>
+  <span class="keyword">var</span> opts = _.isObject(opts) ? _.keys(opts) : opts;
+  <span class="comment">// build good renderer name</span>
+  <span class="keyword">var</span> rendername = <span class="string">"Select"</span>+name.charAt(<span class="number">0</span>).toUpperCase() + name.slice(<span class="number">1</span>)
+  <span class="comment">// create the renderer function</span>
+  <span class="keyword">var</span> renderer = <span class="function"><span class="keyword">function</span><span class="params">(skip)</span>{</span>
     <span class="keyword">var</span> me=<span class="keyword">this</span>;
     <span class="keyword">return</span> (
       <span class="xml"><span class="tag">&lt;<span class="title">div</span> <span class="attribute">style</span>=<span class="value">{{display:"inline-block"}}</span> <span class="attribute">className</span>=<span class="value">"btn-group clearfix"</span>&gt;</span>
@@ -371,23 +375,25 @@ Exploring how we can encapsulate concerns in React by using mixin factories
       <span class="tag">&lt;/<span class="title">div</span>&gt;</span>
     );
   }
+  // second style syntax, attach renderer and set initial value
   if (instance){
-    instance[constructorname] = constructor;
+    instance[rendername] = renderer;
     instance.setState(_.object([name],[opts[0]]));
+  // mixin syntax, return object with getInitialState and renderer
   } else {
     return _.object(
-      ["getInitialState", constructorname],
-      [function(){return _.object([name],[opts[0]])}, constructor]
+      ["getInitialState", rendername],
+      [function(){return _.object([name],[opts[0]])}, renderer]
     );
   }
 };</span></code></pre>
 
-<p>It is actually safe to use <code>this</code> to access the component even in the second syntax, since the constructor will be called as a method on the instance.</p>
+<p>It is actually safe to use <code>this</code> to access the component even in the second syntax, since the renderer will be called as a method on the instance.</p>
 <p>Here&#39;s the full code for <code>Opinion</code> using the second syntax:</p>
 <pre><code><span class="keyword">var</span> List = React.createClass({
   componentWillMount: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
-    Select(<span class="string">"fruit"</span>,_.keys(<span class="keyword">this</span>.props.fruits),<span class="keyword">this</span>);
-    Select(<span class="string">"vegetable"</span>,_.keys(<span class="keyword">this</span>.props.vegetables),<span class="keyword">this</span>);
+    Select(<span class="string">"fruit"</span>,<span class="keyword">this</span>.props.fruits,<span class="keyword">this</span>);
+    Select(<span class="string">"vegetable"</span>,<span class="keyword">this</span>.props.vegetables,<span class="keyword">this</span>);
   },
   render: <span class="function"><span class="keyword">function</span><span class="params">()</span>{</span>
     <span class="keyword">return</span> (

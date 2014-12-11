@@ -328,8 +328,8 @@ Since we depend on the properties, we can't make any call until we have access t
 ```javascript
 var Opinion = React.createClass({
   componentWillMount: function(){
-    SelectSyntax2("fruit",this.props.fruits);
-    SelectSyntax2("vegetables",this.props.vegetables);
+    SelectSyntax2("fruit",_.keys(this.props.fruits));
+    SelectSyntax2("vegetables",_.keys(this.props.vegetables));
   },
   // rest redacted
 });
@@ -362,8 +362,12 @@ Since the two use cases have different signatures, I opted to only have the one 
 
 ```javascript
 function(name,opts,instance){
-  var constructorname = "Select"+name.charAt(0).toUpperCase() + name.slice(1)
-  var constructor = function(skip){
+  // allow passing opts as an object, if so make the _.keys call here
+  var opts = _.isObject(opts) ? _.keys(opts) : opts;
+  // build good renderer name
+  var rendername = "Select"+name.charAt(0).toUpperCase() + name.slice(1)
+  // create the renderer function
+  var renderer = function(skip){
     var me=this;
     return (
       <div style={{display:"inline-block"}} className="btn-group clearfix">
@@ -375,27 +379,29 @@ function(name,opts,instance){
       </div>
     );
   }
+  // second style syntax, attach renderer and set initial value
   if (instance){
-    instance[constructorname] = constructor;
+    instance[rendername] = renderer;
     instance.setState(_.object([name],[opts[0]]));
+  // mixin syntax, return object with getInitialState and renderer
   } else {
     return _.object(
-      ["getInitialState", constructorname],
-      [function(){return _.object([name],[opts[0]])}, constructor]
+      ["getInitialState", rendername],
+      [function(){return _.object([name],[opts[0]])}, renderer]
     );
   }
 };
 ```
 
-It is actually safe to use `this` to access the component even in the second syntax, since the constructor will be called as a method on the instance.
+It is actually safe to use `this` to access the component even in the second syntax, since the renderer will be called as a method on the instance.
 
 Here's the full code for `Opinion` using the second syntax:
 
 ```javascript
 var List = React.createClass({
   componentWillMount: function(){
-    Select("fruit",_.keys(this.props.fruits),this);
-    Select("vegetable",_.keys(this.props.vegetables),this);
+    Select("fruit",this.props.fruits,this);
+    Select("vegetable",this.props.vegetables,this);
   },
   render: function(){
     return (
