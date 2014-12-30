@@ -142,7 +142,7 @@ Modelling the code this way made it easier for me to show the substeps for the u
 
 ###Localization
 
-Probably you've already gleaned that the app is bilingual. I manage localization through a simple literal system. For example, here's the text content to go with the above operation `zeroExpPowerToOne`:
+Probably you've already gleaned that the app is bilingual. I manage localization through a simple literal system. For example, here's the text content to go with the above operation:
 
 ```coffeescript
 zeroExpPowerToOne:
@@ -172,7 +172,11 @@ zeroExpPowerToOne:
 			movetodenom: "The other power we move into the denominator, which makes the exponent become 1 and disappear."
 			andcollapsefracto1: "Now we have a fraction with identical numerator and denominator, which we can collapse to 1!"
 ```
+
+Note how the `steps` keys correspond to the strings used in the `zeroExpPowerToOne` source.
+
 Initially I was worried about keeping such large objects in memory - the one defined in this file, containing all operation descriptions and substep explanations, is over half a megabyte! But as it turned out, this proved to work rather smoothly even on lower end devices.
+
 
 ###Regular expressions ftw
 
@@ -192,7 +196,7 @@ extract:
 ```
 This saved me from manually having to write the links, which would have made authoring the texts a real drag.
 
-At first this didn't work too well - sometimes there was a wording I hadn't anticipated and the word wouldn't be clickable, and other times words would be made clickable when they shouldn't be as they meant something entirely different in that context. This got better over time as I got better at phrasing dexterous but still picky regexes. 
+At first this didn't work too well - sometimes there was a wording I hadn't anticipated and the word wouldn't be clickable, and other times words would be made clickable when they shouldn't be as they meant something entirely different in that context. This got better over time as I got better at phrasing dexterous but still picky regexes.<br/><br/>
 
 I also made a special `MAKESAFE` matcher which wraps all matched content in a span, to prevent it from later being made clickable. This matcher used to be very complicated as it had to cater for lots of false positives, but now this is all that remains:
 

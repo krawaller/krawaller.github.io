@@ -185,7 +185,7 @@ Introducing a symbolic calculator built on the web stack and peeping under the h
 
 <p>Modelling the code this way made it easier for me to show the substeps for the user, as the end result of a <code>simplify</code> call will be a nested object with each step info retained. Thus I can allow the UI to dig however deep the user wishes.</p>
 <h3 id="localization">Localization</h3>
-<p>Probably you&#39;ve already gleaned that the app is bilingual. I manage localization through a simple literal system. For example, here&#39;s the text content to go with the above operation <code>zeroExpPowerToOne</code>:</p>
+<p>Probably you&#39;ve already gleaned that the app is bilingual. I manage localization through a simple literal system. For example, here&#39;s the text content to go with the above operation:</p>
 <pre><code><span class="attribute">zeroExpPowerToOne</span>:
     <span class="attribute">id</span>: <span class="number">2</span>
     <span class="attribute">sv</span>:
@@ -212,12 +212,11 @@ Introducing a symbolic calculator built on the web stack and peeping under the h
             <span class="attribute">dropexp1</span>: <span class="string">"The exponent 1 can be removed."</span>
             <span class="attribute">movetodenom</span>: <span class="string">"The other power we move into the denominator, which makes the exponent become 1 and disappear."</span>
             <span class="attribute">andcollapsefracto1</span>: <span class="string">"Now we have a fraction with identical numerator and denominator, which we can collapse to 1!"</span></code></pre>
-Initially I was worried about keeping such large objects in memory - the one defined in this file, containing all operation descriptions and substep explanations, is over half a megabyte! But as it turned out, this proved to work rather smoothly even on lower end devices.
 
-###Regular expressions ftw
-
-As you can see in the screenshot up top, some terms inside explanations are clickable. Algebra Explorer has an integrated glossary - click the term to navigate to the definition for that term. This is done dynamically by defining a `matcher` for each glossary entry. Here's the definition for the word `extract`:
-
+<p>Note how the <code>steps</code> keys correspond to the strings used in the <code>zeroExpPowerToOne</code> source.</p>
+<p>Initially I was worried about keeping such large objects in memory - the one defined in this file, containing all operation descriptions and substep explanations, is over half a megabyte! But as it turned out, this proved to work rather smoothly even on lower end devices.</p>
+<h3 id="regular-expressions-ftw">Regular expressions ftw</h3>
+<p>As you can see in the screenshot up top, some terms inside explanations are clickable. Algebra Explorer has an integrated glossary - click the term to navigate to the definition for that term. This is done dynamically by defining a <code>matcher</code> for each glossary entry. Here&#39;s the definition for the word <code>extract</code>:</p>
 <pre><code><span class="attribute">extract</span>:
     <span class="attribute">matcher</span>:
         <span class="attribute">en</span>: <span class="string">"extracte?d?i?n?g?"</span>
@@ -230,7 +229,7 @@ As you can see in the screenshot up top, some terms inside explanations are clic
         <span class="attribute">sv</span>: <span class="string">"Om vi faktoriserar ett uttryck för att vi är intresserade av en av de resulterande faktorerna, så säger vi att vi har brytit ut (eller 'extraherat') den faktorn."</span></code></pre>
 This saved me from manually having to write the links, which would have made authoring the texts a real drag.
 
-At first this didn't work too well - sometimes there was a wording I hadn't anticipated and the word wouldn't be clickable, and other times words would be made clickable when they shouldn't be as they meant something entirely different in that context. This got better over time as I got better at phrasing dexterous but still picky regexes. 
+At first this didn't work too well - sometimes there was a wording I hadn't anticipated and the word wouldn't be clickable, and other times words would be made clickable when they shouldn't be as they meant something entirely different in that context. This got better over time as I got better at phrasing dexterous but still picky regexes.<br/><br/>
 
 I also made a special `MAKESAFE` matcher which wraps all matched content in a span, to prevent it from later being made clickable. This matcher used to be very complicated as it had to cater for lots of false positives, but now this is all that remains:
 
