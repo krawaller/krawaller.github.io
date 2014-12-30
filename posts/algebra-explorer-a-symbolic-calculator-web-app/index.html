@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Algebra Explorer - a symbolic calculator web app</title>
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A web developer blog talking mostly about JavaScript">
+  
+  <link rel="stylesheet" href="../../css/highlight.css">
+  <link rel="stylesheet" href="../../css/theme.css"/>
+  <link rel="stylesheet" href="../../css/specials.css"/>
+  
+
+  <script>
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+    ga('create', 'UA-11433118-1', 'auto');
+    ga('send', 'pageview');
+
+  </script>
+
+</head>
+<body>
+
+<header class="site-head">
+  <div class="container">
+    <!-- Vertically center -->
+    <div class="vertical">
+      <div class="site-head-content inner">
+        <h1 class="blog-title"><a href="../../">Krawaller</a></h1>
+        <h2 class="blog-description">
+          <ul class="social-nav">
+            <li class="twitter"><a href="http://www.twitter.com/krawaller">Twitter</a></li>
+            <li class="github"><a href="http://www.github.com/krawaller">Github</a></li>
+            <li class="mail"><a href="mailto:info@krawaller.se">Mail</a></li>
+            <li class="rss"><a href="../../rss.xml">RSS</a></li>
+          </ul>
+        </h2>
+      </div>
+    </div><!-- END .vertical -->
+  </div><!-- END .container -->
+</header>
+
+<div class="sub-head">
+  <div class="container">
+  	
+Introducing a symbolic calculator built on the web stack and peeping under the hood
+  	
+  </div>
+</div><!-- END .sub-head -->
+
+<div class="container">
+  <main class="content" role="main">
+
+
+<article>
+  
+  <header class="post-header">
+  <h2 class="post-title">
+    <a href="../../posts/algebra-explorer-a-symbolic-calculator-web-app">Algebra Explorer - a symbolic calculator web app</a>
+    <span class="post-meta">
+      <time datetime="Tue Dec 30 2014 01:00:00 GMT+0100 (CET)">Dec 30th 2014</time> 
+    </span>
+  </h2>
+    <div class='tags'>
+      By: <span><a href='../../about/david'>David</a></span>
+    </div>
+    <div class="tags">
+      Tags:
+      
+        <span><a href='../../tags/algebra explorer/'>algebra explorer</a></span>
+      
+        <span><a href='../../tags/testing/'>testing</a></span>
+      
+    </div>
+</header>
+
+  <section class='post-content'>
+  <h3 id="the-project">The project</h3>
+<p>For several years now I&#39;ve tried to combine my programming self with my maths teacher alter ego by working on a symbolic calculator that would show the substeps of the manipulations made, to allow people to more easily understand the intricacies of algebra. Now I&#39;m finally finished, and I am ever so happy to present to you - Algebra Explorer!</p>
+<p style='text-align:center;'>
+<img src="../../img/alexscreen.png" alt="substeps">
+</p>
+
+<p>You can find out more by visiting <a href="http://www.algebraexplorer.com">the homepage</a>, but as it is a web app you can also try it out right here by clicking the button below!</p>
+<p><button class='launchbutton' style='display:block;margin: 0 auto;'>Launch Algebra Explorer</button></p>
+
+<p>This post won&#39;t talk too much about the pedagogical side or the app functionality, but instead relate how the app was built.</p>
+<h3 id="payment-model">Payment model</h3>
+<p>After trying out some different approaches I decided to make the app freely available online, and charge for an iOS version (Android planned too, but so far I haven&#39;t managed to bring myself to fix that). Since the online version works fine in a mobile browser too the app really isn&#39;t necessary, but useful if you want an offline version or just want to support the project.</p>
+<p>Time will tell if this model is at all viable, but at this point I&#39;m not too bothered by revenue - I&#39;ll never ever get back what my spent unpaid time is worth anyway. And also it seemed like a nice way to leverage the power of the web stack.</p>
+<h3 id="tech-stack">Tech stack</h3>
+<p>As I have been toiling away at this project for years and years and <em>years</em> (I remember sketching out the prototype on the whiteboard of the school in Blacklake prison in 2007), the choices regarding building blocks are not what present day David would make. But, here we go:</p>
+<ul>
+<li><strong>CoffeeScript:</strong> Yeah, I know, I&#39;m sorry. When I started (this version of the codebase) CS was all the craze, and I had my seat on the train. But I must say, diving down that rabbit hole definitely made me a stronger JS programmer!</li>
+<li><strong>Backbone:</strong> Maybe not that bad of a fit, as my needs were rather specific and Backbone gave me lots of freedom.</li>
+<li><strong>Vows:</strong> I&#39;ll talk some more about the unit testing towards the end of this post.</li>
+<li><strong>Mathjax:</strong> For displaying mathematics in browsers without native support for MathML.</li>
+<li><strong>Cordova:</strong> Initially I used the <a href="https://build.phonegap.com/">phonegap build service</a>, but their repo size limit and other weirdness made me eventually install Cordova locally instead.</li>
+</ul>
+<p>Other than that, I built everything myself. This was more ignorance than pride; for example, had I known more about parsing theory I would have used a library as a foundation for my own instead of doing everything from scratch.</p>
+<h3 id="algebraic-representation">Algebraic representation</h3>
+<p>First off I designed my own data format for mathematics. It is very simple; everything expression has a <code>type</code>, some have a <code>val</code> and some have <code>objs</code> (meaning children). Here is a regular number:</p>
+<pre><code>{
+    "<span class="attribute">type</span>": <span class="value"><span class="string">"number"</span></span>,
+    "<span class="attribute">val</span>": <span class="value"><span class="number">7</span>
+</span>}</code></pre>
+
+<p>Here is the sum <code>x+pi/(4^3)</code>:</p>
+<pre><code>{
+    "<span class="attribute">type</span>": <span class="value"><span class="string">"sum"</span></span>,
+    "<span class="attribute">objs</span>": <span class="value">[{
+        "<span class="attribute">type</span>": <span class="value"><span class="string">"variable"</span></span>,
+        "<span class="attribute">val</span>": <span class="value"><span class="string">"x"</span>
+    </span>},{
+        "<span class="attribute">type</span>": <span class="value"><span class="string">"fraction"</span></span>,
+        "<span class="attribute">objs</span>": <span class="value">[{
+            "<span class="attribute">type</span>": <span class="value"><span class="string">"constant"</span></span>,
+            "<span class="attribute">val</span>": <span class="value"><span class="string">"pi"</span>
+        </span>},{
+            "<span class="attribute">type</span>":<span class="value"><span class="string">"power"</span></span>,
+            "<span class="attribute">objs</span>": <span class="value">[{
+                "<span class="attribute">type</span>":<span class="value"><span class="string">"number"</span></span>,
+                "<span class="attribute">val</span>":<span class="value"><span class="number">4</span>
+            </span>},{
+                "<span class="attribute">type</span>":<span class="value"><span class="string">"number"</span></span>,
+                "<span class="attribute">val</span>":<span class="value"><span class="number">3</span>
+            </span>}]
+        </span>}]
+    </span>}]
+</span>}</code></pre>
+
+
+<h3 id="substeps-under-the-hood">Substeps under the hood</h3>
+<p>The main pedagogical idea behind the app was to show substeps of everything, and not sweeping anything under the rug. Complex rules should break down into a small set of basic truths. I used this same approach under the hood; the basic truths, which I call atomic operations, all return a maths expression, while composite operations explicitly use other operations.</p>
+<p>For example, consider the basic truth that we can always remove an exponent 1 from a power. No matter what the value of the base is, an exponent of 1 can be removed. Here is the source code for this atomic operation:</p>
+<pre><code>oneExpPowerToBase = <span class="comment"># x^1 = x</span>
+    <span class="attribute">info</span>:
+        <span class="attribute">name</span>: <span class="string">"oneExpPowerToBase"</span>
+        <span class="attribute">effect</span>: <span class="string">"simplifying"</span>
+        <span class="attribute">opposite</span>: <span class="string">"raiseByOne"</span>
+        <span class="attribute">example</span>: <span class="string">"x^1"</span>
+        <span class="attribute">tags</span>: [<span class="string">"exponentiation"</span>,<span class="string">"power"</span>,<span class="string">"number1"</span>,<span class="string">"remove"</span>,<span class="string">"neutralelement"</span>]
+        <span class="attribute">lesson</span>: <span class="string">"power101"</span>
+    <span class="attribute">prints</span>:
+        <span class="attribute">errors</span>: [<span class="string">"expmustbeone"</span>]
+    <span class="attribute">target</span>:
+        <span class="attribute">type</span>: <span class="string">"power"</span>
+        <span class="attribute">validate</span>: <span class="function"><span class="params">({deps,target:objs:[base,exp]})</span>-&gt;</span> <span class="keyword">if</span> <span class="keyword">not</span> deps.equal exp, one <span class="keyword">then</span> Err <span class="string">"expmustbeone"</span>, [<span class="number">1</span>] <span class="keyword">else</span> OK
+    <span class="attribute">perform</span>: <span class="function"><span class="params">({target})</span>-&gt;</span>
+        <span class="attribute">result</span>: target.objs[<span class="number">0</span>]
+        <span class="attribute">beforemarks</span>: [[<span class="number">1</span>]]</code></pre>
+
+<p>Note how the <code>result</code> when calling <code>perform</code> will be <code>target.objs[0]</code>. Since the target of the operation is always a power, what is returned is the first child of the power, namely the base. And of course this is what remains if we &quot;remove&quot; the exponent.</p>
+<p>Now consider the rule that if a power has an exponent of 0, it is equal to 1 (actually it is not quite that simple since the base cannot be 0 too, but never mind that for now). This is <em>not</em> a basic truth, but a consequence of the above rule and several other rules. Here&#39;s what this looks like in the app:</p>
+<p style='text-align:center;'>
+<img src="../../img/alexsubsteps.png" alt="substeps">
+</p>
+
+<p>And here is the source code for this operation, where you can see it explicitly calling each substep:</p>
+<pre><code>zeroExpPowerToOne = <span class="comment"># x^0 = 1</span>
+    <span class="attribute">info</span>:
+        <span class="attribute">name</span>: <span class="string">"zeroExpPowerToOne"</span>
+        <span class="attribute">effect</span>: <span class="string">"simplifying"</span>
+        <span class="attribute">example</span>: <span class="string">"x^0"</span>
+        <span class="attribute">uses</span>: [<span class="string">"numToSum"</span>,<span class="string">"biSumExpPowToProd"</span>,<span class="string">"oneExpPowerToBase"</span>,<span class="string">"negExpFacProdToFrac"</span>,<span class="string">"sameNumerDenomFracToOne"</span>]
+        <span class="attribute">tags</span>: [<span class="string">"exponentiation"</span>,<span class="string">"number1"</span>,<span class="string">"number0"</span>,<span class="string">"power"</span>,<span class="string">"collapse"</span>,<span class="string">"neutralelement"</span>]
+        <span class="attribute">opposite</span>: <span class="string">"oneToZeroExpPower"</span>
+        <span class="attribute">lesson</span>: <span class="string">"powernegexp"</span>
+    <span class="attribute">prints</span>:
+        <span class="attribute">errors</span>: [<span class="string">"expmustbezero"</span>]
+    <span class="attribute">target</span>:
+        <span class="attribute">type</span>: <span class="string">"power"</span>
+        <span class="attribute">validate</span>: <span class="function"><span class="params">({deps,target:objs:[base,exp]})</span>-&gt;</span> <span class="keyword">if</span> <span class="keyword">not</span> deps.equal exp, zero <span class="keyword">then</span> Err <span class="string">"expmustbezero"</span>, [<span class="number">1</span>] <span class="keyword">else</span> OK
+    <span class="attribute">perform</span>: <span class="function"><span class="params">(o)</span>-&gt;</span>
+        o.<span class="keyword">do</span> <span class="string">"numToSum"</span>,<span class="string">"turnzeroexpto1minus1"</span>,<span class="attribute">aim</span>:[<span class="number">1</span>],<span class="attribute">argument</span>: Sum one,Neg one
+        o.<span class="keyword">do</span> <span class="string">"biSumExpPowToProd"</span>,<span class="string">"splitpow"</span>
+        o.<span class="keyword">do</span> <span class="string">"oneExpPowerToBase"</span>,<span class="string">"dropexp1"</span>,<span class="attribute">aim</span>:[<span class="number">0</span>]
+        o.<span class="keyword">do</span> <span class="string">"negExpFacProdToFrac"</span>,<span class="string">"movetodenom"</span>,<span class="attribute">selection</span>:[[<span class="number">1</span>]]
+        o.<span class="keyword">do</span> <span class="string">"sameNumerDenomFracToOne"</span>,<span class="string">"andcollapsefracto1"</span>
+        o.beforemark [[<span class="number">1</span>]]</code></pre>
+
+<p>Modelling the code this way made it easier for me to show the substeps for the user, as the end result of a <code>simplify</code> call will be a nested object with each step info retained. Thus I can allow the UI to dig however deep the user wishes.</p>
+<h3 id="regular-expressions-ftw">Regular expressions ftw</h3>
+<p>As you can see in the screenshot up top, some terms inside explanations are clickable. Algebra Explorer has an integrated glossary - click the term to navigate to the definition for that term. This is done dynamically by defining a <code>matcher</code> for each glossary entry. Here&#39;s the definition for the word <code>extract</code>:</p>
+<pre><code><span class="attribute">extract</span>:
+    <span class="attribute">matcher</span>:
+        <span class="attribute">en</span>: <span class="string">"extracte?d?i?n?g?"</span>
+        <span class="attribute">sv</span>: <span class="string">"br[yö]ta?e?r?s?( vi)? ut"</span>
+    <span class="attribute">headline</span>:
+        <span class="attribute">en</span>: <span class="string">"extract"</span>
+        <span class="attribute">sv</span>: <span class="string">"bryta ut"</span>
+    <span class="attribute">description</span>:
+        <span class="attribute">en</span>: <span class="string">"When we factorise an expression because we are interested in one of the resulting factors, we say that we extracted that factor."</span>
+        <span class="attribute">sv</span>: <span class="string">"Om vi faktoriserar ett uttryck för att vi är intresserade av en av de resulterande faktorerna, så säger vi att vi har brytit ut (eller 'extraherat') den faktorn."</span></code></pre>
+This saved me from manually having to write the links, which would have made authoring the texts a real drag.
+
+At first this didn't work too well - sometimes there was a wording I hadn't anticipated and the word wouldn't be clickable, and other times words would be made clickable when they shouldn't be as they meant something entirely different in that context. This got better over time as I got better at phrasing dexterous but still picky regexes. 
+
+I also made a special `MAKESAFE` matcher which wraps all matched content in a span, to prevent it from later being made clickable. This matcher used to be very complicated as it had to cater for lots of false positives, but now this is all that remains:
+
+<pre><code><span class="attribute">MAKESAFE</span>:
+    <span class="attribute">matcher</span>:
+        <span class="attribute">en</span>: <span class="string">"introduced to|[01]\\.[0-9]+|number of times|any number of|the number of|a number of|1\\/|E?e?ven (though|if the)|introduced logic"</span>
+        <span class="attribute">sv</span>: <span class="string">"vardagligt tal|introduceras till|[01][\\,\\.][0-9]+|1\\/|introducerade logik"</span></code></pre>
+
+<h3 id="unit-testing-with-vows">Unit testing with Vows</h3>
+<p>For unit testing my choice fell on <a href="http://vowsjs.org/">Vows</a>, which turned out to be a very good fit. The main advantage for me was that the test definitions in vows are object literals, which makes it easy to write helper functions (they call them &quot;macros&quot;) to clean up your tests. </p>
+<p>Here is what it can look like, using the <code>mergeSameBaseFacs</code> operation as an example:</p>
+<pre><code>tests.addBatch <span class="string">"the mergeSameBaseFacs op"</span>:
+    <span class="attribute">topic</span>:<span class="function"> -&gt;</span> tools.mergeSameBaseFacs
+    <span class="attribute">hasInfo</span>: info
+        <span class="attribute">name</span>: <span class="string">"mergeSameBaseFacs"</span>
+        <span class="attribute">effect</span>: <span class="string">"simplifying"</span>
+        <span class="attribute">example</span>: (<span class="attribute">str</span>:<span class="string">"x*y*x2"</span>,<span class="attribute">selection</span>:[[<span class="number">0</span>,<span class="number">2</span>]])
+    <span class="string">"the target def says product"</span>: targetIs <span class="string">"product"</span>
+    <span class="string">"the selection def"</span>: selection
+        <span class="string">"has min 2"</span>: min <span class="number">2</span>
+    <span class="string">"the auto func"</span>: auto
+        <span class="string">"for no same base fac prod"</span>: test
+            <span class="attribute">withTarget</span>: (Product x, z, Power y,two)
+            <span class="string">"we get err"</span>: isError <span class="string">"musthavesamebasefacs"</span>
+        <span class="string">"for same base fac prod"</span>: test
+            <span class="attribute">withTarget</span>: (Product x, z, two, Power x,two)
+            <span class="string">"we get correct obj"</span>: isObj
+                <span class="attribute">selection</span>: [[<span class="number">0</span>,<span class="number">3</span>]]
+        <span class="string">"when neg hiding same"</span>: test
+            <span class="attribute">withTarget</span>: (Product x, z, two, Neg Power x,two)
+            <span class="string">"we get correct obj"</span>: isObj
+                <span class="attribute">selection</span>: [[<span class="number">0</span>,<span class="number">3</span>]]
+    <span class="string">"the perform func"</span>: perform
+        <span class="string">"when leftover facs"</span>: test
+            <span class="attribute">withTarget</span>: (Product x, z, (Power x,three), Power x,two)
+            <span class="attribute">withSelection</span>: [[<span class="number">0</span>,<span class="number">2</span>,<span class="number">3</span>]]
+            <span class="string">"we get right answer"</span>: resultIs (Product (Power x, Num <span class="number">6</span>), z)
+            <span class="string">"sels are beforemarked"</span>: beforemarks [[<span class="number">0</span>],[<span class="number">2</span>],[<span class="number">3</span>]]
+            <span class="string">"pow is aftermarked"</span>: aftermarks [[<span class="number">0</span>]]
+        <span class="string">"when no leftovers"</span>: test
+            <span class="attribute">withTarget</span>: (Product x, (Power x,three), Power x,two)
+            <span class="attribute">withSelection</span>: [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]]
+            <span class="string">"we get right answer"</span>: (resultIs Power x, Num <span class="number">6</span>)
+            <span class="string">"and no aftermarks"</span>: aftermarks <span class="literal">undefined</span>
+        <span class="string">"when non-numeric"</span>: test
+            <span class="attribute">withTarget</span>: (Product x, Power x, y)
+            <span class="attribute">withSelection</span>: [[<span class="number">0</span>,<span class="number">1</span>]]
+            <span class="string">"we get right answer"</span>: (resultIs Power x, Sum one, y)
+        <span class="string">"when multinonnumeric"</span>: test
+            <span class="attribute">withTarget</span>: (Product (Power two, x), (Power two, y), Power two, z)
+            <span class="attribute">withSelection</span>: [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]]
+            <span class="string">"we get right ans"</span>: (resultIs Power two, Sum x,y,z)
+        <span class="string">"when partly numeric"</span>: test
+            <span class="attribute">withTarget</span>: (Product (Power two, three), (Power two, y), two)
+            <span class="attribute">withSelection</span>: [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]]
+            <span class="string">"we get right ans"</span>: (resultIs Power two,Sum (Num <span class="number">4</span>), y)
+        <span class="string">"when one negation"</span>: test
+            <span class="attribute">withTarget</span>: (Product (Power two, three), (Neg Power two, y), two)
+            <span class="attribute">withSelection</span>: [[<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>]]
+            <span class="string">"we get right ans"</span>: (resultIs Neg Power two,Sum (Num <span class="number">4</span>), y)</code></pre>
+
+<p>Combined with the added readability of CoffeeScript, this really makes for some sleek tests!</p>
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>When I started, part of my motivation was to show that it was possible to build this kind of thing with JavaScript. That&#39;s not a point that needs to be made anymore, and there are already several other CAS implementations built on the web stack. </p>
+<p>Still, I am rather proud of my creation! Sure, it contains many rough edges, the UI isn&#39;t that intuitive, and many times the fact that this is a one man show shines through. But for those who get over the initial threshold it seems the app can really help them grokk algebra. We&#39;re starting now to roll it out for the maths students in the Swedish prisons, and I hope teachers outside the walls will catch on too. Time will tell.</p>
+<p>And also the code is really pretty. :)</p>
+<p>Anyhow, if you have an interest then please do give <a href="http://www.algebraexplorer.com">Algebra Explorer</a> a spin! Any and all feedback much appreciated! </p>
+<script type="text/javascript">
+  document.querySelector(".launchbutton").addEventListener("click",function(e){
+    var win = window.open("https://krawaller.github.io/math3/www/index.html?demo=1&seed=284716495&source=fbtab&language=en",'targetWindow','toolbar=0,location=0,status=0,menubar=0,scrollbars=1,resizable=1,width=320,height=568');
+    win = win || {};
+    win.height = 568;
+    win.width = 320;
+    e.preventDefault();
+  });
+</script>
+  </section>
+
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+    /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
+    var disqus_shortname = 'krawaller'; // required: replace example with your forum shortname
+
+    /* * * DON'T EDIT BELOW THIS LINE * * */
+    (function() {
+        var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+        dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="http://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+
+</article>    
+
+
+
+
+  </main><!-- END role="main" -->
+</div><!-- END .container -->
+
+</body>
+</html>
