@@ -140,6 +140,39 @@ zeroExpPowerToOne = # x^0 = 1
 
 Modelling the code this way made it easier for me to show the substeps for the user, as the end result of a `simplify` call will be a nested object with each step info retained. Thus I can allow the UI to dig however deep the user wishes.
 
+###Localization
+
+Probably you've already gleaned that the app is bilingual. I manage localization through a simple literal system. For example, here's the text content to go with the above operation `zeroExpPowerToOne`:
+
+```coffeescript
+zeroExpPowerToOne:
+	id: 2
+	sv:
+		name: "omvandla potens till 1"
+		explanation: "Exponenten berättar hur många gånger vi multiplicerar basen med sig själv. Men har vi 0 faktorer så återstår bara det neutrala elementet för multiplikation, nämligen 1."
+		targets: "en potens med exponent 0 och bas skiljd från 0"
+		returns: "det naturliga talet 1"
+		effect: "Detta är en förenklande regel, eftersom den kollapsar potensen till talet 1"
+		steps:
+			turnzeroexpto1minus1: "Först delar vi upp exponenten 0 i en summa, för att sedan kunna dela upp potensen."
+			splitpow: "Vi delar upp potensen i två potensfaktorer. De nya potenserna får exponenterna 1 och -1."
+			dropexp1: "Exponenten 1 tar vi bort."
+			movetodenom: "Den andra potensen flyttar vi ner i nämnaren, vilket gör att exponenten byter tecken, blir 1 och försvinner!"
+			andcollapsefracto1: "Nu har vi ett bråk med identisk täljare och nämnare, vilket vi kollapsar till 1!"
+	en: 
+		name: "transform power to 1"
+		explanation: "The exponent tells us how many times we multiply the base with itself. But if we have 0 factors we just get the neutral element of multiplication, namely 1."
+		targets: "a power with exponent 0 and base not equal to 0"
+		returns: "the natural number 1"
+		effect: "This is a simplifying rule, since it collapses the power to the number 1"
+		steps:
+			turnzeroexpto1minus1: "First we split the exponent 0 into a sum, which will enable us to split the power."
+			splitpow: "Now we split the power into two power factors. The new powers get the exponents 1 and -1."
+			dropexp1: "The exponent 1 can be removed."
+			movetodenom: "The other power we move into the denominator, which makes the exponent become 1 and disappear."
+			andcollapsefracto1: "Now we have a fraction with identical numerator and denominator, which we can collapse to 1!"
+```
+Initially I was worried about keeping such large objects in memory - the one defined in this file, containing all operation descriptions and substep explanations, is over half a megabyte! But as it turned out, this proved to work rather smoothly even on lower end devices.
 
 ###Regular expressions ftw
 

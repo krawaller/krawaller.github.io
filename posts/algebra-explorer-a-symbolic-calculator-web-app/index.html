@@ -184,8 +184,40 @@ Introducing a symbolic calculator built on the web stack and peeping under the h
         o.beforemark [[<span class="number">1</span>]]</code></pre>
 
 <p>Modelling the code this way made it easier for me to show the substeps for the user, as the end result of a <code>simplify</code> call will be a nested object with each step info retained. Thus I can allow the UI to dig however deep the user wishes.</p>
-<h3 id="regular-expressions-ftw">Regular expressions ftw</h3>
-<p>As you can see in the screenshot up top, some terms inside explanations are clickable. Algebra Explorer has an integrated glossary - click the term to navigate to the definition for that term. This is done dynamically by defining a <code>matcher</code> for each glossary entry. Here&#39;s the definition for the word <code>extract</code>:</p>
+<h3 id="localization">Localization</h3>
+<p>Probably you&#39;ve already gleaned that the app is bilingual. I manage localization through a simple literal system. For example, here&#39;s the text content to go with the above operation <code>zeroExpPowerToOne</code>:</p>
+<pre><code><span class="attribute">zeroExpPowerToOne</span>:
+    <span class="attribute">id</span>: <span class="number">2</span>
+    <span class="attribute">sv</span>:
+        <span class="attribute">name</span>: <span class="string">"omvandla potens till 1"</span>
+        <span class="attribute">explanation</span>: <span class="string">"Exponenten berättar hur många gånger vi multiplicerar basen med sig själv. Men har vi 0 faktorer så återstår bara det neutrala elementet för multiplikation, nämligen 1."</span>
+        <span class="attribute">targets</span>: <span class="string">"en potens med exponent 0 och bas skiljd från 0"</span>
+        <span class="attribute">returns</span>: <span class="string">"det naturliga talet 1"</span>
+        <span class="attribute">effect</span>: <span class="string">"Detta är en förenklande regel, eftersom den kollapsar potensen till talet 1"</span>
+        <span class="attribute">steps</span>:
+            <span class="attribute">turnzeroexpto1minus1</span>: <span class="string">"Först delar vi upp exponenten 0 i en summa, för att sedan kunna dela upp potensen."</span>
+            <span class="attribute">splitpow</span>: <span class="string">"Vi delar upp potensen i två potensfaktorer. De nya potenserna får exponenterna 1 och -1."</span>
+            <span class="attribute">dropexp1</span>: <span class="string">"Exponenten 1 tar vi bort."</span>
+            <span class="attribute">movetodenom</span>: <span class="string">"Den andra potensen flyttar vi ner i nämnaren, vilket gör att exponenten byter tecken, blir 1 och försvinner!"</span>
+            <span class="attribute">andcollapsefracto1</span>: <span class="string">"Nu har vi ett bråk med identisk täljare och nämnare, vilket vi kollapsar till 1!"</span>
+    <span class="attribute">en</span>: 
+        <span class="attribute">name</span>: <span class="string">"transform power to 1"</span>
+        <span class="attribute">explanation</span>: <span class="string">"The exponent tells us how many times we multiply the base with itself. But if we have 0 factors we just get the neutral element of multiplication, namely 1."</span>
+        <span class="attribute">targets</span>: <span class="string">"a power with exponent 0 and base not equal to 0"</span>
+        <span class="attribute">returns</span>: <span class="string">"the natural number 1"</span>
+        <span class="attribute">effect</span>: <span class="string">"This is a simplifying rule, since it collapses the power to the number 1"</span>
+        <span class="attribute">steps</span>:
+            <span class="attribute">turnzeroexpto1minus1</span>: <span class="string">"First we split the exponent 0 into a sum, which will enable us to split the power."</span>
+            <span class="attribute">splitpow</span>: <span class="string">"Now we split the power into two power factors. The new powers get the exponents 1 and -1."</span>
+            <span class="attribute">dropexp1</span>: <span class="string">"The exponent 1 can be removed."</span>
+            <span class="attribute">movetodenom</span>: <span class="string">"The other power we move into the denominator, which makes the exponent become 1 and disappear."</span>
+            <span class="attribute">andcollapsefracto1</span>: <span class="string">"Now we have a fraction with identical numerator and denominator, which we can collapse to 1!"</span></code></pre>
+Initially I was worried about keeping such large objects in memory - the one defined in this file, containing all operation descriptions and substep explanations, is over half a megabyte! But as it turned out, this proved to work rather smoothly even on lower end devices.
+
+###Regular expressions ftw
+
+As you can see in the screenshot up top, some terms inside explanations are clickable. Algebra Explorer has an integrated glossary - click the term to navigate to the definition for that term. This is done dynamically by defining a `matcher` for each glossary entry. Here's the definition for the word `extract`:
+
 <pre><code><span class="attribute">extract</span>:
     <span class="attribute">matcher</span>:
         <span class="attribute">en</span>: <span class="string">"extracte?d?i?n?g?"</span>
