@@ -1,0 +1,27 @@
+digraph {
+	rankdir = LR
+	bgcolor = transparent
+
+
+	subgraph cluster_sources {
+		label = "sources"
+		style = dashed
+		DOM, store
+	}
+
+	Nameform [shape=box]
+
+	DOM -> Nameform
+	store -> Nameform
+
+	subgraph cluster_sinks {
+		label = "sinks"
+		style = dashed
+		DOMout, storeout
+		storeout [label="store"]
+		DOMout [label="DOM"]
+	}
+
+	Nameform -> DOMout
+	Nameform -> storeout
+}

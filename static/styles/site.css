@@ -1,0 +1,56 @@
+body {
+  background-color: white;
+  font-family: "Open sans", sans-serif;
+}
+
+/* body .master iframe[src^="."] {
+  background-color: white;
+  color: black;
+} */
+
+.master {
+  max-width: 800px;
+  margin: 0 auto;
+  margin-bottom: 6em;
+  /* color: white; */
+}
+
+.master a {
+  color: #777;
+  text-decoration: none;
+}
+
+.master a:hover {
+  text-decoration: underline;
+}
+
+.master img {
+  max-width: 100%;
+  background-color: white;
+}
+
+.taglist a {
+  margin-right: 10px;
+}
+
+.page-content table,
+.page-content table th,
+.page-content table td {
+  border: 1px solid #555;
+  color: black;
+  padding: 4px;
+  min-width: 70px;
+}
+
+.page-content table th {
+  padding: 8px;
+  background-color: #dedede;
+}
+
+.page-content table {
+  background-color: #eee;
+  border-collapse: collapse;
+  font-size: 0.8em;
+  text-align: center;
+  margin-left: 1em;
+}

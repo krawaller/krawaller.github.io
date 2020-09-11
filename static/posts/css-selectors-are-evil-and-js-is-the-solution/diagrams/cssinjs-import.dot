@@ -1,0 +1,16 @@
+digraph {
+  bgcolor = transparent
+  rankdir = LR
+
+  subgraph cluster_html {
+    label = "HTML"
+    element
+  }
+
+  subgraph cluster_css {
+    label = "CSS"
+    rules
+  }
+
+  element -> rules [label="import"]
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple logger</title>
+  <script src="../redux.js"></script>
+</head>
+<body>
+
+<em>Snoop for middleware entrails</em>
+
+<div id="app"></div>
+<div id="log"></div>
+
+<script type="text/javascript" src="../boilerplatestart.js"></script>
+
+<script type="text/javascript">
+
+var puredispatch = createStore(reducer).dispatch;
+
+var noopInner = function(action){
+    return next(action);
+}
+
+var store = createStore(reducer,applyMiddleware(snoop("noopInner",noopInner),noop));
+
+</script>
+<script type="text/javascript" src="../boilerplateend.js"></script>
+</body>
+</html>

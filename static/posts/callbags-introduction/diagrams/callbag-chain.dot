@@ -1,0 +1,17 @@
+digraph {
+  rankdir = LR
+  bgcolor = transparent
+  
+  s1 -> o1 -> s2 -> o2 -> s3 -> sink
+
+  s1, s2, s3 [label="source"]
+  o1, o2 [label="operator", shape=box]
+
+  args -> o1 [constraint=none]
+
+  args2 -> o2 [constraint=none]
+
+  args2 [label="args"]
+
+  {rank=same; args2, s2}
+}

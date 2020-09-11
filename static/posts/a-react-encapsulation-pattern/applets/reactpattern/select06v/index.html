@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="resources/lodash.js"></script>
+    <script type="text/javascript" src="resources/react.js"></script>
+    <script type="text/javascript" src="resources/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="resources/bootstrap.css" type="text/css"></link>
+  </head>
+  <body>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+
+      var Select = function(name,opts){
+        return _.object(["getInitialState","Select"+name.charAt(0).toUpperCase() + name.slice(1)],[
+          function(){ return _.object([name],[opts[0]]); },
+          function(){
+            var me=this;
+            return (
+              <div style={{display:"inline-block"}} className="btn-group clearfix">
+                {_.map(opts,function(g){
+                  return <button onClick={function(){
+                    me.setState(_.object([name],[g]));
+                  }} className={'btn btn-default'+(g===me.state[name]?' active':'')}>{g}</button>
+                })}
+              </div>
+            );
+          }
+        ]);
+      };
+
+      var fruits = {
+        apples: "nice",
+        oranges: "a hassle to peel",
+        bananas: "funny"
+      };
+
+      var vegetables = {
+        carrots: "for bunnies",
+        peas: "perfect for flicking at your mum",
+        eggplants: "just weird"
+      };
+
+      var List = React.createClass({
+        mixins: [Select("fruit",Object.keys(fruits)),Select("vegetable",Object.keys(vegetables))],
+        render: function(){
+          return (
+            <div className="center-block" style={{maxWidth:"800px;",padding:"1em;"}}>
+              <div>I posit that {this.SelectFruit()} are {fruits[this.state.fruit]}!</div><br/>
+              <div>Also {this.SelectVegetable()} are {vegetables[this.state.vegetable]}.</div>
+            </div>
+          )
+        }
+      });
+
+      React.renderComponent(
+        <List />,
+        document.querySelector("body")
+      );
+
+    </script>
+  </body>
+</html>

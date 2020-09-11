@@ -1,0 +1,9 @@
+digraph {
+  rankdir = LR
+  bgcolor = transparent
+
+  window -> makeActions -> actions -> makeState -> state -> makeView -> view -> makeSideEffects
+  actions -> makeSideEffects
+  window -> makeSideEffects
+  makeActions, makeState, makeView, makeSideEffects [shape=box]
+}

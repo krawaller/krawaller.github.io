@@ -1,0 +1,54 @@
+
+.app {
+  background-color: #ebe9e9;
+  color: #282828;
+  font-size: 14px;
+  border-radius: 5px;
+  padding: 14px;
+  border: 2px solid #666666;
+}
+
+.app * {
+  color: black;
+}
+
+.app [disabled] {
+  color: #999;
+}
+
+.app.showkids * .child {
+  border: 1px dashed black;
+  border-radius: 5px;
+  padding: 7px;
+  margin: 7px;
+}
+
+.app button {
+  border: none;
+  background: #fff;
+  padding: 8px 14px;
+  transition: padding, font-size 40ms ease-in-out;
+  margin-left: 5px;
+  position: relative;
+  top: -4px;
+}
+
+.app button:active {
+  background: #a6a4a4;
+}
+
+.app button:before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 3px;
+  bottom: -6px;
+  left: 0;
+  background: #282828;
+}
+
+.app button:focus {
+  outline: none;
+}
+

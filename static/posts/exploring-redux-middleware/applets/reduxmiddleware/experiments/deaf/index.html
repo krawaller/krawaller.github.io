@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple logger</title>
+  <script src="../redux.js"></script>
+</head>
+<body>
+
+<em>Hearing-impaired middleware, will only let actions through 1/3 of the time</em>
+
+<div id="app"></div>
+<div id="log"></div>
+
+<script type="text/javascript" src="../boilerplatestart.js"></script>
+
+<script type="text/javascript">
+
+var deaf = function(middlewareAPI){
+    var i = 0;
+    return function(next){
+        return function(action){
+            if (!(i++%3)) {
+                next(action);
+            }
+        }
+    }
+}
+
+var store = createStore(reducer,applyMiddleware(deaf,logger));
+
+</script>
+<script type="text/javascript" src="../boilerplateend.js"></script>
+</body>
+</html>

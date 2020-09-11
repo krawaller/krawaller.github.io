@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Redux middleware experiment</title>
+  <script src="../redux.js"></script>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+
+<em>snooping at middleware `next`</em>
+
+<div id="app"></div>
+<div id="log"></div>
+
+<script type="text/javascript">
+
+// super simple counter reducer, where state is just a single number.
+var reducer = function(state,action){
+    state = state || 0;
+    switch(action.type){
+        case 'INCREMENT': return state + (action.by || 1);
+        default: return state;
+    }
+}
+
+// render the current state of the store onto the screen
+var render = function(){
+    var newhtml = "<h2>Clicked "+store.getState()+" times.</h2>";
+    document.getElementById("app").innerHTML = newhtml;
+}
+
+// put stuff into the log
+var output = function(txt){
+    var newparagraph = document.createElement("div");
+    newparagraph.innerHTML = txt;
+    document.getElementById("log").appendChild(newparagraph);
+}
+
+// a noop middleware to snoop at
+var noop = function(middlewareAPI){
+    return function(next){
+        return function(action){
+            return next(action);
+        }
+    }
+}
+
+// a snooper middleware who logs out `next`
+var snooper = function(middlewareAPI){
+    return function(next){
+        return function(action){
+            output("snooping at `next`: "+next);
+            return next(action);
+        }
+    }
+}
+
+// setting up the snooping
+var middlewares = Redux.applyMiddleware(snooper,noop),
+    store = Redux.createStore(reducer,middlewares);
+
+// make render run on every change to store, and run an initial render
+store.subscribe(render);
+render();
+
+// increase counter anytime page is clicked
+document.addEventListener('click', function(e){
+    store.dispatch({ type: 'INCREMENT', by: 1 });
+});
+
+
+</script>
+</body>
+</html>

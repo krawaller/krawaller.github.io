@@ -1,0 +1,10 @@
+digraph {
+  bgcolor = transparent;
+  rankdir = LR;
+  WorkerWrapper [shape = rectangle]
+  WorkerWrapper -> library_async
+  library -> WorkerWrapper -> library_worker
+  library -> library_worker [constraint=none, color=gray]
+  library_async -> library_worker [color=gray]
+  {rank=same; library_worker, library_async}
+}

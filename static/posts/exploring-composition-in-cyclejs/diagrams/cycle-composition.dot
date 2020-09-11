@@ -1,0 +1,39 @@
+digraph {
+	rankdir = LR
+	bgcolor = transparent
+
+	sources
+
+	subgraph cluster_parent {
+		label = "Nameform"
+
+		textentrysources [label="textentry\nsources"]
+
+		textentrysinks [label="textentry\nsinks"]
+
+		subgraph cluster_textentry {
+			label = "Textentry"
+
+			confirmsources [label="confirm\nsources"]
+			confirmsinks [label="confirm\nsinks"]
+
+			subgraph cluster_confirm {
+				label = "Confirm"
+				confirmstream [label="confirm\nstream",color=transparent,fontcolor=transparent]
+			}
+			confirmsources -> confirmstream -> confirmsinks
+		}
+
+		textentrysources -> confirmsources
+		confirmsinks -> textentrysinks
+		
+		confirmsinks -> confirmsources [constraint=false; color=red]
+	}
+
+	sources -> textentrysources
+
+	textentrysinks -> sinks
+
+	sinks
+
+}

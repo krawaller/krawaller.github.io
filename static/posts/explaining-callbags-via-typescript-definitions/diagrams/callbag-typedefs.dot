@@ -1,0 +1,12 @@
+digraph {
+  rankdir = LR
+  bgcolor = transparent
+  
+  SourceFactory -> SourceInitiator
+
+  SourceInitiator -> SinkTalkback
+
+  SinkConnector -> SourceInitiator
+
+  SinkTalkback -> SourceTalkback
+}

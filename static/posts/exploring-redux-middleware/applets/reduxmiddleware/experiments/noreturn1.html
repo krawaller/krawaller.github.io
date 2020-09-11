@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple logger</title>
+  <script src="../redux.js"></script>
+</head>
+<body>
+
+<em>What's the return value from store.dispatch with noop middleware?</em>
+
+<div id="app"></div>
+<div id="log"></div>
+
+<script type="text/javascript" src="../boilerplatestart.js"></script>
+
+<script type="text/javascript">
+
+var store = createStore(reducer,applyMiddleware(noop));
+
+</script>
+
+<script type="text/javascript">
+
+store.subscribe(render);
+render();
+
+document.addEventListener('click', function(e){
+    var ret = store.dispatch({ type: 'INCREMENT', by: 1 });
+    output("return value: "+JSON.stringify(ret));
+});
+
+</script>
+
+</body>
+</html>

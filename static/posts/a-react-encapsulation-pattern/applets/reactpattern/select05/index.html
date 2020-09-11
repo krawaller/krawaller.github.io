@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="resources/lodash.js"></script>
+    <script type="text/javascript" src="resources/react.js"></script>
+    <script type="text/javascript" src="resources/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="resources/bootstrap.css" type="text/css"></link>
+  </head>
+  <body>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+
+      var Select = function(name,opts){
+        return _.object(["getInitialState","Select"+name.charAt(0).toUpperCase() + name.slice(1)],[
+          function(){ return _.object([name],[opts[0]]); },
+          function(skip){
+            var me=this;
+            return (
+              <div style={{display:"inline-block"}} className="btn-group clearfix">
+                {_.map(_.without(opts,skip),function(g){
+                  return <button onClick={function(){
+                    me.setState(_.object([name],[g]));
+                  }} className={'btn btn-default'+(g===me.state[name]?' active':'')}>{g}</button>
+                })}
+              </div>
+            );
+          }
+        ]);
+      };
+
+      var fruits = {
+        apples: "nice",
+        oranges: "a hassle to peel",
+        bananas: "funny"
+      };
+
+      var List = React.createClass({
+        mixins: [Select("fruit",Object.keys(fruits)),Select("fruit2",Object.keys(fruits).reverse())],
+        render: function(){
+          return (
+            <div className="center-block" style={{maxWidth:"800px;",paddingTop:"1em;"}}>
+              I posit that {' '}
+              {this.SelectFruit()} {' '}
+              are {fruits[this.state.fruit]} {' '}
+              and {' '}
+              {this.SelectFruit2(this.state.fruit)} {' '}
+              are {fruits[this.state.fruit2]}
+            </div>
+          )
+        }
+      });
+
+      React.renderComponent(
+        <List />,
+        document.querySelector("body")
+      );
+
+    </script>
+  </body>
+</html>

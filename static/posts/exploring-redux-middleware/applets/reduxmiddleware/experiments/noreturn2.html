@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple logger</title>
+  <script src="../redux.js"></script>
+</head>
+<body>
+
+<em>What's the return value when the middleware doesn't return anything?</em>
+
+<div id="app"></div>
+<div id="log"></div>
+
+<script type="text/javascript" src="../boilerplatestart.js"></script>
+
+<script type="text/javascript">
+
+var noreturn = function(middlewareAPI){
+    return function(next){
+        return function(action){
+            next(action);
+        }
+    }
+}
+
+var store = createStore(reducer,applyMiddleware(noreturn));
+
+</script>
+
+<script type="text/javascript">
+
+store.subscribe(render);
+render();
+
+document.addEventListener('click', function(e){
+    var ret = store.dispatch({ type: 'INCREMENT', by: 1 });
+    output("return value: "+JSON.stringify(ret));
+});
+
+</script>
+
+</body>
+</html>

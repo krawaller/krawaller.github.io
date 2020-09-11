@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>React Redux vanilla integration</title>
+	<script type="text/javascript" src="../libs/browserassets.js"></script>
+	<script type="text/javascript" src="../libs/babel.js"></script>
+  <script type="text/javascript" src="../libs/prism.js"></script>
+  <script type="text/javascript" src="../libs/addsource.js"></script>
+  <link rel="stylesheet" href="../libs/prism.css">
+  <link rel="stylesheet" href="../libs/demo.css">
+</head>
+<body>
+  <div id="container"></div></div>
+
+<script type="text/babel" id="code">
+
+
+// ******** Redux section ************
+
+var reducer = function(state,action){
+  switch(action.type){
+    case 'ADD': return state.concat(action.text);
+    default: return state;
+  }
+};
+
+var initial = ['Carpe diem'];
+
+var store = Redux.createStore(reducer,initial);
+
+var actionCreators = {
+  addQuote: function(text){
+    return {type:'ADD',text:text};
+  }
+};
+
+// ********* React components ***********
+
+var QuoteList = function(props){
+  var list = props.quotes.map(function(q,n){
+    return <li key={n}>{q}</li>;
+  });
+  return (
+    <div className="quoteslist">
+      <h3>Words of Wisdom</h3>
+      <ul>{list}</ul>
+    </div>
+  );
+};
+
+var QuoteForm = React.createClass({
+  submit: function(e){
+    var field = this.refs.field;
+    var quote = field.value;
+    this.props.callback(quote);
+    field.value = '';
+    e.preventDefault();
+  },
+  render: function(){
+    return (
+      <form onSubmit={this.submit}>
+        <input ref='field' />
+        <button type='submit'>Add</button>
+      </form>
+    );
+  }
+});
+
+var App = function(props){
+  return <div>
+    <QuoteListContainer/>
+    <QuoteFormContainer/>
+  </div>;
+};
+
+// ********* Component wrappers ***********
+
+var QuoteListContainer = React.createClass({
+  getInitialState: function(){
+    return {quotes:[]};
+  },
+  componentDidMount: function(){
+    store.subscribe(function(){
+      this.setState({quotes: store.getState()});
+    }.bind(this));
+  },
+  render: function(){
+    return <QuoteList quotes={this.state.quotes} />;
+  }
+});
+
+var boundActionCreators = Redux.bindActionCreators(
+  actionCreators,
+  store.dispatch
+);
+
+var QuoteFormContainer = function(props){
+  return <QuoteForm callback={boundActionCreators.addQuote}/>;
+};
+
+
+// ********* Initialization section ***********
+
+ReactDOM.render(
+  <App/>,
+  document.getElementById("container")
+);
+store.dispatch({type:'BOGUSEVENT'});
+
+	</script>
+</body>
+</html>

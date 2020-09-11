@@ -1,0 +1,21 @@
+#container {
+	background-color: #DDD;
+	padding: 1em;
+}
+
+.sourcecode, #container, header {
+	margin: 1em auto;
+	max-width: 700px;
+}
+
+.sourcecode {
+	tab-size: 4;
+}
+
+header img:first-child {
+	width: 200px;
+}
+
+header img:nth-child(2) {
+	width: 140px;
+}

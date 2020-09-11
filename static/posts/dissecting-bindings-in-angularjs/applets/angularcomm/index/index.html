@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>A small Angular app</title>
+    <style>
+      body > * {
+        display: none;
+      }
+      body > :target {
+        display: block;
+      }
+    </style>
+  </head>
+  <body ng-app="apidemo" ng-controller="outercontroller">
+
+    
+    <stringviaat id="stringviaat" text="hello"></stringviaat>
+
+    <stringfaked id="stringfaked" text="hello"></stringfaked>
+
+    <stringthird id="stringthird" text="'hello'"></stringthird>
+
+    <p id="inputfirst">
+      <input ng-model="input1">
+      <inputfirst in="input1"></inputfirst>
+    </p>
+
+    <p id="inputsecond">
+      <input ng-model="input2">
+      <inputsecond in="input2"></inputsecond>
+    </p>
+
+    <p id="inputfaked">
+      <input ng-model="inputfaked">
+      <inputfaked in="inputfaked"></inputfaked>
+    </p>
+
+    <p id="outputfirst">
+      Outer value: {{outputtwoway}}
+      <outputfirst out="outputtwoway"></outputfirst>
+    </p>
+
+    <p id="outputsecond">
+      Outer via &amp;, outer: {{ampersand}}
+      <outputsecond out="ampersand = ampersand + amount"></outputsecond>
+    </p>
+
+    <p id="outputfakedamp">
+      Outer via fake &amp;, outer: {{ampersandfake}}
+      <outputfakeamp out="ampersandfake = ampersandfake + amount"></outputfakeamp>
+    </p>
+
+    <p id="outputthird">
+      Outer via &lt;, outer: {{croccount}}
+      <outputthird out="crocinc"></outputthird>
+    </p>
+
+    <p id="twowayeq">
+      Outer: <input ng-model="twowayeq">
+      <twowayeq connection="twowayeq"></twowayeq>
+    </p>
+
+    <p id="twowayin">
+      Outer: <input ng-model="twowayin">
+      <twowayin value="twowayin" callback="changetwowayin"></twowayin>
+    </p>
+
+    <p id="twowayfaked">
+      Twoway outer faked: <input ng-model="twowayfakedvar">
+      <twowayfaked connection="twowayfakedvar"></twowayfaked>
+    </p>
+
+
+    <script src="angular.js"></script>
+    <script src="code.js"></script>
+  </body>
+</html>

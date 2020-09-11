@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="resources/lodash.js"></script>
+    <script type="text/javascript" src="resources/react_0.12.2.js"></script>
+    <script type="text/javascript" src="resources/react-router_0.12.0.js"></script>
+    <script type="text/javascript" src="resources/JSXTransformer_0.12.2.js"></script>
+    <link rel="stylesheet" href="resources/bootstrap.css" type="text/css"></link>
+  </head>
+  <body>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+
+      var Route = ReactRouter.Route, DefaultRoute = ReactRouter.DefaultRoute, RouteHandler = ReactRouter.RouteHandler;
+
+      var fruits = {
+        apples: "nice",
+        oranges: "a hassle to peel",
+        bananas: "funny"
+      };
+
+      var vegetables = {
+        carrots: "for bunnies",
+        peas: "perfect for flicking at your mum",
+        eggplants: "just weird"
+      };
+
+
+      var Wrapper = React.createClass({
+        render: function(){
+          return (
+            <div>
+              <h2>Important opinions</h2>
+              <NavBar />
+              <RouteHandler {...this.props} />
+            </div>
+          );
+        }
+      });
+
+      var NavLink = React.createClass({
+        mixins: [ ReactRouter.State ],
+        render: function() {
+          var Tag = React.DOM[this.props.tag || "li"];
+          var className = (this.props.linkClasses || '')+(this.isActive(this.props.to, this.props.params, this.props.query) ? 'active' : '');
+          return <Tag className={className}>{ReactRouter.Link(this.props)}</Tag>;
+        }
+      });
+
+      var NavBar = React.createClass({
+        render: function(){
+          return (
+            <ul className="nav nav-pills navbar-left">
+              <NavLink to="home">Home</NavLink>
+              <NavLink to="vegetables">Vegetables</NavLink>
+            </ul>
+          );
+        }
+      });
+
+      var Home = React.createClass({
+        render: function(){
+          return (
+            <p>Hooome!</p>
+          );
+        }
+      });
+
+      var SelectVegetable = React.createClass({
+        render: function(){ return <p>Click a veggie to read our profound insights!</p>; }
+      });
+
+      var Vegetable = React.createClass({
+        render: function(){
+          var name = this.props.params.veg, opinion = this.props.veggies[name];
+          return <p>{this.props.params.veg} are {opinion}!</p>;
+        }
+      });
+
+      var Vegetables = React.createClass({
+        render: function(){
+          var veggielinks = _.map(this.props.veggies,function(opinion,name){
+            return <NavLink to="vegetable" params={{veg:name}}>{name}</NavLink>;
+          });
+          return (
+            <div className="row">
+              <div className="col-xs-4">
+                <ul className="nav">
+                  {veggielinks}
+                </ul>
+              </div>
+              <div className="col-xs-8">
+                <RouteHandler {...this.props} />
+              </div>
+            </div>
+          );
+        }
+      });
+
+      var routes = (
+        <Route handler={Wrapper}>
+          <DefaultRoute name="home" handler={Home} />
+          <Route name="vegetables" path="/vegetables" handler={Vegetables}>
+            <Route name="vegetable" path="/vegetables/:veg" handler={Vegetable}/>
+            <DefaultRoute handler={SelectVegetable}/>
+          </Route>
+        </Route>
+      );
+
+      ReactRouter.run(routes, function(Handler, state) {
+        React.render(<Handler params={state.params} veggies={vegetables} />, document.body);
+      });
+
+    </script>
+  </body>
+</html>

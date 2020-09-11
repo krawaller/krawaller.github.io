@@ -1,0 +1,11 @@
+digraph {
+  rankdir = LR
+  bgcolor = transparent
+
+  window -> makeActions
+  makeEvents -> events -> makeActions -> actions -> makeState -> state -> makeApp
+  actions -> makeApp
+  events -> makeApp
+
+  makeEvents, makeActions, makeState, makeApp [shape=box]
+}

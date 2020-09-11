@@ -1,0 +1,17 @@
+digraph {
+	rankdir = LR
+	bgcolor = transparent
+
+	child [shape=box]
+	parent [shape=box]
+
+	childsources -> child -> childsinks
+	parentsources -> parent -> parentsinks
+
+	parentsinks -> childsources [constraint=false,color=red]
+	childsinks -> parentsources [constraint=false,color=red]
+
+	{rank=same; childsources, parentsources}
+	{rank=same; parent, child}
+	{rank=same; childsinks, parentsinks}
+}

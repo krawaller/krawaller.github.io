@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="resources/lodash.js"></script>
+    <script type="text/javascript" src="resources/react.js"></script>
+    <script type="text/javascript" src="resources/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="resources/bootstrap.css" type="text/css"></link>
+  </head>
+  <body>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+
+      var fruits = {
+        apples: "nice",
+        oranges: "a hassle to peel",
+        bananas: "funny"
+      };
+
+      var vegetables = {
+        carrots: "for bunnies",
+        peas: "perfect for flicking at your mum",
+        eggplants: "just weird"
+      };
+
+      var Select = React.createClass({
+        propTypes: {
+          options: React.PropTypes.arrayOf(React.PropTypes.string).isRequired,
+          makeSelection: React.PropTypes.func.isRequired,
+          current: React.PropTypes.string.isRequired
+        },
+        render: function(){
+          return (
+            <div className="btn-group clearfix">
+              {_.map(this.props.options,function(c){
+                return <button onClick={_.partial(this.props.makeSelection,c)} className={'btn btn-default'+(c===this.props.current?' active':'')}>{c}</button>
+              },this)}
+            </div>
+          );
+        }
+      });
+
+      var List = React.createClass({
+        getInitialState: function(){
+          return {fruit:"apples",vegetable:"carrots"};
+        },
+        choose: function(prop,c){
+          this.setState(_.object([prop],[c]));
+        },
+        render: function(){
+          var cb = this.choose, s = this.state;
+          var fruitSelector = <Select options={Object.keys(fruits)} current={this.state.fruit} makeSelection={_.partial(cb,"fruit")}/>
+          var vegetableSelector = <Select options={Object.keys(vegetables)} current={this.state.vegetable} makeSelection={_.partial(cb,"vegetable")}/>
+          return (
+            <div className="center-block" style={{maxWidth:"800px;",padding:"1em;"}}>
+              <div>I posit that {fruitSelector} are {fruits[s.fruit]}!</div><br/>
+              <div>Also {vegetableSelector} are {vegetables[s.vegetable]}.</div>
+            </div>
+          )
+        }
+      });
+
+      React.renderComponent(
+        <List />,
+        document.querySelector("body")
+      );
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,34 @@
+.exercise {
+	margin: 1em auto;
+	max-width: 700px;
+	background-color: #DDD;
+	padding: 1em;
+}
+
+.instruction {
+	border-bottom: 1px solid black;
+}
+
+#container, .solution {
+	
+}
+
+#container {
+	border-right: 1px solid black;
+}
+
+.exercise > div {
+	display: flex;
+	flex-direction: row;
+	align-items: stretch;
+	min-height: 400px;
+}
+
+.exercise > div > * {
+	width: 48%
+}
+
+iframe {
+	border: none;
+	border-left: 2px inset;
+}

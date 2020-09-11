@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="resources/lodash.js"></script>
+    <script type="text/javascript" src="resources/react.js"></script>
+    <script type="text/javascript" src="resources/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="resources/bootstrap.css" type="text/css"></link>
+  </head>
+  <body>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+
+      var fruits = {
+        apples: "nice",
+        oranges: "a hassle to peel",
+        bananas: "funny"
+      };
+
+      var List = React.createClass({
+        choose: function(c){
+          this.setState({fruit:c});
+        },
+        getInitialState: function(){
+          return {fruit:"apples"};
+        },
+        render: function(){
+          var selector = (
+            <div className="btn-group clearfix">
+              {_.map(Object.keys(fruits),function(c){
+                return <button onClick={_.partial(this.choose,c)} className={'btn btn-default'+(c===this.state.fruit?' active':'')}>{c}</button>
+              },this)}
+            </div>
+          );
+          return (
+            <div className="center-block" style={{maxWidth:"800px;",padding:"1em;"}}>
+              I posit that {selector} are {fruits[this.state.fruit]}!
+            </div>
+          )
+        }
+      });
+
+      React.renderComponent(
+        <List />,
+        document.querySelector("body")
+      );
+
+    </script>
+  </body>
+</html>

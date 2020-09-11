@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Simple logger</title>
+  <script src="../redux.js"></script>
+</head>
+<body>
+
+<em>Nervous middleware envokes actions twice just to make sure</em>
+
+<div id="app"></div>
+<div id="log"></div>
+
+<script type="text/javascript" src="../boilerplatestart.js"></script>
+
+<script type="text/javascript">
+
+// a logging middleware, if we wanna
+var makesure = function(middlewareAPI){
+    return function(next){
+        return function(action){
+            next(action);
+            next(action);
+        }
+    }
+}
+
+var store = createStore(reducer,applyMiddleware(makesure,logger));
+
+</script>
+<script type="text/javascript" src="../boilerplateend.js"></script>
+</body>
+</html>

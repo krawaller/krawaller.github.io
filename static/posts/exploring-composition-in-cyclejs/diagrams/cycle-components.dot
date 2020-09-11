@@ -1,0 +1,17 @@
+digraph {
+	rankdir = LR
+	bgcolor = transparent
+
+	subgraph cluster_parent {
+		label = "Nameform"
+
+		subgraph cluster_textentry {
+			label = "Textentry"
+
+			subgraph cluster_confirm {
+				label = "Confirm"
+				confirmstream [label="confirm\nstream",color=transparent,fontcolor=transparent]
+			}
+		}
+	}
+}

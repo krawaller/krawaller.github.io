@@ -1,0 +1,26 @@
+digraph {
+	rankdir = LR
+	bgcolor = transparent
+
+
+	subgraph cluster_sources {
+		label = "sources"
+		style = dashed
+		DOM
+	}
+
+	Textentry [shape=box]
+
+	DOM -> Textentry
+
+	subgraph cluster_sinks {
+		label = "sinks"
+		style = dashed
+		DOMout, submit
+		submit [label="submit"]
+		DOMout [label="DOM"]
+	}
+
+	Textentry -> DOMout
+	Textentry -> submit
+}

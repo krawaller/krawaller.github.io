@@ -1,0 +1,17 @@
+digraph {
+  subgraph cluster_components {
+    style=dashed
+    label="Components"
+    App, Battle, Combatant, CombatantDetail
+  }
+  App -> Battle -> Combatant -> CombatantDetail
+
+  subgraph cluster_services {
+    style=dashed
+    label="Services"
+    AuthService -> UrlService -> GithubService -> BattleService
+  }
+
+  AuthService -> App [constraint=none]
+  BattleService -> Combatant [constraint=none]
+}

@@ -1,0 +1,11 @@
+digraph {
+  rankdir = LR
+  bgcolor = transparent
+  action -> reducer -> nstate
+  ostate -> reducer
+
+  reducer [shape=box]
+
+  ostate [label="current\nstate"]
+  nstate [label="new state"]
+}

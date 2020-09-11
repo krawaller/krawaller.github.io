@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script type="text/javascript" src="resources/lodash.js"></script>
+    <script type="text/javascript" src="resources/react.js"></script>
+    <script type="text/javascript" src="resources/JSXTransformer.js"></script>
+    <link rel="stylesheet" href="resources/bootstrap.css" type="text/css"></link>
+  </head>
+  <body>
+    <script type="text/jsx">
+      /** @jsx React.DOM */
+
+      var fruits = {
+        apples: "nice",
+        oranges: "a hassle to peel",
+        bananas: "funny"
+      };
+
+      var vegetables = {
+        carrots: "for bunnies",
+        peas: "perfect for flicking at your mum",
+        eggplants: "just weird"
+      };
+
+      var List = React.createClass({
+        chooseFruit: function(c){
+          this.setState({fruit:c});
+        },
+        chooseVegetable: function(c){
+          this.setState({vegetable:c});
+        },
+        getInitialState: function(){
+          return {fruit:"apples",vegetable:"carrots"};
+        },
+        render: function(){
+          var fruitSelector = (
+            <div className="btn-group clearfix">
+              {_.map(Object.keys(fruits),function(c){
+                return <button onClick={_.partial(this.chooseFruit,c)} className={'btn btn-default'+(c===this.state.fruit?' active':'')}>{c}</button>
+              },this)}
+            </div>
+          );
+          var vegetableSelector = (
+            <div className="btn-group clearfix">
+              {_.map(Object.keys(vegetables),function(c){
+                return <button onClick={_.partial(this.chooseVegetable,c)} className={'btn btn-default'+(c===this.state.vegetable?' active':'')}>{c}</button>
+              },this)}
+            </div>
+          );
+          return (
+            <div className="center-block" style={{maxWidth:"800px;",padding:"1em;"}}>
+              <div>I posit that {fruitSelector} are {fruits[this.state.fruit]}!</div><br/>
+              <div>Also {vegetableSelector} are {vegetables[this.state.vegetable]}.</div>
+            </div>
+          )
+        }
+      });
+
+      React.renderComponent(
+        <List />,
+        document.querySelector("body")
+      );
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,9 @@
+digraph {
+  rankdir = LR
+  bgcolor = transparent
+
+  function -> fromFunction -> source
+  fromFunction -> emitter
+
+  fromFunction [shape=box]
+}
